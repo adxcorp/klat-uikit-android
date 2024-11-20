@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <activity
+            android:name=".feature.image.select.ImageSelectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.image.detail.ImageDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.chatting.ChattingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feature.channel.list.ChannelListActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

@@ -5,15 +5,19 @@
 
     <application>
         <activity
+            android:theme="@style/KlatAppTheme"
             android:name=".feature.image.select.ImageSelectActivity"
             android:exported="false" />
         <activity
+            android:theme="@style/KlatAppTheme"
             android:name=".feature.image.detail.ImageDetailActivity"
             android:exported="false" />
         <activity
+            android:theme="@style/KlatAppTheme"
             android:name=".feature.chatting.ChattingActivity"
             android:exported="false" />
         <activity
+            android:theme="@style/KlatAppTheme"
             android:name=".feature.channel.list.ChannelListActivity"
             android:exported="false" />
     </application>

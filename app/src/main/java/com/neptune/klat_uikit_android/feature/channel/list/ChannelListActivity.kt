@@ -1,10 +1,12 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.databinding.ActivityChannelListBinding
+import com.neptune.klat_uikit_android.feature.photo.select.PhotoCropActivity
 
 class ChannelListActivity : AppCompatActivity() {
     private val binding: ActivityChannelListBinding by lazy { ActivityChannelListBinding.inflate(layoutInflater) }
@@ -39,6 +41,7 @@ class ChannelListActivity : AppCompatActivity() {
             setImageResource(R.drawable.ic_24_search)
             setOnClickListener {
                 // TODO 검색
+                startActivity(Intent(this@ChannelListActivity, PhotoCropActivity::class.java))
             }
         }
 

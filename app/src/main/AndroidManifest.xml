@@ -3,14 +3,28 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!--    <uses-permission android:name="android.permission.RECORD_AUDIO" />-->
+    <!--    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />-->
+
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+
     <application>
         <activity
             android:theme="@style/KlatAppTheme"
-            android:name=".feature.image.select.ImageSelectActivity"
+            android:name=".feature.photo.select.PhotoCropActivity"
             android:exported="false" />
         <activity
             android:theme="@style/KlatAppTheme"
-            android:name=".feature.image.detail.ImageDetailActivity"
+            android:name=".feature.photo.detail.PhotoDetailActivity"
             android:exported="false" />
         <activity
             android:theme="@style/KlatAppTheme"
@@ -20,6 +34,14 @@
             android:theme="@style/KlatAppTheme"
             android:name=".feature.channel.list.ChannelListActivity"
             android:exported="false" />
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
-
 </manifest>

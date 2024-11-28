@@ -12,6 +12,8 @@ object KlatUiKit {
         TalkPlus.init(context, appId)
     }
 
+    // test
+
     fun connect(activity: Activity, loginRequest: LoginRequest) {
         val intent = Intent(activity, ChannelListActivity::class.java).apply {
             putExtra(ChannelListActivity.EXTRA_USER_TOKEN, loginRequest.userToken)

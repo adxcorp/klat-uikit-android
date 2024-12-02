@@ -2,27 +2,32 @@ package com.neptune.klat_uikit_android.feature.channel.list
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import com.neptune.klat_uikit_android.R
-import com.neptune.klat_uikit_android.databinding.ActivityChannelListBinding
+import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 
-class ChannelListActivity : AppCompatActivity() {
-    private val binding: ActivityChannelListBinding by lazy { ActivityChannelListBinding.inflate(layoutInflater) }
-
-    companion object {
-        const val EXTRA_USER_TOKEN = "extra_user_token"
-        const val EXTRA_USER_ID = "extra_user_ud"
-        const val EXTRA_USER_NICKNAME = "extra_user_nickname"
-        const val EXTRA_USER_PROFILE_IMAGE = "extra_user_profile_image"
-    }
+class ChannelListFragment : Fragment() {
+    private var _binding: FragmentChannelListBinding? = null
+    private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
+    private val parentActivity = requireActivity()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentChannelListBinding.inflate(inflater)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setHeaderUI()
     }
 
@@ -30,7 +35,7 @@ class ChannelListActivity : AppCompatActivity() {
         layoutHeader.ivLeftBtn.apply {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_24_back)
-            setOnClickListener { finish() }
+            setOnClickListener { parentActivity.finish() }
         }
 
         layoutHeader.tvLeftText.apply {
@@ -60,7 +65,7 @@ class ChannelListActivity : AppCompatActivity() {
         layoutSearch.etSearch.requestFocus()
 
         // 리팩토링
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = parentActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(layoutSearch.etSearch, InputMethodManager.SHOW_IMPLICIT)
 
         layoutSearch.etSearch.addTextChangedListener { input ->
@@ -72,7 +77,7 @@ class ChannelListActivity : AppCompatActivity() {
             layoutSearch.root.visibility = View.GONE
 
             // 리팩토링
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = parentActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(layoutSearch.etSearch.windowToken, 0)
         }
     }

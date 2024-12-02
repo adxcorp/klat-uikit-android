@@ -1,16 +1,16 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.util.hideKeyboard
+import com.neptune.klat_uikit_android.core.util.showKeyboard
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 
 class ChannelListFragment : Fragment() {
@@ -65,9 +65,7 @@ class ChannelListFragment : Fragment() {
         layoutSearch.root.visibility = View.VISIBLE
         layoutSearch.etSearch.requestFocus()
 
-        // 리팩토링
-        val imm = parentActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(layoutSearch.etSearch, InputMethodManager.SHOW_IMPLICIT)
+        parentActivity.showKeyboard(layoutSearch.etSearch)
 
         layoutSearch.etSearch.addTextChangedListener { input ->
             layoutSearch.tvSearchCancel.isVisible = !input.isNullOrEmpty()
@@ -77,9 +75,7 @@ class ChannelListFragment : Fragment() {
             layoutSearch.etSearch.setText("")
             layoutSearch.root.visibility = View.GONE
 
-            // 리팩토링
-            val imm = parentActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(layoutSearch.etSearch.windowToken, 0)
+            parentActivity.hideKeyboard(layoutSearch.etSearch)
         }
     }
 }

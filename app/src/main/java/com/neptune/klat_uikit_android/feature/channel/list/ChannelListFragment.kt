@@ -9,13 +9,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.FragmentActivity
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 
 class ChannelListFragment : Fragment() {
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
-    private val parentActivity = requireActivity()
+    private val parentActivity: FragmentActivity by lazy { requireActivity() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

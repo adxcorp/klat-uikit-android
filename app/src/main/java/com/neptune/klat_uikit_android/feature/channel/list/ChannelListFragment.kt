@@ -8,15 +8,23 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.util.hideKeyboard
 import com.neptune.klat_uikit_android.core.util.showKeyboard
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
+import kotlinx.coroutines.launch
 
 class ChannelListFragment : Fragment() {
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
     private val parentActivity: FragmentActivity by lazy { requireActivity() }
+    private val viewModel: ChannelListViewModel by viewModels()
+    private val adapter: ChannelListAdapter by lazy { ChannelListAdapter(viewModel.currentChannelList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +37,34 @@ class ChannelListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getChannelList()
         setHeaderUI()
+        observeChannelList()
+    }
+
+    private fun observeChannelList() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.channelUiState.collect { channelUiState ->
+                    handleChannelUiState(channelUiState)
+                }
+            }
+        }
+    }
+
+    private fun handleChannelUiState(uiState: ChannelUiState) {
+        when (uiState) {
+            is ChannelUiState.BaseState -> {
+                when (uiState.baseState) {
+                    is BaseUiState.Loading -> {}
+                    is BaseUiState.LoadingFinish -> {}
+                    is BaseUiState.Error -> {}
+                }
+            }
+
+            is ChannelUiState.ChannelListEmpty -> showEmptyChannelUI()
+            is ChannelUiState.GetChannelList -> binding.rvChannels.adapter = this.adapter
+        }
     }
 
     private fun setHeaderUI() = with(binding) {
@@ -77,5 +112,14 @@ class ChannelListFragment : Fragment() {
 
             parentActivity.hideKeyboard(layoutSearch.etSearch)
         }
+    }
+
+    private fun setChannelList() {
+
+    }
+
+    private fun showEmptyChannelUI() {
+        binding.layoutEmpty.root.visibility = View.VISIBLE
+        binding.layoutEmpty.tvEmptyMessage.text = getString(R.string.empty_channel)
     }
 }

@@ -18,19 +18,37 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
 
     val currentChannelList: ArrayList<TPChannel> = arrayListOf()
 
-    fun getChannelList(lastChannel: TPChannel? = null) {
-        viewModelScope.launch {
-            _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Loading))
-            channelRepository.getChannelList(lastChannel).collect { callbackResult ->
-                when (callbackResult) {
-                    is Result.Success -> {
-                        _channelUiState.emit(ChannelUiState.GetChannelList(callbackResult.successData))
-                        currentChannelList.addAll(callbackResult.successData.first)
+    private var currentTPChannel: TPChannel? = null
+        private set
+
+    private var hasNext: Boolean = true
+
+    fun getChannelList(lastChannel: TPChannel? = currentTPChannel) {
+        if (hasNext) {
+            viewModelScope.launch {
+                _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Loading))
+                channelRepository.getChannelList(lastChannel).collect { callbackResult ->
+                    when (callbackResult) {
+                        is Result.Success -> {
+                            _channelUiState.emit(ChannelUiState.GetChannelList(callbackResult.successData))
+
+                            if (callbackResult.successData.first.isNotEmpty()) {
+                                currentChannelList.addAll(callbackResult.successData.first)
+                                currentTPChannel = callbackResult.successData.first.last()
+                            }
+
+                            if (currentChannelList.isEmpty()) {
+                                _channelUiState.emit(ChannelUiState.ChannelListEmpty)
+                            }
+
+                            hasNext = callbackResult.successData.second
+                        }
+
+                        is Result.Failure -> _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                     }
-                    is Result.Failure -> _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
+                _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.LoadingFinish))
             }
-            _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.LoadingFinish))
         }
     }
 }

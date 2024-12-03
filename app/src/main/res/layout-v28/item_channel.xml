@@ -47,7 +47,7 @@
             android:id="@+id/constraintLayout9"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/tv_recent_message"
+            app:layout_constraintBottom_toTopOf="@+id/tv_last_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -55,7 +55,7 @@
             app:layout_constraintWidth_default="wrap">
 
             <TextView
-                android:id="@+id/tv_channel_title"
+                android:id="@+id/tv_channel_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -79,9 +79,9 @@
                 android:gravity="center"
                 android:textColor="#888888"
                 android:textFontWeight="400"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_channel_title"
-                app:layout_constraintStart_toEndOf="@+id/tv_channel_title"
-                app:layout_constraintTop_toTopOf="@+id/tv_channel_title"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_channel_name"
+                app:layout_constraintStart_toEndOf="@+id/tv_channel_name"
+                app:layout_constraintTop_toTopOf="@+id/tv_channel_name"
                 tools:text="39"></TextView>
 
             <ImageView
@@ -96,7 +96,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
-            android:id="@+id/tv_recent_message"
+            android:id="@+id/tv_last_message"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -117,7 +117,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/tv_recent_date"
+            android:id="@+id/tv_last_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
@@ -140,7 +140,7 @@
             android:textFontWeight="500"
             android:textSize="11dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/tv_recent_date"
+            app:layout_constraintEnd_toEndOf="@+id/tv_last_date"
             tools:text="999+"></TextView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

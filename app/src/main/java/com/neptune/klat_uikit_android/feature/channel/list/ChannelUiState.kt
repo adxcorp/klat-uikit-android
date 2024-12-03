@@ -6,4 +6,5 @@ import io.talkplus.entity.channel.TPChannel
 sealed class ChannelUiState {
     data class BaseState(val baseState: BaseUiState) : ChannelUiState()
     data class GetChannelList(val channelList: Pair<List<TPChannel>, Boolean>) : ChannelUiState()
+    object ChannelListEmpty : ChannelUiState()
 }

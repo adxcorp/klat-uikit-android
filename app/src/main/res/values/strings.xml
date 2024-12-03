@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">klat-uikit-android</string>
+    <string name="empty_channel">아직 생성된 채널이 없습니다.\n채널을 생성하여 새로운 대화를 시작해보세요.</string>
 </resources>

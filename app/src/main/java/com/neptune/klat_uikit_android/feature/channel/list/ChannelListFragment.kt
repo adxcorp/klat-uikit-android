@@ -1,25 +1,24 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
-import com.neptune.klat_uikit_android.core.util.hideKeyboard
-import com.neptune.klat_uikit_android.core.util.showKeyboard
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
+import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import kotlinx.coroutines.launch
 
-class ChannelListFragment : Fragment() {
+class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
     private val parentActivity: FragmentActivity by lazy { requireActivity() }
@@ -39,6 +38,7 @@ class ChannelListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getChannelList()
         setHeaderUI()
+        setSwipeListener()
         observeChannelList()
     }
 
@@ -82,9 +82,7 @@ class ChannelListFragment : Fragment() {
         layoutHeader.ivFirstRightBtn.apply {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_24_search)
-            setOnClickListener {
-                setSearchUI()
-            }
+            setOnClickListener { startActivity(Intent(parentActivity, ChannelSearchActivity::class.java)) }
         }
 
         layoutHeader.ivSecondRightBtn.apply {
@@ -96,30 +94,24 @@ class ChannelListFragment : Fragment() {
         }
     }
 
-    private fun setSearchUI() = with(binding) {
-        layoutSearch.root.visibility = View.VISIBLE
-        layoutSearch.etSearch.requestFocus()
-
-        parentActivity.showKeyboard(layoutSearch.etSearch)
-
-        layoutSearch.etSearch.addTextChangedListener { input ->
-            layoutSearch.tvSearchCancel.isVisible = !input.isNullOrEmpty()
-        }
-
-        layoutSearch.tvSearchCancel.setOnClickListener {
-            layoutSearch.etSearch.setText("")
-            layoutSearch.root.visibility = View.GONE
-
-            parentActivity.hideKeyboard(layoutSearch.etSearch)
-        }
-    }
-
     private fun setChannelList() {
 
     }
 
-    private fun showEmptyChannelUI() {
-        binding.layoutEmpty.root.visibility = View.VISIBLE
-        binding.layoutEmpty.tvEmptyMessage.text = getString(R.string.empty_channel)
+    private fun showEmptyChannelUI() = with(binding) {
+        layoutEmpty.root.visibility = View.VISIBLE
+        layoutEmpty.tvEmptyMessage.text = getString(R.string.empty_channel)
+        layoutHeader.ivFirstRightBtn.isEnabled = false
+    }
+
+    private fun setSwipeListener() {
+        ItemTouchHelper(ItemSwipeCallback(
+            swipeCallbackListener = this,
+            context = parentActivity
+        )).attachToRecyclerView(binding.rvChannels)
+    }
+
+    override fun onSwipe(position: Int) {
+
     }
 }

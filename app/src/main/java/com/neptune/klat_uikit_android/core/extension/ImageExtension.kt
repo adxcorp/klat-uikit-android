@@ -1,4 +1,4 @@
-package com.neptune.klat_uikit_android.core.util
+package com.neptune.klat_uikit_android.core.extension
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide

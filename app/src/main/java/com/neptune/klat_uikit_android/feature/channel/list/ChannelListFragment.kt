@@ -16,6 +16,7 @@ import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
+import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import kotlinx.coroutines.launch
 
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
@@ -23,7 +24,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
     private val parentActivity: FragmentActivity by lazy { requireActivity() }
     private val viewModel: ChannelListViewModel by viewModels()
-    private val adapter: ChannelListAdapter by lazy { ChannelListAdapter(viewModel.currentChannelList) }
+    private val adapter: ChannelListAdapter by lazy { setChannelListAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +83,12 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         layoutHeader.ivFirstRightBtn.apply {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_24_search)
-            setOnClickListener { startActivity(Intent(parentActivity, ChannelSearchActivity::class.java)) }
+            setOnClickListener {
+                val intent: Intent = Intent(parentActivity, ChannelSearchActivity::class.java).apply {
+                    putExtra(ChannelSearchActivity.EXTRA_CHANNEL_LIST, viewModel.currentChannelList)
+                }
+                startActivity(intent)
+            }
         }
 
         layoutHeader.ivSecondRightBtn.apply {
@@ -102,6 +108,15 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         layoutEmpty.root.visibility = View.VISIBLE
         layoutEmpty.tvEmptyMessage.text = getString(R.string.empty_channel)
         layoutHeader.ivFirstRightBtn.isEnabled = false
+    }
+
+    private fun setChannelListAdapter(): ChannelListAdapter {
+        return ChannelListAdapter(viewModel.currentChannelList) { tpChannel ->
+            val intent = Intent(parentActivity, ChatActivity::class.java).apply {
+                putExtra(ChatActivity.EXTRA_CHANNEL_ID, tpChannel.channelId)
+            }
+            startActivity(intent)
+        }
     }
 
     private fun setSwipeListener() {

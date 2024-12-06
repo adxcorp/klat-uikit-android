@@ -19,7 +19,6 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
     val currentChannelList: ArrayList<TPChannel> = arrayListOf()
 
     private var currentTPChannel: TPChannel? = null
-        private set
 
     private var hasNext: Boolean = true
 

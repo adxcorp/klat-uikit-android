@@ -5,14 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
-import com.neptune.klat_uikit_android.core.util.loadThumbnail
+import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChannelBinding
 import io.talkplus.entity.channel.TPChannel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class ChannelListAdapter(private val channelList: ArrayList<TPChannel>) : RecyclerView.Adapter<ChannelListAdapter.ChannelViewHolder>() {
+class ChannelListAdapter(
+    private val channelList: ArrayList<TPChannel>,
+    private val onClick: (TPChannel) -> Unit
+) : RecyclerView.Adapter<ChannelListAdapter.ChannelViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val binding: ItemChannelBinding = ItemChannelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ChannelViewHolder(binding)
@@ -50,6 +53,10 @@ class ChannelListAdapter(private val channelList: ArrayList<TPChannel>) : Recycl
                 true -> ivChannelImage.loadThumbnail(R.drawable.ic_48_default_logo)
                 false -> ivChannelImage.loadThumbnail(tpChannel.imageUrl)
             }
+
+            itemView.setOnClickListener {
+                onClick.invoke(tpChannel)
+            }
         }
 
         private fun lastFormattedTime(timestamp: Long): String {
@@ -57,7 +64,7 @@ class ChannelListAdapter(private val channelList: ArrayList<TPChannel>) : Recycl
             val messageTime = Calendar.getInstance().apply { timeInMillis = timestamp }
 
             val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-            val dateFormat = SimpleDateFormat("MM월dd일", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("MM월 d일", Locale.getDefault())
 
             val isToday = currentTime.get(Calendar.YEAR) == messageTime.get(Calendar.YEAR) &&
                 currentTime.get(Calendar.DAY_OF_YEAR) == messageTime.get(Calendar.DAY_OF_YEAR)

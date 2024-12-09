@@ -1,6 +1,7 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
+import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import kotlinx.coroutines.launch
@@ -95,7 +97,8 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_24_add_channel)
             setOnClickListener {
-                // TODO 채널 추가
+                val intent: Intent = Intent(parentActivity, ChannelCreateActivity::class.java)
+                startActivity(intent)
             }
         }
     }

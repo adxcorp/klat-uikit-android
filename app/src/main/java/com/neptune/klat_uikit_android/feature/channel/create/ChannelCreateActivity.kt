@@ -41,6 +41,6 @@ class ChannelCreateActivity : AppCompatActivity(), PhotoActionListener {
     }
 
     override fun onPhotoSelected(fileUri: Uri) {
-
+        binding.ivCreateChannelLogo.loadThumbnail(fileUri)
     }
 }

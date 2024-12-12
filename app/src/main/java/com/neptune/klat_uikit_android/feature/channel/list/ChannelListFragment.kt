@@ -1,7 +1,6 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,8 +20,6 @@ import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivi
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
-import io.talkplus.entity.channel.TPChannel
-import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
@@ -43,13 +40,18 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getChannelList()
+        init()
         setHeaderUI()
         setSwipeListener()
-        observeChannelList()
+        observeChannelListUiState()
     }
 
-    private fun observeChannelList() {
+    private fun init() = with(viewModel) {
+        observeChannelList()
+        getChannelList()
+    }
+
+    private fun observeChannelListUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.channelUiState.collect { channelUiState ->
@@ -59,22 +61,21 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         }
     }
 
-    private fun handleChannelUiState(uiState: ChannelUiState) {
-        when (uiState) {
+    private fun handleChannelUiState(channelUiState: ChannelUiState) {
+        when (channelUiState) {
+            is ChannelUiState.ChannelListEmpty -> showEmptyChannelUI()
+            is ChannelUiState.GetChannelList -> binding.rvChannels.adapter = this.adapter
+            is ChannelUiState.ReceivedMessage -> Log.d("!! ReceivedMessage: ", channelUiState.tpMessage.toString())
+            is ChannelUiState.AddedChannel -> Log.d("!! ReceivedMessage: ", channelUiState.tpChannel.toString())
+            is ChannelUiState.RemovedChannel -> Log.d("!! ReceivedMessage: ", channelUiState.tpChannel.toString())
+            is ChannelUiState.ChangedChannel -> Log.d("!! ReceivedMessage: ", channelUiState.tpChannel.toString())
             is ChannelUiState.BaseState -> {
-                when (uiState.baseState) {
+                when (channelUiState.baseState) {
                     is BaseUiState.Loading -> {}
                     is BaseUiState.LoadingFinish -> {}
                     is BaseUiState.Error -> {}
                 }
             }
-
-            is ChannelUiState.ChannelListEmpty -> showEmptyChannelUI()
-            is ChannelUiState.GetChannelList -> binding.rvChannels.adapter = this.adapter
-            is ChannelUiState.ReceivedMessage -> { }
-            is ChannelUiState.AddedChannel -> { }
-            is ChannelUiState.RemovedChannel -> { }
-            is ChannelUiState.ChangedChannel -> { }
         }
     }
 
@@ -105,8 +106,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             visibility = View.VISIBLE
             setImageResource(R.drawable.ic_24_add_channel)
             setOnClickListener {
-                val intent: Intent = Intent(parentActivity, ChannelCreateActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(parentActivity, ChannelCreateActivity::class.java))
             }
         }
     }

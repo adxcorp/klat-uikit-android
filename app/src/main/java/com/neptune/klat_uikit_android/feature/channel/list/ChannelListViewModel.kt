@@ -13,10 +13,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class ChannelListViewModel(private val channelRepository: ChannelRepository = ChannelRepository()) : ViewModel() {
-    init {
-        observeChannel()
-    }
-
     private var _channelUiState = MutableSharedFlow<ChannelUiState>()
     val channelUiState: SharedFlow<ChannelUiState>
         get() = _channelUiState.asSharedFlow()
@@ -38,7 +34,7 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
                 channelRepository.getChannelList(lastChannel).collect { callbackResult ->
                     when (callbackResult) {
                         is Result.Success -> {
-                            if (callbackResult.successData.tpChannels.isEmpty()) {
+                            if (callbackResult.successData.tpChannels.isNotEmpty()) {
                                 currentChannelList.addAll(callbackResult.successData.tpChannels)
                                 currentTPChannel = callbackResult.successData.tpChannels.last()
                                 _channelUiState.emit(ChannelUiState.GetChannelList(callbackResult.successData))
@@ -60,14 +56,20 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
         }
     }
 
-    private fun observeChannel() {
+    fun observeChannelList() {
         viewModelScope.launch {
             channelRepository.observeChannel(tag).collect { callbackResult ->
                 when(callbackResult.type) {
-                    EventType.RECEIVED_MESSAGE -> {}
-                    EventType.CHANGED_CHANNEL -> {}
-                    EventType.ADDED_CHANNEL -> {}
-                    EventType.REMOVED_CHANNEL -> {}
+                    EventType.CHANGED_CHANNEL, EventType.ADDED_CHANNEL, EventType.REMOVED_CHANNEL -> {
+                        _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
+                    }
+
+                    EventType.RECEIVED_MESSAGE -> {
+                        _channelUiState.emit(ChannelUiState.ReceivedMessage(
+                            tpMessage = callbackResult.message,
+                            tpChannel = callbackResult.channel
+                        ))
+                    }
                 }
             }
         }

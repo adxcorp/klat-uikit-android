@@ -3,6 +3,7 @@ package com.neptune.klat_uikit_android.feature.channel.list
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,9 @@ import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
+import io.talkplus.TalkPlus
+import io.talkplus.entity.channel.TPChannel
+import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
@@ -67,6 +71,10 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
             is ChannelUiState.ChannelListEmpty -> showEmptyChannelUI()
             is ChannelUiState.GetChannelList -> binding.rvChannels.adapter = this.adapter
+            is ChannelUiState.ReceivedMessage -> { }
+            is ChannelUiState.AddedChannel -> { }
+            is ChannelUiState.RemovedChannel -> { }
+            is ChannelUiState.ChangedChannel -> { }
         }
     }
 
@@ -131,5 +139,10 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     override fun onSwipe(position: Int) {
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        TalkPlus.removeChannelListener(viewModel.tag)
     }
 }

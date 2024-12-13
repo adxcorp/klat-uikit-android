@@ -72,4 +72,37 @@ class ChannelListAdapter(
             return if (isToday) timeFormat.format(messageTime.time) else dateFormat.format(messageTime.time)
         }
     }
+
+    fun moveChannelItemToTop(tpChannel: TPChannel) {
+        val oldChannelIndex: Int = channelList.indexOfFirst { it.channelId == tpChannel.channelId }
+        if (oldChannelIndex == NO_INDEX) return
+        channelList.removeAt(oldChannelIndex)
+        channelList.add(FIRST, tpChannel)
+        notifyItemMoved(oldChannelIndex, FIRST)
+        notifyItemChanged(FIRST)
+    }
+
+    fun addChannelItemToTop(tpChannel: TPChannel) {
+        channelList.add(FIRST, tpChannel)
+        notifyItemInserted(FIRST)
+    }
+
+    fun updateChannelItem(tpChannel: TPChannel) {
+        val updateTPChannelIndex: Int = channelList.indexOfFirst { it.channelId == tpChannel.channelId }
+        if (updateTPChannelIndex == NO_INDEX) return
+        channelList[updateTPChannelIndex] = tpChannel
+        notifyItemChanged(updateTPChannelIndex)
+    }
+
+    fun removeChannelItem(tpChannel: TPChannel) {
+        val removeChannelIndex: Int = channelList.indexOfFirst { it.channelId == tpChannel.channelId }
+        if (removeChannelIndex == NO_INDEX) return
+        channelList.removeAt(removeChannelIndex)
+        notifyItemRemoved(removeChannelIndex)
+    }
+
+    companion object {
+        private const val FIRST = 0
+        private const val NO_INDEX = -1
+    }
 }

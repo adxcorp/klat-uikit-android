@@ -2,19 +2,17 @@ package com.neptune.klat_uikit_android.feature.channel.list
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
+import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
@@ -47,35 +45,34 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
     }
 
     private fun init() = with(viewModel) {
+        binding.rvChannels.itemAnimator = null
         observeChannelList()
         getChannelList()
     }
 
     private fun observeChannelListUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.channelUiState.collect { channelUiState ->
-                    handleChannelUiState(channelUiState)
-                }
+            viewModel.channelUiState.collect { channelUiState ->
+                handleChannelUiState(channelUiState)
             }
         }
     }
 
     private fun handleChannelUiState(channelUiState: ChannelUiState) {
         when (channelUiState) {
-            is ChannelUiState.ChannelListEmpty -> showEmptyChannelUI()
-            is ChannelUiState.GetChannelList -> binding.rvChannels.adapter = this.adapter
-            is ChannelUiState.ReceivedMessage -> Log.d("!! ReceivedMessage: ", channelUiState.tpMessage.toString())
-            is ChannelUiState.AddedChannel -> Log.d("!! ReceivedMessage: ", channelUiState.tpChannel.toString())
-            is ChannelUiState.RemovedChannel -> Log.d("!! ReceivedMessage: ", channelUiState.tpChannel.toString())
-            is ChannelUiState.ChangedChannel -> Log.d("!! ReceivedMessage: ", channelUiState.tpChannel.toString())
             is ChannelUiState.BaseState -> {
                 when (channelUiState.baseState) {
-                    is BaseUiState.Loading -> {}
-                    is BaseUiState.LoadingFinish -> {}
-                    is BaseUiState.Error -> {}
+                    is BaseUiState.Loading -> { }
+                    is BaseUiState.LoadingFinish -> { }
+                    is BaseUiState.Error ->  { }
                 }
             }
+            is ChannelUiState.ChannelListEmpty -> showEmptyChannelUI()
+            is ChannelUiState.GetChannelList -> binding.rvChannels.adapter = this.adapter
+            is ChannelUiState.ReceivedMessage -> adapter.moveChannelItemToTop(channelUiState.tpChannel)
+            is ChannelUiState.AddedChannel -> adapter.addChannelItemToTop(channelUiState.tpChannel)
+            is ChannelUiState.RemovedChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
+            is ChannelUiState.ChangedChannel -> adapter.updateChannelItem(channelUiState.tpChannel)
         }
     }
 
@@ -104,15 +101,11 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
         layoutHeader.ivSecondRightBtn.apply {
             visibility = View.VISIBLE
-            setImageResource(R.drawable.ic_24_add_channel)
+            loadThumbnail(R.drawable.ic_24_add_channel)
             setOnClickListener {
                 startActivity(Intent(parentActivity, ChannelCreateActivity::class.java))
             }
         }
-    }
-
-    private fun setChannelList() {
-
     }
 
     private fun showEmptyChannelUI() = with(binding) {

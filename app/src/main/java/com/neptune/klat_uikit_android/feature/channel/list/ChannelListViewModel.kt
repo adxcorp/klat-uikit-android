@@ -60,10 +60,9 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
         viewModelScope.launch {
             channelRepository.observeChannel(tag).collect { callbackResult ->
                 when(callbackResult.type) {
-                    EventType.CHANGED_CHANNEL, EventType.ADDED_CHANNEL, EventType.REMOVED_CHANNEL -> {
-                        _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
-                    }
-
+                    EventType.CHANGED_CHANNEL -> _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
+                    EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
+                    EventType.REMOVED_CHANNEL -> _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))
                     EventType.RECEIVED_MESSAGE -> {
                         _channelUiState.emit(ChannelUiState.ReceivedMessage(
                             tpMessage = callbackResult.message,

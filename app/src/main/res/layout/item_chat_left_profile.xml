@@ -8,15 +8,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
-        android:minHeight="56dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxWidth="266dp"
+        android:minHeight="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.8" >
+        app:layout_constraintWidth_percent="0.8">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView3"
@@ -51,13 +52,14 @@
 
         <TextView
             android:id="@+id/tv_left_chat_profile_message"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/bg_radius_8dp"
             android:backgroundTint="#EEEEEE"
             android:gravity="center_vertical"
+            android:maxWidth="266dp"
             android:minHeight="38dp"
             android:paddingStart="12dp"
             android:paddingTop="10dp"
@@ -65,6 +67,9 @@
             android:paddingBottom="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/constraintLayout4"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toEndOf="@+id/cardView3"
             app:layout_constraintStart_toStartOf="@+id/tv_chat_left_profile_nickname"
             app:layout_constraintTop_toBottomOf="@+id/tv_chat_left_profile_nickname"
             tools:text="동일한 시간에 다른 메세지를 추가로 보낸 경우, 이렇게 표시됩니다." />
@@ -74,7 +79,9 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/tv_left_chat_profile_message">
 
             <TextView
                 android:id="@+id/tv_left_chat_profile_un_read_count"

@@ -6,23 +6,21 @@
     android:layout_height="56dp">
 
     <ImageView
-        tools:visibility="visible"
         android:visibility="gone"
         android:id="@+id/iv_left_btn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
         android:scaleType="centerInside"
         android:src="@drawable/ic_24_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
     <TextView
         android:textFontWeight="500"
-        tools:visibility="visible"
+        tools:visibility="gone"
         android:visibility="gone"
         android:maxLength="15"
         android:id="@+id/tv_left_text"
@@ -80,7 +78,7 @@
         android:layout_height="48dp"
         android:layout_marginEnd="4dp"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_24_add_channel"
+        android:src="@drawable/ic_24_info"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

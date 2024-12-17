@@ -17,6 +17,7 @@
         android:layout_width="match_parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        app:reverseLayout="true"
         app:layout_goneMarginBottom="0dp"
         android:id="@+id/rv_chat"
         android:layout_width="0dp"
@@ -38,7 +39,7 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/bg_radius_8dp"
         android:backgroundTint="#E9F7F6"
-        app:layout_constraintBottom_toTopOf="@+id/layout_message"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chat_message_bar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -73,12 +74,22 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
+        android:id="@+id/layout_chat_message_bar"
+        layout="@layout/layout_message_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/layout_message"
-        layout="@layout/layout_message_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chat_attach"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <include
+        android:visibility="gone"
+        android:id="@+id/layout_chat_attach"
+        layout="@layout/layout_attach_block"
+        android:layout_width="match_parent"
+        android:layout_height="156dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

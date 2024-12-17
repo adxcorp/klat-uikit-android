@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/iv_chat_attach"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="2dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_24_attach"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/et_input_message"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/bg_radius_8dp"
+        android:backgroundTint="#F3F3F3"
+        android:hint="메세지 입력"
+        android:minHeight="36dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/iv_chat_send"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/iv_chat_attach" />
+
+    <ImageView
+        android:id="@+id/iv_chat_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_send_btn"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/et_input_message"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/et_input_message"
+        app:layout_constraintTop_toTopOf="@+id/et_input_message" />
+</androidx.constraintlayout.widget.ConstraintLayout>

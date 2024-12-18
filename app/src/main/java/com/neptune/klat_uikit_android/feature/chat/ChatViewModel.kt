@@ -51,7 +51,7 @@ class ChatViewModel(
                     is Result.Success -> {
                         hasNext = callbackResult.successData.hasNext
                         tpMessages.addAll(callbackResult.successData.tpMessages)
-                        _chatUiState.emit(ChatUiState.GetMessages)
+                        _chatUiState.emit(ChatUiState.GetMessages(callbackResult.successData.tpMessages))
                     }
 
                     is Result.Failure -> {

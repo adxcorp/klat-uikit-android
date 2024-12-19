@@ -9,6 +9,7 @@ import com.neptune.klat_uikit_android.databinding.ItemChatLeftBinding
 import com.neptune.klat_uikit_android.feature.chat.viewholder.LeftMessageViewHolder
 import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
+import java.lang.Exception
 
 class ChatAdapter(
     private val tpMessages: ArrayList<TPMessage>,
@@ -33,18 +34,23 @@ class ChatAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
-            is LeftMessageViewHolder -> holder.bind(tpMessages[position])
+            is LeftMessageViewHolder -> holder.bind(
+                currentTPMessage = tpMessages[position],
+                previousTPMessage = try { tpMessages[position-1] } catch (e: Exception) { tpMessages[position] },
+                nextTPMessage = try { tpMessages[position+1] } catch (e: Exception) { tpMessages[position] }
+            )
         }
     }
 
-//    override fun getItemViewType(position: Int): Int {
+    override fun getItemViewType(position: Int): Int {
+        return position
 //        val currentTPMessage: TPMessage = tpMessages[position]
 //        return when {
 //            (currentTPMessage.fileUrl == "") && (currentTPMessage.userId == this.userId) -> RIGHT_MESSAGE
 //            (currentTPMessage.fileUrl == "") && (currentTPMessage.userId != this.userId) -> LEFT_MESSAGE
 //            else -> RIGHT_IMAGE_MESSAGE
 //        }
-//    }
+    }
 
     fun addMessages(nextTpMessages: List<TPMessage>) {
         val startPosition = tpMessages.size

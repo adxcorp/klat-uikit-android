@@ -1,11 +1,13 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.databinding.ItemChannelBinding
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftBinding
+import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
 import com.neptune.klat_uikit_android.feature.chat.viewholder.LeftMessageViewHolder
 import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
@@ -15,20 +17,24 @@ class ChatAdapter(
     private val tpMessages: ArrayList<TPMessage>,
     private val tpChannel: TPChannel,
     private val userId: String,
+    private val context: Context,
     private val onClickProfile: () -> Unit,
     private val onLongClickMessage: () -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding: ItemChatLeftBinding = ItemChatLeftBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding: ItemChatLeftProfileBinding = ItemChatLeftProfileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return LeftMessageViewHolder(
             binding = binding,
             tpChannel = tpChannel,
             onClickProfile = onClickProfile,
-            onLongClickMessage = onLongClickMessage
+            onLongClickMessage = onLongClickMessage,
+            context = context
         )
     }
 
     override fun getItemCount(): Int {
+        val numbers = listOf(1, 2, 3)
+        numbers.find { it == 3 }
         return tpMessages.size
     }
 
@@ -37,7 +43,8 @@ class ChatAdapter(
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
                 previousTPMessage = try { tpMessages[position-1] } catch (e: Exception) { tpMessages[position] },
-                nextTPMessage = try { tpMessages[position+1] } catch (e: Exception) { tpMessages[position] }
+                nextTPMessage = try { tpMessages[position+1] } catch (e: Exception) { tpMessages[position] },
+                tpMessages
             )
         }
     }

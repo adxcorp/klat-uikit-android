@@ -33,8 +33,6 @@ class ChatAdapter(
     }
 
     override fun getItemCount(): Int {
-        val numbers = listOf(1, 2, 3)
-        numbers.find { it == 3 }
         return tpMessages.size
     }
 
@@ -42,8 +40,8 @@ class ChatAdapter(
         when(holder) {
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
-                previousTPMessage = try { tpMessages[position-1] } catch (e: Exception) { tpMessages[position] },
-                nextTPMessage = try { tpMessages[position+1] } catch (e: Exception) { tpMessages[position] },
+                previousTPMessage = tpMessages.getOrNull(position-1),
+                nextTPMessage = tpMessages.getOrNull(position+1),
                 tpMessages
             )
         }

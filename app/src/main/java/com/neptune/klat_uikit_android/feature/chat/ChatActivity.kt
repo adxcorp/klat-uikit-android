@@ -2,7 +2,6 @@ package com.neptune.klat_uikit_android.feature.chat
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.viewModels
@@ -12,6 +11,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.extension.getSerializable
@@ -37,6 +37,7 @@ class ChatActivity : AppCompatActivity() {
         intent.getSerializable<TPChannel>(EXTRA_TP_CHANNEL)?.let { tpChannel ->
             viewModel.setTPChannel(tpChannel)
             viewModel.getMessageList()
+            viewModel.receiveMessage()
             setHeaderUI()
             setRecyclerViewListener()
             observeChatUiState()
@@ -53,7 +54,9 @@ class ChatActivity : AppCompatActivity() {
 
                         }
 
+                        is ChatUiState.SendMessage -> adapter.addMessage(chatUiState.tpMessage)
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
+                        is ChatUiState.ReceiveMessage -> adapter.addMessage(chatUiState.tpMessage)
                     }
                 }
             }
@@ -78,34 +81,35 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private fun setFrozenUI() = with(binding) {
-        clChatFrozen.visibility = View.VISIBLE
-        layoutChatMessageBar.etInputMessage.isEnabled = false
-        layoutChatMessageBar.etInputMessage.hint = "메세지 입력 불가"
-        layoutChatMessageBar.etInputMessage.setHintTextColor(Color.parseColor("#9A9A9A"))
-        layoutChatMessageBar.ivChatAttach.setColorFilter(Color.parseColor("#C1C1C1"))
+    private fun setFrozenUI() = with(binding.layoutChatMessageBar) {
+        binding.clChatFrozen.visibility = View.VISIBLE
+        etInputMessage.isEnabled = false
+        etInputMessage.hint = "메세지 입력 불가"
+        etInputMessage.setHintTextColor(Color.parseColor("#9A9A9A"))
+        ivChatAttach.setColorFilter(Color.parseColor("#C1C1C1"))
     }
 
-    private fun setMessageBarUI() = with(binding) {
+    private fun setMessageBarUI() = with(binding.layoutChatMessageBar) {
         setAttackBlockUI()
 
-        layoutChatMessageBar.etInputMessage.addTextChangedListener { input ->
-            layoutChatMessageBar.ivChatSend.isVisible = !input.isNullOrEmpty()
+        etInputMessage.addTextChangedListener { input ->
+            ivChatSend.isVisible = !input.isNullOrEmpty()
         }
 
-        layoutChatMessageBar.ivChatSend.setOnClickListener {
-
+        ivChatSend.setOnClickListener {
+            viewModel.sendMessage(etInputMessage.text.toString())
+            etInputMessage.setText("")
+            binding.rvChat.scrollToPosition(BOTTOM)
         }
 
-        layoutChatMessageBar.ivChatAttach.setOnClickListener {
+        ivChatAttach.setOnClickListener {
             viewModel.setAttachMode(!viewModel.isAttachMode)
 
-            layoutChatMessageBar.ivChatAttach
-                .loadThumbnail(if(viewModel.isAttachMode) R.drawable.ic_24_attach__close else R.drawable.ic_24_attach)
+            ivChatAttach.loadThumbnail(if(viewModel.isAttachMode) R.drawable.ic_24_attach__close else R.drawable.ic_24_attach)
 
             when (viewModel.isAttachMode) {
-                true -> layoutChatAttach.clChatAttachBloack.visibility = View.VISIBLE
-                false -> layoutChatAttach.clChatAttachBloack.visibility = View.GONE
+                true -> binding.layoutChatAttach.clChatAttachBloack.visibility = View.VISIBLE
+                false -> binding.layoutChatAttach.clChatAttachBloack.visibility = View.GONE
             }
         }
     }
@@ -137,8 +141,14 @@ class ChatActivity : AppCompatActivity() {
 
                 val isAtTop = !recyclerView.canScrollVertically(-1)
 
-                if (newState == RecyclerView.SCROLL_STATE_IDLE && isAtTop) {
-                    viewModel.getMessageList()
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                    viewModel.setPosition(firstVisibleItemPosition)
+
+                    if (isAtTop) {
+                        viewModel.getMessageList()
+                    }
                 }
             }
         })
@@ -148,7 +158,8 @@ class ChatActivity : AppCompatActivity() {
         return ChatAdapter(
             tpMessages = arrayListOf(),
             tpChannel = viewModel.currentTPChannel,
-            userId = "test1",
+            userId = "test2",
+            context = this,
             onLongClickMessage = { },
             onClickProfile = { }
         )

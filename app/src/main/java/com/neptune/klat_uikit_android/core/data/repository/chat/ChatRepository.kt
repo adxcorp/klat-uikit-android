@@ -1,12 +1,16 @@
 package com.neptune.klat_uikit_android.core.data.repository.chat
 
-import com.neptune.klat_uikit_android.core.data.model.MessagesResponse
+import com.neptune.klat_uikit_android.core.data.model.chat.MessagesResponse
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
+import com.neptune.klat_uikit_android.core.data.model.channel.EventType
+import com.neptune.klat_uikit_android.core.data.model.channel.ObserveChannelResponse
 import io.talkplus.TalkPlus
 import io.talkplus.TalkPlus.TPCallbackListener
+import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
+import io.talkplus.params.TPMessageSendParams
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -33,5 +37,33 @@ class ChatRepository {
             })
             awaitClose { cancel() }
         }
+    }
+
+    fun sendMessage(tpMessageSendParams: TPMessageSendParams): Flow<Result<TPMessage, WrappedFailResult>> {
+        return callbackFlow {
+            TalkPlus.sendMessage(tpMessageSendParams, object : TalkPlus.CallbackListener<TPMessage> {
+                override fun onSuccess(tpMessage: TPMessage) {
+                    trySend(Result.Success(tpMessage))
+                }
+
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            })
+            awaitClose { cancel() }
+        }
+    }
+
+
+    fun receiveMessage(tag: String): Flow<TPMessage> = callbackFlow {
+        TalkPlus.addChannelListener(tag, object : TalkPlus.ChannelListener {
+            override fun onMessageReceived(tpChannel: TPChannel, tpMessage: TPMessage) {
+                trySend(tpMessage)
+            }
+        })
+        awaitClose { cancel() }
     }
 }

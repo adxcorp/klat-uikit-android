@@ -1,26 +1,24 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
-import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
 import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
+import io.talkplus.params.TPMessageSendParams
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class ChatViewModel(
-    private val channelRepository: ChannelRepository = ChannelRepository(),
-    private val chatRepository: ChatRepository = ChatRepository()
-) : ViewModel() {
+class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository()) : ViewModel() {
     private var hasNext: Boolean = true
+
+    var currentPosition = 0
+        private set
 
     lateinit var currentTPChannel: TPChannel
         private set
@@ -30,7 +28,6 @@ class ChatViewModel(
 
     var isAttachMode: Boolean = false
         private set
-
 
     val tpMessages: ArrayList<TPMessage> = arrayListOf()
 
@@ -62,6 +59,31 @@ class ChatViewModel(
         }
     }
 
+    fun sendMessage(message: String) {
+        val params: TPMessageSendParams = TPMessageSendParams.Builder(currentTPChannel,
+            TPMessageSendParams.MessageType.TEXT,
+            TPMessageSendParams.ContentType.TEXT)
+            .setText(message)
+            .build()
+
+        viewModelScope.launch {
+            chatRepository.sendMessage(params).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _chatUiState.emit(ChatUiState.SendMessage(callbackResult.successData))
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    fun receiveMessage() {
+        viewModelScope.launch {
+            chatRepository.receiveMessage("ffbdd92b-c437-4c84-ab2c-9bf2c9207a42").collect { tpMessage ->
+                _chatUiState.emit(ChatUiState.ReceiveMessage(tpMessage))
+            }
+        }
+    }
+
     fun setTPChannel(tpChannel: TPChannel) {
         currentTPChannel = tpChannel
     }
@@ -72,5 +94,9 @@ class ChatViewModel(
 
     fun setFirstLoad(isLoaded: Boolean) {
         isFirstLoad = isLoaded
+    }
+
+    fun setPosition(position: Int) {
+        currentPosition = position
     }
 }

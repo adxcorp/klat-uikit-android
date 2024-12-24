@@ -2,6 +2,7 @@ package com.neptune.klat_uikit_android.feature.chat
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.viewModels
@@ -54,9 +55,9 @@ class ChatActivity : AppCompatActivity() {
 
                         }
 
-                        is ChatUiState.SendMessage -> adapter.addMessage(chatUiState.tpMessage)
+                        is ChatUiState.SendMessage -> sendMessage(chatUiState.tpMessage)
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
-                        is ChatUiState.ReceiveMessage -> adapter.addMessage(chatUiState.tpMessage)
+                        is ChatUiState.ReceiveMessage -> receiveMessage(chatUiState.tpMessage)
                     }
                 }
             }
@@ -171,6 +172,19 @@ class ChatActivity : AppCompatActivity() {
             binding.rvChat.scrollToPosition(BOTTOM)
         }
         adapter.addMessages(newTPMessages)
+    }
+
+    private fun sendMessage(tpMessage: TPMessage) {
+        adapter.addMessage(tpMessage)
+        binding.rvChat.scrollToPosition(BOTTOM)
+    }
+
+    private fun receiveMessage(tpMessage: TPMessage) {
+        adapter.addMessage(tpMessage)
+        val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
+        if (layoutManager.findFirstVisibleItemPosition() == BOTTOM) {
+            binding.rvChat.scrollToPosition(BOTTOM)
+        }
     }
 
     companion object {

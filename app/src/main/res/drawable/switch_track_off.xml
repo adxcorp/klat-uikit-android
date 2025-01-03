@@ -6,6 +6,7 @@
         android:radius="28dp" />
 
     <size
+        android:switchMinWidth="48dp"
         android:width="48dp"
         android:height="28dp" />
 

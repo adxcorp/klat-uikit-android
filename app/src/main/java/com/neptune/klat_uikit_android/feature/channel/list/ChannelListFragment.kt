@@ -2,23 +2,28 @@ package com.neptune.klat_uikit_android.feature.channel.list
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
+import io.talkplus.TalkPlus.CallbackListener
+import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
+
 
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private var _binding: FragmentChannelListBinding? = null
@@ -116,9 +121,10 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     private fun setChannelListAdapter(): ChannelListAdapter {
         return ChannelListAdapter(viewModel.currentChannelList) { tpChannel ->
-            val intent = Intent(parentActivity, ChatActivity::class.java).apply {
-                putExtra(ChatActivity.EXTRA_CHANNEL_ID, tpChannel.channelId)
-            }
+            Log.d("!! : getMembers adt ", tpChannel.members.toString())
+            ChannelObject.setTPChannel(tpChannel)
+            ChannelObject.ownerId = tpChannel.channelOwnerId
+            val intent = Intent(parentActivity, ChatActivity::class.java)
             startActivity(intent)
         }
     }
@@ -136,6 +142,6 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        TalkPlus.removeChannelListener(viewModel.tag)
+        TalkPlus.removeChannelListener(ChannelObject.tag)
     }
 }

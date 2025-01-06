@@ -21,7 +21,7 @@ class ChannelRepository {
             TalkPlus.getChannels(lastChannel, object : TalkPlus.TPCallbackListener<List<TPChannel>, Boolean> {
                 override fun onSuccess(tpChannelList: List<TPChannel>, hasNext: Boolean) {
                     trySend(Result.Success(ChannelListResponse(
-                        tpChannels = tpChannelList,
+                        tpChannels = tpChannelList.filter { it.type == "private" },
                         hasNext = hasNext
                     )))
                 }
@@ -29,8 +29,8 @@ class ChannelRepository {
                 override fun onFailure(errorCode: Int, exception: Exception) {
                     trySend(Result.Failure(WrappedFailResult(
                         errorCode = errorCode,
-                        exception = exception)
-                    ))
+                        exception = exception
+                    )))
                 }
             })
             awaitClose { cancel() }

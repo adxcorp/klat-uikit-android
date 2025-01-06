@@ -21,6 +21,10 @@
         app:layout_constraintWidth_percent="0.8">
 
         <TextView
+            android:includeFontPadding="false"
+            android:gravity="center_vertical"
+            android:textFontWeight="400"
+            android:textSize="15dp"
             android:id="@+id/tv_chat_left_message"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -67,7 +71,7 @@
                 android:textSize="11dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="09:41"></TextView>
+                tools:text="09:41" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

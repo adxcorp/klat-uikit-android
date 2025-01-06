@@ -3,6 +3,7 @@ package com.neptune.klat_uikit_android.feature.channel.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
@@ -19,12 +20,9 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
 
     val currentChannelList: ArrayList<TPChannel> = arrayListOf()
 
-    var currentTPChannel: TPChannel? = null
-        private set
+    private var currentTPChannel: TPChannel? = null
 
     private var hasNext: Boolean = true
-
-    val tag: String = "ffbdd92b-c437-4c84-ab2c-9bf2c9207a42"
 
     fun getChannelList(lastChannel: TPChannel? = currentTPChannel) {
         if (hasNext) {
@@ -58,7 +56,7 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
 
     fun observeChannelList() {
         viewModelScope.launch {
-            channelRepository.observeChannel(tag).collect { callbackResult ->
+            channelRepository.observeChannel(ChannelObject.tag).collect { callbackResult ->
                 when(callbackResult.type) {
                     EventType.CHANGED_CHANNEL -> _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
                     EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))

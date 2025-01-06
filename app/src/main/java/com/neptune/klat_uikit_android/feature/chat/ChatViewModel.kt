@@ -2,6 +2,7 @@ package com.neptune.klat_uikit_android.feature.chat
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
@@ -20,16 +21,13 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
     var currentPosition = 0
         private set
 
-    lateinit var currentTPChannel: TPChannel
-        private set
-
     var isFirstLoad: Boolean = true
         private set
 
     var isAttachMode: Boolean = false
         private set
 
-    val tpMessages: ArrayList<TPMessage> = arrayListOf()
+    private val tpMessages: ArrayList<TPMessage> = arrayListOf()
 
     private var _chatUiState = MutableSharedFlow<ChatUiState>()
     val channelUiState: SharedFlow<ChatUiState>
@@ -38,7 +36,7 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
     fun getMessageList() {
         if (!hasNext) return
 
-        val params: TPMessageRetrievalParams = TPMessageRetrievalParams.Builder(currentTPChannel)
+        val params: TPMessageRetrievalParams = TPMessageRetrievalParams.Builder(ChannelObject.tpChannel)
             .setLastMessage(tpMessages.lastOrNull())
             .build()
 
@@ -60,7 +58,7 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
     }
 
     fun sendMessage(message: String) {
-        val params: TPMessageSendParams = TPMessageSendParams.Builder(currentTPChannel,
+        val params: TPMessageSendParams = TPMessageSendParams.Builder(ChannelObject.tpChannel,
             TPMessageSendParams.MessageType.TEXT,
             TPMessageSendParams.ContentType.TEXT)
             .setText(message)
@@ -82,10 +80,6 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
                 _chatUiState.emit(ChatUiState.ReceiveMessage(tpMessage))
             }
         }
-    }
-
-    fun setTPChannel(tpChannel: TPChannel) {
-        currentTPChannel = tpChannel
     }
 
     fun setAttachMode(mode: Boolean) {

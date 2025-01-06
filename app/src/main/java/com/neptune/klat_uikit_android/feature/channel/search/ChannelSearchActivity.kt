@@ -98,7 +98,7 @@ class ChannelSearchActivity : AppCompatActivity() {
     private fun setChannelListAdapter(channelList: List<TPChannel>): ChannelListAdapter {
         return ChannelListAdapter(channelList as ArrayList<TPChannel>) { tpChannel ->
             val intent = Intent(this, ChatActivity::class.java).apply {
-                putExtra(ChatActivity.EXTRA_CHANNEL_ID, tpChannel.channelId)
+                putExtra(ChatActivity.EXTRA_TP_CHANNEL, tpChannel)
             }
             startActivity(intent)
         }

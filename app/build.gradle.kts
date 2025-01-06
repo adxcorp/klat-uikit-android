@@ -88,4 +88,6 @@ dependencies {
     // ViewModels
     api("androidx.activity:activity-ktx:1.5.0")
     api("androidx.fragment:fragment-ktx:1.2.0")
+
+    implementation(project(":talkplus"))
 }

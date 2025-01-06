@@ -18,6 +18,7 @@
         tools:text="채널 정보 변경" />
 
     <ImageView
+        android:id="@+id/iv_channel_info_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_16_arrow"

@@ -8,12 +8,12 @@
     android:layout_height="154dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout10"
+        android:id="@+id/cl_chat_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toStartOf="@+id/constraintLayout8"
+        app:layout_constraintEnd_toStartOf="@+id/cl_chat_album"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,14 +43,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout8"
+        android:id="@+id/cl_chat_album"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
-        app:layout_constraintEnd_toStartOf="@+id/constraintLayout11"
+        app:layout_constraintEnd_toStartOf="@+id/cl_chat_file"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout10"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout10">
+        app:layout_constraintStart_toEndOf="@+id/cl_chat_camera"
+        app:layout_constraintTop_toTopOf="@+id/cl_chat_camera">
 
         <ImageView
             android:id="@+id/imageView4"
@@ -74,13 +74,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout11"
+        android:id="@+id/cl_chat_file"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout8"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout10">
+        app:layout_constraintStart_toEndOf="@+id/cl_chat_album"
+        app:layout_constraintTop_toTopOf="@+id/cl_chat_camera">
 
         <ImageView
             android:id="@+id/imageView5"

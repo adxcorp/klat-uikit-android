@@ -11,10 +11,13 @@ abstract class BaseActivity<T : ViewBinding> : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingFactory()
-        initViews()
+        getExtra()
+        init()
         setContentView(binding.root)
     }
 
     abstract fun bindingFactory(): T
-    abstract fun initViews()
+    abstract fun init()
+
+    open fun getExtra() { }
 }

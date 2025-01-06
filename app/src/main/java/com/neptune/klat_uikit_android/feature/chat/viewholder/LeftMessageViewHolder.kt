@@ -16,8 +16,9 @@ class LeftMessageViewHolder(
     private val binding: ItemChatLeftProfileBinding,
     private val tpChannel: TPChannel,
     private val context: Context,
-    onClickProfile: () -> Unit,
-    onLongClickMessage: () -> Unit,
+    private val userId: String,
+    private val onClickProfile: (TPMessage, String, String) -> Unit,
+    private val onLongClickMessage: () -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         currentTPMessage: TPMessage,
@@ -37,77 +38,88 @@ class LeftMessageViewHolder(
 
         tvLeftChatProfileMessage.text = currentTPMessage.text
 
-        when {
-            nextTPMessage == null -> {
-                when (currentMessageCreatedTime == previousMessageCreatedTime) {
-                    true -> {
-                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                        tvChatLeftProfileNickname.text = currentTPMessage.username
-                    }
-                    false -> {
-                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                        tvChatLeftProfileNickname.text = currentTPMessage.username
-                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-                    }
-                }
-            }
-
-            previousTPMessage == null -> {
-                when (currentMessageCreatedTime == nextMessageCreatedTime) {
-                    true -> {
-                        cvLeftChatProfile.visibility = View.INVISIBLE
-                        tvChatLeftProfileNickname.visibility = View.GONE
-                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-                    }
-
-                    false -> {
-                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                        tvChatLeftProfileNickname.text = currentTPMessage.username
-                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-                    }
-                }
-            }
-
-            currentMessageCreatedTime == previousMessageCreatedTime && currentMessageCreatedTime != nextMessageCreatedTime -> {
-                clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                tvChatLeftProfileNickname.text = currentTPMessage.username
-                tvLeftChatProfileLastMessageAt.visibility = View.GONE
-            }
-
-            currentMessageCreatedTime == nextMessageCreatedTime && currentMessageCreatedTime == previousMessageCreatedTime -> {
-                cvLeftChatProfile.visibility = View.INVISIBLE
-                tvChatLeftProfileNickname.visibility = View.GONE
-                tvLeftChatProfileLastMessageAt.visibility = View.GONE
-            }
-
-            currentMessageCreatedTime == nextMessageCreatedTime && currentMessageCreatedTime != previousMessageCreatedTime -> {
-                if (adapterPosition == tpMessages.lastIndex) {
-                    clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-                    ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                    tvChatLeftProfileNickname.text = currentTPMessage.username
-                    tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-                } else {
-                    cvLeftChatProfile.visibility = View.INVISIBLE
-                    tvChatLeftProfileNickname.visibility = View.GONE
-                    tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-                }
-            }
-
-            currentMessageCreatedTime != nextMessageCreatedTime && currentMessageCreatedTime != previousMessageCreatedTime -> {
-                clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                tvChatLeftProfileNickname.text = currentTPMessage.username
-                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-            }
-        }
-
         if (tpChannel.getMessageUnreadCount(currentTPMessage) != CHAT_MESSAGES_READ_ALL) {
             tvLeftChatProfileUnReadCount.text = tpChannel.getMessageUnreadCount(currentTPMessage).toString()
         }
+
+        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+
+        ivLeftChatProfileThumbnail.setOnClickListener {
+            onClickProfile.invoke(currentTPMessage, userId, tpChannel.channelOwnerId)
+        }
+
+        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+
+        Log.d("!! : parentMessage : ", currentTPMessage.parentMessage.toString())
+
+//        when {
+//            nextTPMessage == null -> {
+//                when (currentMessageCreatedTime == previousMessageCreatedTime) {
+//                    true -> {
+//                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
+//                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+//                        tvChatLeftProfileNickname.text = currentTPMessage.username
+//                    }
+//                    false -> {
+//                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
+//                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+//                        tvChatLeftProfileNickname.text = currentTPMessage.username
+//                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+//                    }
+//                }
+//            }
+//
+//            previousTPMessage == null -> {
+//                when (currentMessageCreatedTime == nextMessageCreatedTime) {
+//                    true -> {
+//                        cvLeftChatProfile.visibility = View.INVISIBLE
+//                        tvChatLeftProfileNickname.visibility = View.GONE
+//                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+//                    }
+//
+//                    false -> {
+//                        Log.d("!! : ", "call!!")
+//                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
+//                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+//                        tvChatLeftProfileNickname.text = currentTPMessage.username
+//                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+//                    }
+//                }
+//            }
+//
+//            currentMessageCreatedTime == previousMessageCreatedTime && currentMessageCreatedTime != nextMessageCreatedTime -> {
+//                clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
+//                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+//                tvChatLeftProfileNickname.text = currentTPMessage.username
+//                tvLeftChatProfileLastMessageAt.visibility = View.GONE
+//            }
+//
+//            currentMessageCreatedTime == nextMessageCreatedTime && currentMessageCreatedTime == previousMessageCreatedTime -> {
+//                cvLeftChatProfile.visibility = View.INVISIBLE
+//                tvChatLeftProfileNickname.visibility = View.GONE
+//                tvLeftChatProfileLastMessageAt.visibility = View.GONE
+//            }
+//
+//            currentMessageCreatedTime == nextMessageCreatedTime && currentMessageCreatedTime != previousMessageCreatedTime -> {
+//                if (adapterPosition == tpMessages.lastIndex) {
+//                    clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
+//                    ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+//                    tvChatLeftProfileNickname.text = currentTPMessage.username
+//                    tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+//                } else {
+//                    cvLeftChatProfile.visibility = View.INVISIBLE
+//                    tvChatLeftProfileNickname.visibility = View.GONE
+//                    tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+//                }
+//            }
+//
+//            currentMessageCreatedTime != nextMessageCreatedTime && currentMessageCreatedTime != previousMessageCreatedTime -> {
+//                clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
+//                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+//                tvChatLeftProfileNickname.text = currentTPMessage.username
+//                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+//            }
+//        }
     }
 
     private fun longToTime(createdAt: Long?): String {
@@ -115,7 +127,7 @@ class LeftMessageViewHolder(
     }
 
     companion object {
-        private const val CHAT_MESSAGES_READ_ALL = 0
+        const val CHAT_MESSAGES_READ_ALL = 0
         private const val INVALID_TIME = "-1"
         private const val FIRST_INDEX = 0
     }

@@ -40,12 +40,12 @@
         app:layout_constraintStart_toEndOf="@+id/iv_chat_attach" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/iv_chat_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:src="@drawable/ic_send_btn"
-
         app:layout_constraintBottom_toBottomOf="@+id/et_input_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

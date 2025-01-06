@@ -12,14 +12,14 @@
         android:layout_height="wrap_content"
         android:textColor="@color/black"
         android:textSize="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_info_switch_tsub_title"
+        app:layout_constraintBottom_toTopOf="@+id/tv_info_switch_sub_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="푸시 알림 설정" />
 
     <TextView
-        android:id="@+id/tv_info_switch_tsub_title"
+        android:id="@+id/tv_info_switch_sub_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#777777"

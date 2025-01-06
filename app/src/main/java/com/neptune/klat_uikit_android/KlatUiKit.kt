@@ -3,8 +3,11 @@ package com.neptune.klat_uikit_android
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
+import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.model.LoginRequest
 import io.talkplus.TalkPlus
 import io.talkplus.entity.user.TPUser
@@ -14,6 +17,7 @@ import java.lang.Exception
 object KlatUiKit {
     fun initialize(context: Context, appId: String) {
         TalkPlus.init(context, appId)
+        ChannelObject.tag = appId
     }
 
     fun connect(activity: Activity, loginRequest: LoginRequest) {
@@ -26,8 +30,9 @@ object KlatUiKit {
         }.build()
 
         TalkPlus.login(tpLoginParams, object : TalkPlus.CallbackListener<TPUser> {
-            override fun onSuccess(t: TPUser?) {
+            override fun onSuccess(tpUser: TPUser) {
                 val intent = Intent(activity, ChannelActivity::class.java)
+                ChannelObject.userId = tpUser.userId
                 activity.startActivity(intent)
             }
 

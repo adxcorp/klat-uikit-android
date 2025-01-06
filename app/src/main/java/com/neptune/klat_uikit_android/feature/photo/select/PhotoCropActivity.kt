@@ -112,7 +112,6 @@ class PhotoCropActivity : AppCompatActivity() {
         startActivityForResult(intent, GALLERY_REQUEST)
     }
 
-    @SuppressLint("QueryPermissionsNeeded")
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {

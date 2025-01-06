@@ -71,7 +71,7 @@ class ProfileDialog(
 
     private fun setDisplayMetrics() {
         dialog?.window?.apply {
-            setBackgroundDrawableResource(R.drawable.bg_radius_8dp) // 배경 설정
+            setBackgroundDrawableResource(R.drawable.bg_radius_8dp)
             setLayout(
                 (resources.displayMetrics.widthPixels * 0.88).toInt(),
                 ViewGroup.LayoutParams.WRAP_CONTENT

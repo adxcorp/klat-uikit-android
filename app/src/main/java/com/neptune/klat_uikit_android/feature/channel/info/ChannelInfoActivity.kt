@@ -70,7 +70,7 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
         layoutChannelInfo3.tvInfoTitle.text = "음소거 목록"
         layoutChannelInfo3.root.setOnClickListener {
             val intent = Intent(this@ChannelInfoActivity, MemberActivity::class.java).apply {
-                putExtra(MemberActivity.EXTRA_IS_OWNER, ChannelObject.ownerId == ChannelObject.userId)
+                putExtra(MemberActivity.EXTRA_IS_OWNER, ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId)
             }
             startActivity(intent)
         }

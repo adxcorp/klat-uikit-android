@@ -121,9 +121,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     private fun setChannelListAdapter(): ChannelListAdapter {
         return ChannelListAdapter(viewModel.currentChannelList) { tpChannel ->
-            Log.d("!! : getMembers adt ", tpChannel.members.toString())
             ChannelObject.setTPChannel(tpChannel)
-            ChannelObject.ownerId = tpChannel.channelOwnerId
             val intent = Intent(parentActivity, ChatActivity::class.java)
             startActivity(intent)
         }

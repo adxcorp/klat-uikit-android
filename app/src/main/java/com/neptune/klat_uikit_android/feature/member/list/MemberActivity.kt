@@ -55,9 +55,9 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>() {
             members = if (intent.getBooleanExtra(EXTRA_MEMBER, false)) {
                  ArrayList(ChannelObject.tpChannel.members.sortedBy { tpMember ->
                      when {
-                         tpMember.userId == ChannelObject.userId -> 0
-                         ChannelObject.tpChannel.channelOwnerId == tpMember.userId -> 1
-                         else -> 2
+                         tpMember.userId == ChannelObject.userId -> FIRST_INDEX
+                         ChannelObject.tpChannel.channelOwnerId == tpMember.userId -> SECOND_INDEX
+                         else -> OTHERS
                      }
                  })
             } else arrayListOf()
@@ -79,5 +79,9 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>() {
     companion object {
         const val EXTRA_MEMBER = "extra_member"
         const val EXTRA_IS_OWNER = "extra_is_owner"
+
+        private const val FIRST_INDEX = 0
+        private const val SECOND_INDEX = 1
+        private const val OTHERS = 2
     }
 }

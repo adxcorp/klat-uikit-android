@@ -28,12 +28,12 @@ class MemberViewHolder(
 
     private fun setMemberView(tpMember: TPUser) = with(binding) {
         when {
-            tpMember.userId == ChannelObject.userId && tpMember.userId == ChannelObject.ownerId -> {
+            tpMember.userId == ChannelObject.userId && tpMember.userId == ChannelObject.tpChannel.channelOwnerId -> {
                 tvBadgeMe.visibility = View.VISIBLE
                 tvBadgeOwner.visibility = View.VISIBLE
             }
             tpMember.userId == ChannelObject.userId -> tvBadgeMe.visibility = View.VISIBLE
-            tpMember.userId == ChannelObject.ownerId -> tvBadgeOwner.visibility = View.VISIBLE
+            tpMember.userId == ChannelObject.tpChannel.channelOwnerId -> tvBadgeOwner.visibility = View.VISIBLE
         }
     }
 }

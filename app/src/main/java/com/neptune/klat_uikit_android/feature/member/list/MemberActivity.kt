@@ -7,12 +7,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
 import com.neptune.klat_uikit_android.core.base.ChannelObject
+import com.neptune.klat_uikit_android.core.ui.AlertDialog
+import com.neptune.klat_uikit_android.core.ui.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
 
 class MemberActivity : BaseActivity<ActivityMemberBinding>() {
     private val viewModel: MemberViewModel by viewModels()
-    private val adapter: MutedAdapter by lazy { setAdapter() }
+    private val adapter: MemberAdapter by lazy { setAdapter() }
 
     override fun bindingFactory(): ActivityMemberBinding {
         return ActivityMemberBinding.inflate(layoutInflater)
@@ -49,8 +51,8 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>() {
         }
     }
 
-    private fun setAdapter(): MutedAdapter {
-        return MutedAdapter(
+    private fun setAdapter(): MemberAdapter {
+        return MemberAdapter(
             memberType = if(intent.getBooleanExtra(EXTRA_MEMBER, false)) MemberType.MEMBER else MemberType.MUTED,
             members = if (intent.getBooleanExtra(EXTRA_MEMBER, false)) {
                  ArrayList(ChannelObject.tpChannel.members.sortedBy { tpMember ->
@@ -61,7 +63,13 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>() {
                      }
                  })
             } else arrayListOf()
-        )
+        ) { tpUser ->
+            ProfileDialog(
+                profileImage =  tpUser.profileImageUrl,
+                userId = tpUser.userId,
+                userNickname = tpUser.username
+            ).show(supportFragmentManager, null)
+        }
     }
 
     private fun setClickListener() = with(binding) {

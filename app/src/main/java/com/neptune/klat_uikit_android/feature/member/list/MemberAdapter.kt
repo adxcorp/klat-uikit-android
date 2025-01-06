@@ -7,15 +7,17 @@ import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.databinding.ItemMembersBinding
 import io.talkplus.entity.user.TPUser
 
-class MutedAdapter(
+class MemberAdapter(
     private val members: ArrayList<TPUser>,
-    private val memberType: MemberType = MemberType.MEMBER
+    private val memberType: MemberType = MemberType.MEMBER,
+    private val onClick: (TPUser) -> Unit
 ) : RecyclerView.Adapter<MemberViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemberViewHolder {
         val binding = ItemMembersBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MemberViewHolder(
             memberType = memberType,
-            binding = binding
+            binding = binding,
+            onClick = onClick
         )
     }
 

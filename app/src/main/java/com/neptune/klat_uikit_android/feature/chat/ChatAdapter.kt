@@ -20,7 +20,7 @@ class ChatAdapter(
     private val tpChannel: TPChannel,
     private val userId: String,
     private val context: Context,
-    private val onClickProfile: (TPMessage, String, String) -> Unit,
+    private val onClickProfile: (TPMessage) -> Unit,
     private val onLongClickMessage: () -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {

@@ -7,7 +7,6 @@ object ChannelObject {
         private set
 
     var userId: String = ""
-    var ownerId: String = ""
 
     var tag: String = ""
 

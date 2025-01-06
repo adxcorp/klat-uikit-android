@@ -163,11 +163,11 @@ class ChatActivity : AppCompatActivity() {
             onLongClickMessage = {
 
             },
-            onClickProfile = { tpMessage, userId, ownerId ->
+            onClickProfile = { tpMessage ->
                 ProfileDialog(
-                    tpMessage =  tpMessage,
-                    userId = userId,
-                    ownerId = ownerId
+                    profileImage =  tpMessage.userProfileImage,
+                    userId = tpMessage.userId,
+                    userNickname = tpMessage.username
                 ).show(supportFragmentManager, null)
             }
         )

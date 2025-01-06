@@ -9,21 +9,20 @@ import io.talkplus.entity.user.TPUser
 
 class MemberViewHolder(
     private val binding: ItemMembersBinding,
-    private val memberType: MemberType
+    private val memberType: MemberType,
+    private val onClick: (TPUser) -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(tpMember: TPUser) = with(binding) {
         tvMemberNickname.text = tpMember.username
         ivMemberThumbnail.loadThumbnail(tpMember.profileImageUrl)
 
-        when (memberType) {
-            MemberType.MEMBER -> setMemberView(tpMember)
-            MemberType.MUTED -> Unit
+        itemView.setOnClickListener {
+            onClick.invoke(tpMember)
         }
-    }
 
-    private fun setMutedView() = with(binding) {
-        tvBadgeMe.visibility = View.GONE
-        tvBadgeOwner.visibility = View.GONE
+        if (memberType == MemberType.MEMBER) {
+            setMemberView(tpMember)
+        }
     }
 
     private fun setMemberView(tpMember: TPUser) = with(binding) {

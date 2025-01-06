@@ -15,16 +15,14 @@ class AlertDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 0.8).toInt(),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
+        dialog?.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.8).toInt(),
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         _binding = LayoutAlertDialogBinding.inflate(layoutInflater)
         return binding.root
     }

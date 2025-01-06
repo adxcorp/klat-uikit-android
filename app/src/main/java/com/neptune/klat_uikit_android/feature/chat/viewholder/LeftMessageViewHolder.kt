@@ -17,7 +17,7 @@ class LeftMessageViewHolder(
     private val tpChannel: TPChannel,
     private val context: Context,
     private val userId: String,
-    private val onClickProfile: (TPMessage, String, String) -> Unit,
+    private val onClickProfile: (TPMessage) -> Unit,
     private val onLongClickMessage: () -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
@@ -45,7 +45,7 @@ class LeftMessageViewHolder(
         ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
 
         ivLeftChatProfileThumbnail.setOnClickListener {
-            onClickProfile.invoke(currentTPMessage, userId, tpChannel.channelOwnerId)
+            onClickProfile.invoke(currentTPMessage)
         }
 
         tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime

@@ -70,9 +70,12 @@ class ProfileDialog(
     }
 
     private fun setDisplayMetrics() {
-        dialog?.window?.setLayout(
-            (resources.displayMetrics.widthPixels * 1),
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+        dialog?.window?.apply {
+            setBackgroundDrawableResource(R.drawable.bg_radius_8dp) // 배경 설정
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.88).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
     }
 }

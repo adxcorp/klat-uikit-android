@@ -3,7 +3,6 @@ package com.neptune.klat_uikit_android.feature.chat
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.viewModels
@@ -17,12 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
-import com.neptune.klat_uikit_android.core.extension.getSerializable
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
-import com.neptune.klat_uikit_android.core.ui.ProfileDialog
+import com.neptune.klat_uikit_android.core.ui.components.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
-import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 

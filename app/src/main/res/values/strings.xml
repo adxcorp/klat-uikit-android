@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">klat-uikit-android</string>
     <string name="empty_channel">아직 생성된 채널이 없습니다.\n채널을 생성하여 새로운 대화를 시작해보세요.</string>
+
+    <string name="alert_grant_owner_title">%s에게\n운영자 권한을 부여할까요?</string>
+    <string name="alert_grant_owner_description">선택한 사용자가 즉시 운영자로 변경되며,\n해당 채널의 권한이 부여됩니다.</string>
+
+    <string name="alert_mute_title">%s\n사용자를 음소거할까요?</string>
+    <string name="alert_mute_description">선택한 사용자가 즉시 음소거되며,\n별도로 해제하지 않는 한 음소거 상태가 유지됩니다.</string>
+
+    <string name="alert_un_ute_title">%s\n음소거를 해제할까요?</string>
+    <string name="alert_un_mute_description">선택한 사용자의 음소거가 해제되며,\n정상적으로 채팅을 이용할 수 있습니다.</string>
+
+    <string name="alert_ban_title">%s\n사용자를 강퇴할까요?</string>
+    <string name="alert_ban_description">선택한 사용자가 즉시 퇴장되며,\n차단이 해제돨 때까지 채널에 다시 입장할 수 없습니다.</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.neptune.klat_uikit_android.core.ui
+package com.neptune.klat_uikit_android.core.ui.components
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,13 +8,15 @@ import androidx.fragment.app.DialogFragment
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.ui.components.enums.AlertType
+import com.neptune.klat_uikit_android.core.ui.interfaces.DialogInterface
 import com.neptune.klat_uikit_android.databinding.LayoutProfileDialogBinding
 
 class ProfileDialog(
     private val userId: String,
     private val userNickname: String,
     private val profileImage: String
-) : DialogFragment() {
+) : DialogFragment(), DialogInterface {
     private var _binding: LayoutProfileDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutProfileDialogBinding 초기화 에러")
     private val isOwner: Boolean = ChannelObject.userId == ChannelObject.tpChannel.channelOwnerId
@@ -65,8 +67,34 @@ class ProfileDialog(
     }
 
     private fun setClickListener() {
-        binding.clProfileBlock.setOnClickListener { AlertDialog().showNow(parentFragmentManager, null) }
-        binding.clProfileMute.setOnClickListener { AlertDialog().showNow(parentFragmentManager, null) }
+        binding.ivProfileClose.setOnClickListener { dialog?.dismiss() }
+
+        binding.clProfileBlock.setOnClickListener {
+            AlertDialog(
+                alertType = AlertType.BAN,
+                userId = userId,
+                userNickname = userNickname,
+                dialogInterface = this
+            ).showNow(parentFragmentManager, null)
+        }
+
+        binding.clProfileMute.setOnClickListener {
+            AlertDialog(
+                alertType = AlertType.MUTE,
+                userId = userId,
+                userNickname = userNickname,
+                dialogInterface = this
+            ).showNow(parentFragmentManager, null)
+        }
+
+        binding.clOwner.setOnClickListener {
+            AlertDialog(
+                alertType = AlertType.OWNER,
+                userId = userId,
+                userNickname = userNickname,
+                dialogInterface = this
+            ).showNow(parentFragmentManager, null)
+        }
     }
 
     private fun setDisplayMetrics() {
@@ -77,5 +105,29 @@ class ProfileDialog(
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
         }
+    }
+
+    override fun peerMuteUser() {
+
+    }
+
+    override fun unPeerMuteUser() {
+
+    }
+
+    override fun muteUser() {
+
+    }
+
+    override fun unMuteUser() {
+
+    }
+
+    override fun banUser() {
+
+    }
+
+    override fun grantOwner() {
+
     }
 }

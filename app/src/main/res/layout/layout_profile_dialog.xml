@@ -10,7 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/iv_profile_close"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="4dp"
@@ -27,7 +27,7 @@
         app:cardCornerRadius="66dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView6">
+        app:layout_constraintTop_toBottomOf="@+id/iv_profile_close">
 
         <ImageView
             android:id="@+id/iv_profile_thumbnail"
@@ -188,7 +188,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="차단"
+                android:text="강퇴"
                 android:textColor="@color/black"
                 android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"

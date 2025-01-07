@@ -1,14 +1,12 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
 import com.neptune.klat_uikit_android.core.base.ChannelObject
-import com.neptune.klat_uikit_android.core.ui.AlertDialog
-import com.neptune.klat_uikit_android.core.ui.ProfileDialog
+import com.neptune.klat_uikit_android.core.ui.components.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
 

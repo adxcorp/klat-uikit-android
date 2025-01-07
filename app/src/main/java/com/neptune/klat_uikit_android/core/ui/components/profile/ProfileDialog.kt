@@ -38,33 +38,9 @@ class ProfileDialog(
 
     private fun setClickListener() {
         binding.ivProfileClose.setOnClickListener { dialog?.dismiss() }
-
-        binding.clProfileBlock.setOnClickListener {
-            AlertDialog(
-                alertType = AlertType.BAN,
-                userId = userId,
-                userNickname = userNickname,
-                dialogInterface = this
-            ).showNow(parentFragmentManager, null)
-        }
-
-        binding.clProfileMute.setOnClickListener {
-            AlertDialog(
-                alertType = AlertType.MUTE,
-                userId = userId,
-                userNickname = userNickname,
-                dialogInterface = this
-            ).showNow(parentFragmentManager, null)
-        }
-
-        binding.clOwner.setOnClickListener {
-            AlertDialog(
-                alertType = AlertType.OWNER,
-                userId = userId,
-                userNickname = userNickname,
-                dialogInterface = this
-            ).showNow(parentFragmentManager, null)
-        }
+        binding.clProfileBlock.setOnClickListener { showAlertDialog(type = AlertType.BAN) }
+        binding.clProfileMute.setOnClickListener { showAlertDialog(type = AlertType.MUTE) }
+        binding.clOwner.setOnClickListener { showAlertDialog(type = AlertType.OWNER) }
     }
 
     private fun setDisplayMetrics() {
@@ -82,32 +58,46 @@ class ProfileDialog(
         ivProfileThumbnail.loadThumbnail(profileImage)
 
         when {
-            userId == ChannelObject.userId -> {
-                clOwner.visibility = View.GONE
-                clBlock.visibility = View.GONE
-                tvProfileUserNickname.text = "$userNickname(나)"
-            }
-
-            isOwner -> {
-                ivBadgeIcon.setImageResource(R.drawable.ic_20_add)
-                tvBadgeContent.text = "운영자 권한 부여하기"
-            }
-
+            userId == ChannelObject.userId -> setViewTypeMe()
+            isOwner -> setViewTypeOwner()
             !isOwner -> {
                 when (userId == ChannelObject.tpChannel.channelOwnerId) {
-                    true -> {
-                        clProfileBlock.visibility = View.GONE
-                        ivBadgeIcon.setImageResource(R.drawable.ic_20_owner)
-                        tvBadgeContent.text = "운영자"
-                    }
-
-                    false -> {
-                        clProfileBlock.visibility = View.GONE
-                        clOwner.visibility = View.GONE
-                    }
+                    true -> setViewTypeChannelOwner()
+                    false -> hideOwnerView()
                 }
             }
         }
+    }
+
+    private fun showAlertDialog(type: AlertType) {
+        AlertDialog(
+            alertType = type,
+            userId = userId,
+            userNickname = userNickname,
+            dialogInterface = this
+        ).showNow(parentFragmentManager, null)
+    }
+
+    private fun setViewTypeMe() = with(binding) {
+        clOwner.visibility = View.GONE
+        clBlock.visibility = View.GONE
+        tvProfileUserNickname.text = "$userNickname(나)"
+    }
+
+    private fun setViewTypeOwner() = with(binding) {
+        ivBadgeIcon.setImageResource(R.drawable.ic_20_add)
+        tvBadgeContent.text = "운영자 권한 부여하기"
+    }
+
+    private fun setViewTypeChannelOwner() = with(binding) {
+        clProfileBlock.visibility = View.GONE
+        ivBadgeIcon.setImageResource(R.drawable.ic_20_owner)
+        tvBadgeContent.text = "운영자"
+    }
+
+    private fun hideOwnerView() = with(binding) {
+        clProfileBlock.visibility = View.GONE
+        clOwner.visibility = View.GONE
     }
 
     override fun peerMuteUser() {

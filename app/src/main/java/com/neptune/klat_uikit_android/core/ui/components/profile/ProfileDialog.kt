@@ -1,4 +1,4 @@
-package com.neptune.klat_uikit_android.core.ui.components
+package com.neptune.klat_uikit_android.core.ui.components.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.AlertType
 import com.neptune.klat_uikit_android.core.ui.interfaces.DialogInterface
 import com.neptune.klat_uikit_android.databinding.LayoutProfileDialogBinding

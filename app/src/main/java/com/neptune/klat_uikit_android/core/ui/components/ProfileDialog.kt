@@ -30,40 +30,7 @@ class ProfileDialog(
         super.onViewCreated(view, savedInstanceState)
         setDisplayMetrics()
         setClickListener()
-        bindView()
-    }
-
-    private fun bindView() = with(binding) {
-        tvProfileUserNickname.text = userNickname
-        ivProfileThumbnail.loadThumbnail(profileImage)
-
-        when {
-            userId == ChannelObject.userId -> {
-                clOwner.visibility = View.GONE
-                clBlock.visibility = View.GONE
-                tvProfileUserNickname.text = "$userNickname(나)"
-            }
-
-            isOwner -> {
-                ivBadgeIcon.setImageResource(R.drawable.ic_20_add)
-                tvBadgeContent.text = "운영자 권한 부여하기"
-            }
-
-            !isOwner -> {
-                when (userId == ChannelObject.tpChannel.channelOwnerId) {
-                    true -> {
-                        clProfileBlock.visibility = View.GONE
-                        ivBadgeIcon.setImageResource(R.drawable.ic_20_owner)
-                        tvBadgeContent.text = "운영자"
-                    }
-
-                    false -> {
-                        clProfileBlock.visibility = View.GONE
-                        clOwner.visibility = View.GONE
-                    }
-                }
-            }
-        }
+        setUserType()
     }
 
     private fun setClickListener() {
@@ -104,6 +71,39 @@ class ProfileDialog(
                 (resources.displayMetrics.widthPixels * 0.88).toInt(),
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
+        }
+    }
+
+    private fun setUserType() = with(binding) {
+        tvProfileUserNickname.text = userNickname
+        ivProfileThumbnail.loadThumbnail(profileImage)
+
+        when {
+            userId == ChannelObject.userId -> {
+                clOwner.visibility = View.GONE
+                clBlock.visibility = View.GONE
+                tvProfileUserNickname.text = "$userNickname(나)"
+            }
+
+            isOwner -> {
+                ivBadgeIcon.setImageResource(R.drawable.ic_20_add)
+                tvBadgeContent.text = "운영자 권한 부여하기"
+            }
+
+            !isOwner -> {
+                when (userId == ChannelObject.tpChannel.channelOwnerId) {
+                    true -> {
+                        clProfileBlock.visibility = View.GONE
+                        ivBadgeIcon.setImageResource(R.drawable.ic_20_owner)
+                        tvBadgeContent.text = "운영자"
+                    }
+
+                    false -> {
+                        clProfileBlock.visibility = View.GONE
+                        clOwner.visibility = View.GONE
+                    }
+                }
+            }
         }
     }
 

@@ -22,7 +22,9 @@ class ProfileDialog(
 ) : DialogFragment(), DialogInterface {
     private var _binding: LayoutProfileDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutProfileDialogBinding 초기화 에러")
-    private val isOwner: Boolean = ChannelObject.userId == ChannelObject.tpChannel.channelOwnerId
+
+    private val isMyProfile: Boolean = userId == ChannelObject.userId
+    private val isChannelOwner: Boolean = ChannelObject.userId == ChannelObject.tpChannel.channelOwnerId
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = LayoutProfileDialogBinding.inflate(inflater, container, false)
@@ -36,11 +38,11 @@ class ProfileDialog(
         setUserType()
     }
 
-    private fun setClickListener() {
-        binding.ivProfileClose.setOnClickListener { dialog?.dismiss() }
-        binding.clProfileBlock.setOnClickListener { showAlertDialog(type = AlertType.BAN) }
-        binding.clProfileMute.setOnClickListener { showAlertDialog(type = AlertType.MUTE) }
-        binding.clOwner.setOnClickListener { showAlertDialog(type = AlertType.OWNER) }
+    private fun setClickListener() = with(binding) {
+        ivProfileClose.setOnClickListener { dialog?.dismiss() }
+        clProfileBlock.setOnClickListener { showAlertDialog(type = AlertType.BAN) }
+        clProfileMute.setOnClickListener { showAlertDialog(type = AlertType.MUTE) }
+        clOwner.setOnClickListener { showAlertDialog(type = AlertType.OWNER) }
     }
 
     private fun setDisplayMetrics() {
@@ -58,9 +60,9 @@ class ProfileDialog(
         ivProfileThumbnail.loadThumbnail(profileImage)
 
         when {
-            userId == ChannelObject.userId -> setViewTypeMe()
-            isOwner -> setViewTypeOwner()
-            !isOwner -> {
+            isMyProfile -> setViewTypeMe()
+            isChannelOwner -> setViewTypeOwner()
+            !isChannelOwner -> {
                 when (userId == ChannelObject.tpChannel.channelOwnerId) {
                     true -> setViewTypeChannelOwner()
                     false -> hideOwnerView()

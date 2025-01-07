@@ -5,6 +5,6 @@ interface DialogInterface {
     fun unPeerMuteUser()
     fun muteUser()
     fun unMuteUser()
-    fun banUser()
+    fun banUser(banId: String)
     fun grantOwner()
 }

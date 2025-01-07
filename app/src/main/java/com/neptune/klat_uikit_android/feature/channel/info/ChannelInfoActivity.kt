@@ -22,12 +22,12 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
         setListener()
     }
 
-    override fun getExtra() {
-
+    override fun onResume() {
+        super.onResume()
+        setChannelInfo()
     }
 
     private fun setDefaultUI() = with(binding) {
-        setChannelInfo()
         layoutChannelInfo2.root.visibility = View.GONE
         layoutChannelInfo3.root.visibility = View.GONE
         layoutChannelInfo4.root.visibility = View.GONE
@@ -52,8 +52,6 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
     }
 
     private fun setOwnerUI() = with(binding) {
-        setChannelInfo()
-
         layoutChannelInfo1.tvInfoTitle.text = "채널 정보 변경"
         layoutChannelInfo1.root.setOnClickListener {
 

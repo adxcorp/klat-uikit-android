@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

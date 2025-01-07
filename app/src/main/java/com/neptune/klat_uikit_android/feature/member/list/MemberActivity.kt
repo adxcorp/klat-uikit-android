@@ -6,11 +6,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
 import com.neptune.klat_uikit_android.core.base.ChannelObject
-import com.neptune.klat_uikit_android.core.ui.components.ProfileDialog
+import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
 
-class MemberActivity : BaseActivity<ActivityMemberBinding>() {
+class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
     private val viewModel: MemberViewModel by viewModels()
     private val adapter: MemberAdapter by lazy { setAdapter() }
 
@@ -65,7 +65,8 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>() {
             ProfileDialog(
                 profileImage =  tpUser.profileImageUrl,
                 userId = tpUser.userId,
-                userNickname = tpUser.username
+                userNickname = tpUser.username,
+                memberInterface = this
             ).show(supportFragmentManager, null)
         }
     }
@@ -89,5 +90,9 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>() {
         private const val FIRST_INDEX = 0
         private const val SECOND_INDEX = 1
         private const val OTHERS = 2
+    }
+
+    override fun updateMembers(banId: String) {
+        adapter.removeMember(banId)
     }
 }

@@ -4,5 +4,6 @@ enum class EventType {
     RECEIVED_MESSAGE,
     CHANGED_CHANNEL,
     ADDED_CHANNEL,
-    REMOVED_CHANNEL
+    REMOVED_CHANNEL,
+    BAN_USER
 }

@@ -3,7 +3,6 @@ package com.neptune.klat_uikit_android.feature.member.list
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.databinding.ItemMembersBinding
 import io.talkplus.entity.user.TPUser
 
@@ -34,10 +33,16 @@ class MemberAdapter(
     }
 
     fun addMembers(newMembers: List<TPUser>) {
-        ChannelObject.tpChannel.members
         val startPosition = members.size
         members.addAll(newMembers)
         notifyItemRangeInserted(startPosition, newMembers.size)
+    }
+
+    fun removeMember(banId: String) {
+        val removeTPUser = members.find { it.userId == banId }
+        val removePosition = members.indexOf(removeTPUser)
+        members.removeAt(removePosition)
+        notifyItemRemoved(removePosition)
     }
 }
 

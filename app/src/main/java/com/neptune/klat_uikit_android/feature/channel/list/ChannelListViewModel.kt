@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -56,8 +57,9 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
 
     fun observeChannelList() {
         viewModelScope.launch {
-            channelRepository.observeChannel(ChannelObject.tag).collect { callbackResult ->
+            channelRepository.observeChannel().collect { callbackResult ->
                 when(callbackResult.type) {
+                    EventType.BAN_USER -> _channelUiState.emit(ChannelUiState.BanUser(callbackResult.channel))
                     EventType.CHANGED_CHANNEL -> _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
                     EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
                     EventType.REMOVED_CHANNEL -> _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))

@@ -12,11 +12,13 @@ import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.AlertType
 import com.neptune.klat_uikit_android.core.ui.interfaces.DialogInterface
 import com.neptune.klat_uikit_android.databinding.LayoutProfileDialogBinding
+import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 
 class ProfileDialog(
     private val userId: String,
     private val userNickname: String,
-    private val profileImage: String
+    private val profileImage: String,
+    private val memberInterface: MemberInterface
 ) : DialogFragment(), DialogInterface {
     private var _binding: LayoutProfileDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutProfileDialogBinding 초기화 에러")
@@ -124,8 +126,9 @@ class ProfileDialog(
 
     }
 
-    override fun banUser() {
-
+    override fun banUser(banId: String) {
+        memberInterface.updateMembers(banId)
+        dialog?.dismiss()
     }
 
     override fun grantOwner() {

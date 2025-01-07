@@ -1,5 +1,7 @@
 package com.neptune.klat_uikit_android.core.data.repository.channel
 
+import android.util.Log
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
 import com.neptune.klat_uikit_android.core.data.model.channel.ChannelListResponse
@@ -8,6 +10,7 @@ import com.neptune.klat_uikit_android.core.data.model.channel.ObserveChannelResp
 import io.talkplus.TalkPlus
 import io.talkplus.TalkPlus.ChannelListener
 import io.talkplus.entity.channel.TPChannel
+import io.talkplus.entity.channel.TPMember
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
@@ -37,8 +40,8 @@ class ChannelRepository {
         }
     }
 
-    fun observeChannel(tag: String): Flow<ObserveChannelResponse> = callbackFlow {
-        TalkPlus.addChannelListener(tag, object : ChannelListener {
+    fun observeChannel(): Flow<ObserveChannelResponse> = callbackFlow {
+        TalkPlus.addChannelListener(ChannelObject.tag, object : ChannelListener {
             override fun onMessageReceived(tpChannel: TPChannel, tpMessage: TPMessage) {
                 trySend(ObserveChannelResponse(
                     type = EventType.RECEIVED_MESSAGE,
@@ -64,6 +67,13 @@ class ChannelRepository {
             override fun onChannelRemoved(tpChannel: TPChannel) {
                 trySend(ObserveChannelResponse(
                     type = EventType.REMOVED_CHANNEL,
+                    channel = tpChannel,
+                ))
+            }
+
+            override fun onMemberBanned(tpChannel: TPChannel, users: MutableList<TPMember>) {
+                trySend(ObserveChannelResponse(
+                    type = EventType.BAN_USER,
                     channel = tpChannel,
                 ))
             }

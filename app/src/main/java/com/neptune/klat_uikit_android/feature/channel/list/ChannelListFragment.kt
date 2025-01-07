@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -57,8 +59,10 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     private fun observeChannelListUiState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.channelUiState.collect { channelUiState ->
-                handleChannelUiState(channelUiState)
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.channelUiState.collect { channelUiState ->
+                    handleChannelUiState(channelUiState)
+                }
             }
         }
     }
@@ -78,6 +82,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             is ChannelUiState.AddedChannel -> adapter.addChannelItemToTop(channelUiState.tpChannel)
             is ChannelUiState.RemovedChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
             is ChannelUiState.ChangedChannel -> adapter.updateChannelItem(channelUiState.tpChannel)
+            is ChannelUiState.BanUser -> adapter.updateChannelItem(channelUiState.tpChannel)
         }
     }
 

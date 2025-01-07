@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.core.data.repository.chat
 
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.chat.MessagesResponse
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
@@ -58,8 +59,8 @@ class ChatRepository {
     }
 
 
-    fun receiveMessage(tag: String): Flow<TPMessage> = callbackFlow {
-        TalkPlus.addChannelListener(tag, object : TalkPlus.ChannelListener {
+    fun receiveMessage(): Flow<TPMessage> = callbackFlow {
+        TalkPlus.addChannelListener(ChannelObject.tpChannel.channelId, object : TalkPlus.ChannelListener {
             override fun onMessageReceived(tpChannel: TPChannel, tpMessage: TPMessage) {
                 trySend(tpMessage)
             }

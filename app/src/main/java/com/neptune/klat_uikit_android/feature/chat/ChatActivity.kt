@@ -17,13 +17,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
-import com.neptune.klat_uikit_android.core.ui.components.ProfileDialog
+import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
+import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
+import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : AppCompatActivity(), MemberInterface {
     private val binding: ActivityChatBinding by lazy { ActivityChatBinding.inflate(layoutInflater) }
     private val viewModel: ChatViewModel by viewModels()
     private val adapter: ChatAdapter by lazy { setAdapter() }
@@ -63,7 +65,7 @@ class ChatActivity : AppCompatActivity() {
 
     private fun observeChatUiState() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.channelUiState.collect { chatUiState ->
                     when (chatUiState) {
                         is ChatUiState.BaseState -> {
@@ -164,7 +166,8 @@ class ChatActivity : AppCompatActivity() {
                 ProfileDialog(
                     profileImage =  tpMessage.userProfileImage,
                     userId = tpMessage.userId,
-                    userNickname = tpMessage.username
+                    userNickname = tpMessage.username,
+                    memberInterface = this
                 ).show(supportFragmentManager, null)
             }
         )
@@ -194,5 +197,14 @@ class ChatActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_TP_CHANNEL = "extra_tp_channel"
         private const val BOTTOM = 0
+    }
+
+    override fun updateMembers(banId: String) {
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        TalkPlus.removeChannelListener(ChannelObject.tpChannel.channelId)
     }
 }

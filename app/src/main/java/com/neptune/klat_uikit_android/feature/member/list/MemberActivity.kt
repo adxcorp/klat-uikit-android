@@ -5,7 +5,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
-import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
@@ -52,15 +51,7 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
     private fun setAdapter(): MemberAdapter {
         return MemberAdapter(
             memberType = if(intent.getBooleanExtra(EXTRA_MEMBER, false)) MemberType.MEMBER else MemberType.MUTED,
-            members = if (intent.getBooleanExtra(EXTRA_MEMBER, false)) {
-                 ArrayList(ChannelObject.tpChannel.members.sortedBy { tpMember ->
-                     when {
-                         tpMember.userId == ChannelObject.userId -> FIRST_INDEX
-                         ChannelObject.tpChannel.channelOwnerId == tpMember.userId -> SECOND_INDEX
-                         else -> OTHERS
-                     }
-                 })
-            } else arrayListOf()
+            members = if (intent.getBooleanExtra(EXTRA_MEMBER, false)) { viewModel.sortOwnerAndMe() } else arrayListOf()
         ) { tpUser ->
             ProfileDialog(
                 profileImage =  tpUser.profileImageUrl,
@@ -86,13 +77,13 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
     companion object {
         const val EXTRA_MEMBER = "extra_member"
         const val EXTRA_IS_OWNER = "extra_is_owner"
-
-        private const val FIRST_INDEX = 0
-        private const val SECOND_INDEX = 1
-        private const val OTHERS = 2
     }
 
     override fun updateMembers(banId: String) {
         adapter.removeMember(banId)
+    }
+
+    override fun updateOwner(ownerId: String) {
+        adapter.updateMembers(viewModel.sortOwnerAndMe())
     }
 }

@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,15 @@ class MemberAdapter(
         val removePosition = members.indexOf(removeTPUser)
         members.removeAt(removePosition)
         notifyItemRemoved(removePosition)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateMembers(newMembers: List<TPUser>) {
+        members.apply {
+            clear()
+            addAll(newMembers)
+        }
+        notifyDataSetChanged()
     }
 }
 

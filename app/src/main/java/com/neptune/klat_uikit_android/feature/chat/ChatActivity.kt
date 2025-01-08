@@ -203,6 +203,10 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
 
     }
 
+    override fun updateOwner(ownerId: String) {
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         TalkPlus.removeChannelListener(ChannelObject.tpChannel.channelId)

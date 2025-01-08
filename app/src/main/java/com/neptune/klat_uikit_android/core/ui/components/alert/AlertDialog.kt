@@ -27,6 +27,7 @@ class AlertDialog(
 ) : DialogFragment() {
     private var _binding: LayoutAlertDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutAlertDialogBinding 초기화 에러")
+
     private val viewModel: AlertViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -55,13 +56,14 @@ class AlertDialog(
     private fun handleAlertUiState(alertUiState: AlertUiState) {
         when (alertUiState) {
             is AlertUiState.BaseState -> { }
-            is AlertUiState.BanUser -> successBanUser(alertUiState.tpChannel)
+            is AlertUiState.BanUser -> dialogInterface.banUser(userId)
             is AlertUiState.MuteUser -> { }
             is AlertUiState.UnMuteUser -> { }
             is AlertUiState.PeerMuteUser -> { }
             is AlertUiState.PeerUnMuteUser -> { }
-            is AlertUiState.GrantOwner -> { }
+            is AlertUiState.GrantOwner -> dialogInterface.grantOwner(userId)
         }
+        dialog?.dismiss()
     }
 
     private fun setAlertViewType() = with(binding) {
@@ -75,7 +77,7 @@ class AlertDialog(
             }
 
             AlertType.OWNER -> {
-                tvAlertRight.setOnClickListener {  }
+                tvAlertRight.setOnClickListener { viewModel.grantOwner(userId) }
                 setContent(
                     titleDescription = getString(R.string.alert_grant_owner_title, userNickname),
                     contentDescription = getString(R.string.alert_grant_owner_description)
@@ -112,11 +114,5 @@ class AlertDialog(
     ) = with(binding) {
         tvAlertTitle.text = titleDescription
         tvAlertDescription.text = contentDescription
-    }
-
-    private fun successBanUser(tpChannel: TPChannel) {
-        ChannelObject.setTPChannel(tpChannel)
-        dialogInterface.banUser(userId)
-        dialog?.dismiss()
     }
 }

@@ -18,6 +18,7 @@ class UserEventRepository {
             targetId,
             object : TalkPlus.CallbackListener<TPChannel> {
             override fun onSuccess(tpChannel: TPChannel) {
+                ChannelObject.setTPChannel(tpChannel)
                 trySend(Result.Success(tpChannel))
             }
 
@@ -28,6 +29,26 @@ class UserEventRepository {
                 )))
             }
         })
+        awaitClose { cancel() }
+    }
+
+    fun grantOwner(targetId: String): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.transferChannelOwnership(
+            ChannelObject.tpChannel,
+            targetId,
+            object : TalkPlus.CallbackListener<TPChannel> {
+                override fun onSuccess(tpChannel: TPChannel) {
+                    ChannelObject.setTPChannel(tpChannel)
+                    trySend(Result.Success(tpChannel))
+                }
+
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            })
         awaitClose { cancel() }
     }
 }

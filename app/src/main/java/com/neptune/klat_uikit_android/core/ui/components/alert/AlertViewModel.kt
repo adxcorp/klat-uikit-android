@@ -19,7 +19,18 @@ class AlertViewModel(private val userEventRepository: UserEventRepository = User
         viewModelScope.launch {
             userEventRepository.banUser(targetId).collect { callbackResult ->
                 when (callbackResult) {
-                    is Result.Success -> _alertUiState.emit(AlertUiState.BanUser(callbackResult.successData))
+                    is Result.Success -> _alertUiState.emit(AlertUiState.BanUser)
+                    is Result.Failure -> _alertUiState.emit(AlertUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
+                }
+            }
+        }
+    }
+
+    fun grantOwner(targetId: String) {
+        viewModelScope.launch {
+            userEventRepository.grantOwner(targetId).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _alertUiState.emit(AlertUiState.GrantOwner)
                     is Result.Failure -> _alertUiState.emit(AlertUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }

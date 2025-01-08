@@ -123,7 +123,8 @@ class ProfileDialog(
         dialog?.dismiss()
     }
 
-    override fun grantOwner() {
-
+    override fun grantOwner(ownerId: String) {
+        setViewTypeChannelOwner()
+        memberInterface.updateOwner(ownerId)
     }
 }

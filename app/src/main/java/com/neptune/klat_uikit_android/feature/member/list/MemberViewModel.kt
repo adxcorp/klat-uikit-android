@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -57,5 +58,22 @@ class MemberViewModel(private val memberRepository: MemberRepository = MemberRep
         hasNext = memberResponse.hasNext
         lastUser = memberResponse.tpMembers.lastOrNull()
         _memberUiState.emit(MemberUiState.GetMutesMembers(memberResponse.tpMembers))
+    }
+
+    fun sortOwnerAndMe(): ArrayList<TPUser> {
+        Log.d("!! : sortOwnerAndMe ", ChannelObject.tpChannel.channelOwnerId.toString())
+        return ArrayList(ChannelObject.tpChannel.members.sortedBy { tpMember ->
+            when {
+                tpMember.userId == ChannelObject.userId -> FIRST_INDEX
+                ChannelObject.tpChannel.channelOwnerId == tpMember.userId -> SECOND_INDEX
+                else -> OTHERS
+            }
+        })
+    }
+
+    companion object {
+        private const val FIRST_INDEX = 0
+        private const val SECOND_INDEX = 1
+        private const val OTHERS = 2
     }
 }

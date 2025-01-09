@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -15,6 +14,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class MemberViewModel(private val memberRepository: MemberRepository = MemberRepository()) : ViewModel() {
+    companion object {
+        private const val FIRST_INDEX = 0
+        private const val SECOND_INDEX = 1
+        private const val OTHERS = 2
+    }
+
     private var lastUser: TPUser? = null
     private var hasNext: Boolean = true
 
@@ -26,10 +31,7 @@ class MemberViewModel(private val memberRepository: MemberRepository = MemberRep
         if (!hasNext) return
 
         viewModelScope.launch {
-            memberRepository.getPeerMutedMembers(
-                tpChannel = ChannelObject.tpChannel,
-                lastUser = lastUser
-            ).collect { callbackResult ->
+            memberRepository.getPeerMutedMembers(lastUser).collect { callbackResult ->
                 when(callbackResult) {
                     is Result.Success -> emitMemberUiState(callbackResult.successData)
                     is Result.Failure -> _memberUiState.emit(MemberUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
@@ -61,7 +63,6 @@ class MemberViewModel(private val memberRepository: MemberRepository = MemberRep
     }
 
     fun sortOwnerAndMe(): ArrayList<TPUser> {
-        Log.d("!! : sortOwnerAndMe ", ChannelObject.tpChannel.channelOwnerId.toString())
         return ArrayList(ChannelObject.tpChannel.members.sortedBy { tpMember ->
             when {
                 tpMember.userId == ChannelObject.userId -> FIRST_INDEX
@@ -69,11 +70,5 @@ class MemberViewModel(private val memberRepository: MemberRepository = MemberRep
                 else -> OTHERS
             }
         })
-    }
-
-    companion object {
-        private const val FIRST_INDEX = 0
-        private const val SECOND_INDEX = 1
-        private const val OTHERS = 2
     }
 }

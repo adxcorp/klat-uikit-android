@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
@@ -30,13 +29,11 @@ class MemberViewHolder(
         tvBadgeMe.visibility = View.GONE
         tvBadgeOwner.visibility = View.GONE
 
-        when {
-            tpMember.userId == ChannelObject.tpChannel.channelOwnerId && tpMember.userId == ChannelObject.userId -> {
-                tvBadgeMe.visibility = View.VISIBLE
-                tvBadgeOwner.visibility = View.VISIBLE
-            }
-            tpMember.userId == ChannelObject.userId -> tvBadgeMe.visibility = View.VISIBLE
-            tpMember.userId == ChannelObject.tpChannel.channelOwnerId -> tvBadgeOwner.visibility = View.VISIBLE
-        }
+        val currentUserId = tpMember.userId
+        val ownerId = ChannelObject.tpChannel.channelOwnerId
+        val myId = ChannelObject.userId
+
+        tvBadgeMe.visibility = if (currentUserId == myId) View.VISIBLE else View.GONE
+        tvBadgeOwner.visibility = if (currentUserId == ownerId) View.VISIBLE else View.GONE
     }
 }

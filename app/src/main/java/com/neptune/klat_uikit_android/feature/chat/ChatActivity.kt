@@ -23,6 +23,7 @@ import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
+import io.talkplus.entity.user.TPUser
 import kotlinx.coroutines.launch
 
 class ChatActivity : AppCompatActivity(), MemberInterface {

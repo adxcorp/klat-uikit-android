@@ -10,6 +10,11 @@ import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
 
 class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
+    companion object {
+        const val EXTRA_MEMBER = "extra_member"
+        const val EXTRA_IS_OWNER = "extra_is_owner"
+    }
+
     private val viewModel: MemberViewModel by viewModels()
     private val adapter: MemberAdapter by lazy { setAdapter() }
 
@@ -72,11 +77,6 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
             false -> setMutedType()
         }
         binding.rvMembers.adapter = adapter
-    }
-
-    companion object {
-        const val EXTRA_MEMBER = "extra_member"
-        const val EXTRA_IS_OWNER = "extra_is_owner"
     }
 
     override fun updateMembers(banId: String) {

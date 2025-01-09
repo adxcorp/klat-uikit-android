@@ -3,6 +3,7 @@ package com.neptune.klat_uikit_android.core.ui.components.alert
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -57,10 +58,8 @@ class AlertDialog(
         when (alertUiState) {
             is AlertUiState.BaseState -> { }
             is AlertUiState.BanUser -> dialogInterface.banUser(userId)
-            is AlertUiState.MuteUser -> { }
-            is AlertUiState.UnMuteUser -> { }
-            is AlertUiState.PeerMuteUser -> { }
-            is AlertUiState.PeerUnMuteUser -> { }
+            is AlertUiState.MuteUser -> dialogInterface.muteUser()
+            is AlertUiState.PeerMuteUser -> dialogInterface.peerMuteUser()
             is AlertUiState.GrantOwner -> dialogInterface.grantOwner(userId)
         }
         dialog?.dismiss()
@@ -85,11 +84,17 @@ class AlertDialog(
             }
 
             AlertType.MUTE -> {
-                tvAlertRight.setOnClickListener {  }
                 setContent(
                     titleDescription = getString(R.string.alert_mute_title, userNickname),
                     contentDescription = getString(R.string.alert_mute_description)
                 )
+
+                tvAlertRight.setOnClickListener {
+                    when {
+                        viewModel.isChannelOwner -> viewModel.muteUser(userId)
+                        else -> viewModel.peerMuteUser(userId)
+                    }
+                }
             }
         }
     }

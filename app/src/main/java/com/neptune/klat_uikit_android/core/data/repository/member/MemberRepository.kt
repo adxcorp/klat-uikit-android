@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.core.data.repository.member
 
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
 import com.neptune.klat_uikit_android.core.data.model.member.MemberResponse
@@ -40,10 +41,9 @@ class MemberRepository {
     }
 
     fun getPeerMutedMembers(
-        tpChannel: TPChannel,
         lastUser: TPUser?
     ) = callbackFlow {
-        TalkPlus.getMutedPeers(tpChannel, lastUser as TPMember?, object : TalkPlus.TPCallbackListener<List<TPMember>, Boolean> {
+        TalkPlus.getMutedPeers(ChannelObject.tpChannel, lastUser as TPMember?, object : TalkPlus.TPCallbackListener<List<TPMember>, Boolean> {
             override fun onSuccess(tpMembers: List<TPMember>, hasNext: Boolean) {
                 trySend(Result.Success(MemberResponse(
                     tpMembers = tpMembers,

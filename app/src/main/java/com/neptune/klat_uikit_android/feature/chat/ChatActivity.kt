@@ -157,20 +157,8 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
     private fun setAdapter(): ChatAdapter {
         return ChatAdapter(
             tpMessages = arrayListOf(),
-            tpChannel = ChannelObject.tpChannel,
-            userId = ChannelObject.userId,
-            context = this,
-            onLongClickMessage = {
-
-            },
-            onClickProfile = { tpMessage ->
-                ProfileDialog(
-                    profileImage =  tpMessage.userProfileImage,
-                    userId = tpMessage.userId,
-                    userNickname = tpMessage.username,
-                    memberInterface = this
-                ).show(supportFragmentManager, null)
-            }
+            onLongClickMessage = { },
+            onClickProfile = { tpMessage -> showProfileDialog(tpMessage) }
         )
     }
 
@@ -193,6 +181,15 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
         if (layoutManager.findFirstVisibleItemPosition() == BOTTOM) {
             binding.rvChat.scrollToPosition(BOTTOM)
         }
+    }
+
+    private fun showProfileDialog(tpMessage: TPMessage) {
+        ProfileDialog(
+            profileImage = tpMessage.userProfileImage,
+            userId = tpMessage.userId,
+            userNickname = tpMessage.username,
+            memberInterface = this
+        ).show(supportFragmentManager, null)
     }
 
     companion object {

@@ -7,16 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.extension.dpToPx
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
+import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
+import org.jetbrains.annotations.TestOnly
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class LeftMessageViewHolder(
     private val binding: ItemChatLeftProfileBinding,
-    private val tpChannel: TPChannel,
-    private val context: Context,
-    private val userId: String,
     private val onClickProfile: (TPMessage) -> Unit,
     private val onLongClickMessage: () -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -30,11 +29,6 @@ class LeftMessageViewHolder(
         val previousMessageCreatedTime: String = longToTime(previousTPMessage?.createdAt)
         val currentMessageCreatedTime: String = longToTime(currentTPMessage.createdAt)
         val nextMessageCreatedTime: String = longToTime(nextTPMessage?.createdAt)
-
-        Log.d("!! --------------------", "-----------------------")
-        Log.d("!! ${adapterPosition + 1}번째 prv : ", previousTPMessage?.text + " " + previousMessageCreatedTime)
-        Log.d("!! ${adapterPosition + 1}번째 current : ", currentTPMessage.text + " " + currentMessageCreatedTime)
-        Log.d("!! ${adapterPosition + 1}번째 next : ", nextTPMessage?.text + " " + nextMessageCreatedTime)
 
         tvLeftChatProfileMessage.text = currentTPMessage.text
 
@@ -50,76 +44,20 @@ class LeftMessageViewHolder(
 
         tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
 
-        Log.d("!! : parentMessage : ", currentTPMessage.parentMessage.toString())
 
-//        when {
-//            nextTPMessage == null -> {
-//                when (currentMessageCreatedTime == previousMessageCreatedTime) {
-//                    true -> {
-//                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-//                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-//                        tvChatLeftProfileNickname.text = currentTPMessage.username
-//                    }
-//                    false -> {
-//                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-//                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-//                        tvChatLeftProfileNickname.text = currentTPMessage.username
-//                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-//                    }
-//                }
-//            }
-//
-//            previousTPMessage == null -> {
-//                when (currentMessageCreatedTime == nextMessageCreatedTime) {
-//                    true -> {
-//                        cvLeftChatProfile.visibility = View.INVISIBLE
-//                        tvChatLeftProfileNickname.visibility = View.GONE
-//                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-//                    }
-//
-//                    false -> {
-//                        Log.d("!! : ", "call!!")
-//                        clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-//                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-//                        tvChatLeftProfileNickname.text = currentTPMessage.username
-//                        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-//                    }
-//                }
-//            }
-//
-//            currentMessageCreatedTime == previousMessageCreatedTime && currentMessageCreatedTime != nextMessageCreatedTime -> {
-//                clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-//                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-//                tvChatLeftProfileNickname.text = currentTPMessage.username
-//                tvLeftChatProfileLastMessageAt.visibility = View.GONE
-//            }
-//
-//            currentMessageCreatedTime == nextMessageCreatedTime && currentMessageCreatedTime == previousMessageCreatedTime -> {
-//                cvLeftChatProfile.visibility = View.INVISIBLE
-//                tvChatLeftProfileNickname.visibility = View.GONE
-//                tvLeftChatProfileLastMessageAt.visibility = View.GONE
-//            }
-//
-//            currentMessageCreatedTime == nextMessageCreatedTime && currentMessageCreatedTime != previousMessageCreatedTime -> {
-//                if (adapterPosition == tpMessages.lastIndex) {
-//                    clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-//                    ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-//                    tvChatLeftProfileNickname.text = currentTPMessage.username
-//                    tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-//                } else {
-//                    cvLeftChatProfile.visibility = View.INVISIBLE
-//                    tvChatLeftProfileNickname.visibility = View.GONE
-//                    tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-//                }
-//            }
-//
-//            currentMessageCreatedTime != nextMessageCreatedTime && currentMessageCreatedTime != previousMessageCreatedTime -> {
-//                clItemChatLeftRoot.setPadding(0, 12.dpToPx(context).toInt(), 0, 0)
-//                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-//                tvChatLeftProfileNickname.text = currentTPMessage.username
-//                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
-//            }
-//        }
+        // 테스트
+        itemView.setOnClickListener {
+            TalkPlus.addMessageReaction(currentTPMessage,
+                "happy???zzz",
+                object : TalkPlus.CallbackListener<TPMessage> {
+                    override fun onSuccess(tpMessage: TPMessage) {
+                        Log.d("!! : 성공 : ", tpMessage.toString())
+                    }
+                    override fun onFailure(errorCode: Int, exception: Exception) {
+
+                    }
+                })
+        }
     }
 
     private fun longToTime(createdAt: Long?): String {

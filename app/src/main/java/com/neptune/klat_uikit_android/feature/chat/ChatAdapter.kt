@@ -1,48 +1,26 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.neptune.klat_uikit_android.databinding.ItemChannelBinding
-import com.neptune.klat_uikit_android.databinding.ItemChatLeftBinding
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
 import com.neptune.klat_uikit_android.databinding.ItemChatRightBinding
 import com.neptune.klat_uikit_android.feature.chat.viewholder.LeftMessageViewHolder
 import com.neptune.klat_uikit_android.feature.chat.viewholder.RightMessageViewHolder
-import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
-import java.lang.Exception
 
 class ChatAdapter(
     private val tpMessages: ArrayList<TPMessage>,
-    private val tpChannel: TPChannel,
-    private val userId: String,
-    private val context: Context,
     private val onClickProfile: (TPMessage) -> Unit,
     private val onLongClickMessage: () -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            LEFT_MESSAGE -> {
-                val binding: ItemChatLeftProfileBinding = ItemChatLeftProfileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                LeftMessageViewHolder(
-                    binding = binding,
-                    tpChannel = tpChannel,
-                    onClickProfile = onClickProfile,
-                    onLongClickMessage = onLongClickMessage,
-                    userId = userId,
-                    context = context
-                )
-            }
-
+            LEFT_MESSAGE -> showLeftMessage(parent)
             RIGHT_MESSAGE -> {
                 val binding: ItemChatRightBinding = ItemChatRightBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                RightMessageViewHolder(
-                    binding = binding,
-                    tpChannel = tpChannel,
-                )
+                RightMessageViewHolder(binding = binding)
             }
 
             else -> error("")
@@ -71,10 +49,19 @@ class ChatAdapter(
     override fun getItemViewType(position: Int): Int {
         val currentTPMessage: TPMessage = tpMessages[position]
         return when {
-            (currentTPMessage.userId == this.userId) -> RIGHT_MESSAGE
-            (currentTPMessage.userId != this.userId) -> LEFT_MESSAGE
+            (currentTPMessage.userId == ChannelObject.userId) -> RIGHT_MESSAGE
+            (currentTPMessage.userId != ChannelObject.userId) -> LEFT_MESSAGE
             else -> error("")
         }
+    }
+
+    private fun showLeftMessage(parent: ViewGroup): LeftMessageViewHolder {
+        val binding = ItemChatLeftProfileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return LeftMessageViewHolder(
+            binding = binding,
+            onClickProfile = onClickProfile,
+            onLongClickMessage = onLongClickMessage,
+        )
     }
 
     fun addMessages(nextTpMessages: List<TPMessage>) {

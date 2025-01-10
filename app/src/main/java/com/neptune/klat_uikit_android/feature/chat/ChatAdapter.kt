@@ -35,9 +35,8 @@ class ChatAdapter(
         when(holder) {
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
-                previousTPMessage = tpMessages.getOrNull(position-1),
                 nextTPMessage = tpMessages.getOrNull(position+1),
-                tpMessages
+                previousTPMessage = tpMessages.getOrNull(position-1)
             )
 
             is RightMessageViewHolder -> holder.bind(
@@ -65,14 +64,13 @@ class ChatAdapter(
     }
 
     fun addMessages(nextTpMessages: List<TPMessage>) {
-        val startPosition = tpMessages.size
-        tpMessages.addAll(nextTpMessages)
-        notifyItemRangeInserted(startPosition, nextTpMessages.size)
+        tpMessages.addAll(0, nextTpMessages)
+        notifyItemRangeInserted(0, nextTpMessages.size)
     }
 
     fun addMessage(newTPMessage: TPMessage) {
-        tpMessages.add(0, newTPMessage)
-        notifyItemInserted(0)
+        tpMessages.add(newTPMessage)
+        notifyItemInserted(tpMessages.size-1)
     }
 
     companion object {

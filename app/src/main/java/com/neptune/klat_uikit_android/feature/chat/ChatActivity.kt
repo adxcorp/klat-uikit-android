@@ -3,6 +3,7 @@ package com.neptune.klat_uikit_android.feature.chat
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.viewModels
@@ -23,7 +24,6 @@ import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
-import io.talkplus.entity.user.TPUser
 import kotlinx.coroutines.launch
 
 class ChatActivity : AppCompatActivity(), MemberInterface {
@@ -41,10 +41,14 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
 
-            val isAtTop = !recyclerView.canScrollVertically(-1)
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                val isAtTop = !recyclerView.canScrollVertically(-1)
 
-            if (isAtTop) {
-                viewModel.getMessageList()
+                Log.d("!! : isAtTop : ", isAtTop.toString())
+
+                if (isAtTop) {
+                    viewModel.getMessageList()
+                }
             }
         }
     }
@@ -119,7 +123,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
         ivChatSend.setOnClickListener {
             viewModel.sendMessage(etInputMessage.text.toString())
             etInputMessage.setText("")
-            binding.rvChat.scrollToPosition(BOTTOM)
+            binding.rvChat.scrollToPosition(adapter.itemCount-1)
         }
 
         ivChatAttach.setOnClickListener {
@@ -158,38 +162,36 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
         return ChatAdapter(
             tpMessages = arrayListOf(),
             onLongClickMessage = { },
-            onClickProfile = { tpMessage -> showProfileDialog(tpMessage) }
+            onClickProfile = { tpMessage ->
+                ProfileDialog(
+                    profileImage =  tpMessage.userProfileImage,
+                    userId = tpMessage.userId,
+                    userNickname = tpMessage.username,
+                    memberInterface = this
+                ).show(supportFragmentManager, null)
+            }
         )
     }
 
     private fun loadMessages(newTPMessages: List<TPMessage>) {
         if (viewModel.isFirstLoad) {
             viewModel.setFirstLoad(false)
-            binding.rvChat.scrollToPosition(BOTTOM)
+            binding.rvChat.scrollToPosition(adapter.itemCount-1)
         }
         adapter.addMessages(newTPMessages)
     }
 
     private fun sendMessage(tpMessage: TPMessage) {
         adapter.addMessage(tpMessage)
-        binding.rvChat.scrollToPosition(BOTTOM)
+        binding.rvChat.scrollToPosition(adapter.itemCount-1)
     }
 
     private fun receiveMessage(tpMessage: TPMessage) {
         adapter.addMessage(tpMessage)
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         if (layoutManager.findFirstVisibleItemPosition() == BOTTOM) {
-            binding.rvChat.scrollToPosition(BOTTOM)
+            binding.rvChat.scrollToPosition(adapter.itemCount-1)
         }
-    }
-
-    private fun showProfileDialog(tpMessage: TPMessage) {
-        ProfileDialog(
-            profileImage = tpMessage.userProfileImage,
-            userId = tpMessage.userId,
-            userNickname = tpMessage.username,
-            memberInterface = this
-        ).show(supportFragmentManager, null)
     }
 
     companion object {

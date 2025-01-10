@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.ChannelObject
@@ -39,7 +40,7 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
         if (!hasNext) return
 
         val params: TPMessageRetrievalParams = TPMessageRetrievalParams.Builder(ChannelObject.tpChannel)
-            .setLastMessage(tpMessages.lastOrNull())
+            .setLastMessage(tpMessages.firstOrNull())
             .build()
 
         viewModelScope.launch {
@@ -47,8 +48,12 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
                 when (callbackResult) {
                     is Result.Success -> {
                         hasNext = callbackResult.successData.hasNext
-                        tpMessages.addAll(callbackResult.successData.tpMessages)
-                        _chatUiState.emit(ChatUiState.GetMessages(callbackResult.successData.tpMessages))
+                        val reversedMembers = callbackResult.successData.tpMessages.reversed()
+                        tpMessages.addAll(0, reversedMembers)
+                        _chatUiState.emit(ChatUiState.GetMessages(reversedMembers))
+
+                        Log.d("!! last : ", tpMessages.firstOrNull()?.text.toString())
+
                     }
 
                     is Result.Failure -> {

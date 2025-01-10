@@ -2,9 +2,13 @@ package com.neptune.klat_uikit_android.feature.chat.viewholder
 
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
+import com.neptune.klat_uikit_android.core.extension.dpToPx
+import com.neptune.klat_uikit_android.core.extension.dpToPxInt
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
 import io.talkplus.TalkPlus
@@ -28,6 +32,8 @@ class LeftMessageViewHolder(
         tvChatLeftProfileNickname.visibility = View.VISIBLE
         cvLeftChatProfile.visibility = View.VISIBLE
 
+        topMargin(binding.root, 0)
+
         val currentMessageCreatedTime: String = longToTime(currentTPMessage.createdAt)
         val nextMessageCreatedTime: String = longToTime(nextTPMessage?.createdAt)
         val previousMessageCreatedTime: String = longToTime(previousMessage?.createdAt)
@@ -44,6 +50,7 @@ class LeftMessageViewHolder(
 
         when {
             nextMessageCreatedTime == INVALID_TIME -> {
+                topMargin(root, 14)
                 cvLeftChatProfile.visibility = View.VISIBLE
                 tvChatLeftProfileNickname.text = currentTPMessage.username
                 ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
@@ -54,15 +61,17 @@ class LeftMessageViewHolder(
                     cvLeftChatProfile.visibility = View.INVISIBLE
                     tvChatLeftProfileNickname.visibility = View.GONE
                 } else {
+                    ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
                     tvChatLeftProfileNickname.text = currentTPMessage.username
+                    topMargin(root, 14)
                     cvLeftChatProfile.visibility = View.VISIBLE
                 }
-                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
                 tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
             }
             nextMessageCreatedTime == currentMessageCreatedTime ->  {
                 when (previousMessageCreatedTime != currentMessageCreatedTime) {
                     true -> {
+                        topMargin(root, 14)
                         cvLeftChatProfile.visibility = View.VISIBLE
                         ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
                         tvChatLeftProfileNickname.visibility = View.VISIBLE
@@ -95,6 +104,14 @@ class LeftMessageViewHolder(
 
     private fun longToTime(createdAt: Long?): String {
         return createdAt?.let { SimpleDateFormat("HH:mm", Locale.getDefault()).format(it) } ?: INVALID_TIME
+    }
+
+    private fun topMargin(
+        rootView: ConstraintLayout,
+        margin: Int
+    ) {
+        val layoutParams = rootView.layoutParams as? ViewGroup.MarginLayoutParams
+        layoutParams?.topMargin = margin.dpToPxInt(itemView.context)
     }
 
     companion object {

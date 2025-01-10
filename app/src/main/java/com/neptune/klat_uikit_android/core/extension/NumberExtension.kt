@@ -10,6 +10,10 @@ fun Int.dpToPx(context: Context): Float {
     return this * context.resources.displayMetrics.density
 }
 
+fun Int.dpToPxInt(context: Context): Int {
+    return (this * context.resources.displayMetrics.density).toInt()
+}
+
 fun Float.pxToDp(context: Context): Float {
     return this / context.resources.displayMetrics.density
 }

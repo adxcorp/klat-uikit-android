@@ -1,16 +1,14 @@
 package com.neptune.klat_uikit_android.feature.chat.viewholder
 
-import android.content.Context
 import android.util.Log
 import android.view.View
+import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.recyclerview.widget.RecyclerView
-import com.neptune.klat_uikit_android.core.extension.dpToPx
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
 import io.talkplus.TalkPlus
-import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
-import org.jetbrains.annotations.TestOnly
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -21,40 +19,75 @@ class LeftMessageViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         currentTPMessage: TPMessage,
-        previousTPMessage: TPMessage?,
         nextTPMessage: TPMessage?,
-        tpMessages: List<TPMessage>
+        previousMessage: TPMessage?
     ) = with(binding) {
 
-        val previousMessageCreatedTime: String = longToTime(previousTPMessage?.createdAt)
+        tvLeftChatProfileLastMessageAt.visibility = View.VISIBLE
+        ivLeftChatProfileThumbnail.visibility = View.VISIBLE
+        tvChatLeftProfileNickname.visibility = View.VISIBLE
+        cvLeftChatProfile.visibility = View.VISIBLE
+
         val currentMessageCreatedTime: String = longToTime(currentTPMessage.createdAt)
         val nextMessageCreatedTime: String = longToTime(nextTPMessage?.createdAt)
+        val previousMessageCreatedTime: String = longToTime(previousMessage?.createdAt)
 
         tvLeftChatProfileMessage.text = currentTPMessage.text
 
-        if (tpChannel.getMessageUnreadCount(currentTPMessage) != CHAT_MESSAGES_READ_ALL) {
-            tvLeftChatProfileUnReadCount.text = tpChannel.getMessageUnreadCount(currentTPMessage).toString()
+        if (ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage) != CHAT_MESSAGES_READ_ALL) {
+            tvLeftChatProfileUnReadCount.text = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString()
         }
-
-        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
 
         ivLeftChatProfileThumbnail.setOnClickListener {
             onClickProfile.invoke(currentTPMessage)
         }
 
-        tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+        when {
+            nextMessageCreatedTime == INVALID_TIME -> {
+                cvLeftChatProfile.visibility = View.VISIBLE
+                tvChatLeftProfileNickname.text = currentTPMessage.username
+                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+            }
+            nextMessageCreatedTime != currentMessageCreatedTime ->  {
+                if (currentMessageCreatedTime == previousMessageCreatedTime) {
+                    cvLeftChatProfile.visibility = View.INVISIBLE
+                    tvChatLeftProfileNickname.visibility = View.GONE
+                } else {
+                    tvChatLeftProfileNickname.text = currentTPMessage.username
+                    cvLeftChatProfile.visibility = View.VISIBLE
+                }
+                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+            }
+            nextMessageCreatedTime == currentMessageCreatedTime ->  {
+                when (previousMessageCreatedTime != currentMessageCreatedTime) {
+                    true -> {
+                        cvLeftChatProfile.visibility = View.VISIBLE
+                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
+                        tvChatLeftProfileNickname.visibility = View.VISIBLE
+                        tvChatLeftProfileNickname.text = currentTPMessage.username
+                        tvLeftChatProfileLastMessageAt.visibility = View.GONE
+                    }
+                    false -> {
+                        cvLeftChatProfile.visibility = View.INVISIBLE
+                        tvChatLeftProfileNickname.visibility = View.GONE
+                        tvLeftChatProfileLastMessageAt.visibility = View.GONE
+                    }
+                }
+            }
+        }
 
-
-        // 테스트
+        // 리액션 테스트
         itemView.setOnClickListener {
             TalkPlus.addMessageReaction(currentTPMessage,
-                "happy???zzz",
+                "❤️",
                 object : TalkPlus.CallbackListener<TPMessage> {
                     override fun onSuccess(tpMessage: TPMessage) {
                         Log.d("!! : 성공 : ", tpMessage.toString())
                     }
                     override fun onFailure(errorCode: Int, exception: Exception) {
-
+                        Log.d("!! : 실패 : ", exception.toString())
                     }
                 })
         }

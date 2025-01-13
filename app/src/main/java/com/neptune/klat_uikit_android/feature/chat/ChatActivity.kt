@@ -147,10 +147,6 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
         clChatCamera.setOnClickListener {
 
         }
-
-        clChatFile.setOnClickListener {
-
-        }
     }
 
     private fun setRecyclerViewListener() = with(binding) {

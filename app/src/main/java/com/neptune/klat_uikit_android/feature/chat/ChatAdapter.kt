@@ -64,13 +64,18 @@ class ChatAdapter(
     }
 
     fun addMessages(nextTpMessages: List<TPMessage>) {
-        tpMessages.addAll(0, nextTpMessages)
-        notifyItemRangeInserted(0, nextTpMessages.size)
+        tpMessages.addAll(FIRST_POSITION, nextTpMessages)
+        notifyItemRangeInserted(FIRST_POSITION, nextTpMessages.size)
+        updateLastMessage()
     }
 
     fun addMessage(newTPMessage: TPMessage) {
         tpMessages.add(newTPMessage)
-        notifyItemInserted(tpMessages.size-1)
+        notifyItemInserted(tpMessages.size)
+    }
+
+    private fun updateLastMessage() {
+        notifyItemChanged(LAST_POSITION)
     }
 
     companion object {
@@ -78,5 +83,8 @@ class ChatAdapter(
         private const val LEFT_PROFILE_MESSAGE = 1
         private const val RIGHT_MESSAGE = 2
         private const val RIGHT_IMAGE_MESSAGE = 3
+
+        private const val LAST_POSITION = 19
+        private const val FIRST_POSITION = 0
     }
 }

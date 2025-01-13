@@ -1,17 +1,13 @@
 package com.neptune.klat_uikit_android.feature.chat.viewholder
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.VIEW_MODEL_STORE_OWNER_KEY
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
-import com.neptune.klat_uikit_android.core.extension.dpToPx
 import com.neptune.klat_uikit_android.core.extension.dpToPxInt
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
-import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -26,19 +22,11 @@ class LeftMessageViewHolder(
         nextTPMessage: TPMessage?,
         previousMessage: TPMessage?
     ) = with(binding) {
-
-        tvLeftChatProfileLastMessageAt.visibility = View.VISIBLE
-        ivLeftChatProfileThumbnail.visibility = View.VISIBLE
-        tvChatLeftProfileNickname.visibility = View.VISIBLE
-        cvLeftChatProfile.visibility = View.VISIBLE
-
-        topMargin(binding.root, 0)
+        initView(currentTPMessage)
 
         val currentMessageCreatedTime: String = longToTime(currentTPMessage.createdAt)
         val nextMessageCreatedTime: String = longToTime(nextTPMessage?.createdAt)
         val previousMessageCreatedTime: String = longToTime(previousMessage?.createdAt)
-
-        tvLeftChatProfileMessage.text = currentTPMessage.text
 
         if (ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage) != CHAT_MESSAGES_READ_ALL) {
             tvLeftChatProfileUnReadCount.text = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString()
@@ -50,55 +38,72 @@ class LeftMessageViewHolder(
 
         when {
             nextMessageCreatedTime == INVALID_TIME -> {
-                topMargin(root, 14)
-                cvLeftChatProfile.visibility = View.VISIBLE
-                tvChatLeftProfileNickname.text = currentTPMessage.username
-                ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+                setFirstMessageUI(
+                    currentTPMessage = currentTPMessage,
+                    currentMessageCreatedTime = currentMessageCreatedTime
+                )
             }
-            nextMessageCreatedTime != currentMessageCreatedTime ->  {
-                if (currentMessageCreatedTime == previousMessageCreatedTime) {
-                    cvLeftChatProfile.visibility = View.INVISIBLE
-                    tvChatLeftProfileNickname.visibility = View.GONE
-                } else {
-                    ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                    tvChatLeftProfileNickname.text = currentTPMessage.username
-                    topMargin(root, 14)
-                    cvLeftChatProfile.visibility = View.VISIBLE
-                }
-                tvLeftChatProfileLastMessageAt.text = currentMessageCreatedTime
+
+            nextMessageCreatedTime != currentMessageCreatedTime -> {
+                setTimeChangeUI(
+                    currentTPMessage = currentTPMessage,
+                    currentMessageCreatedTime = currentMessageCreatedTime,
+                    previousMessageCreatedTime = previousMessageCreatedTime
+                )
             }
+
             nextMessageCreatedTime == currentMessageCreatedTime ->  {
-                when (previousMessageCreatedTime != currentMessageCreatedTime) {
-                    true -> {
-                        topMargin(root, 14)
-                        cvLeftChatProfile.visibility = View.VISIBLE
-                        ivLeftChatProfileThumbnail.loadThumbnail(currentTPMessage.userProfileImage)
-                        tvChatLeftProfileNickname.visibility = View.VISIBLE
-                        tvChatLeftProfileNickname.text = currentTPMessage.username
-                        tvLeftChatProfileLastMessageAt.visibility = View.GONE
-                    }
-                    false -> {
-                        cvLeftChatProfile.visibility = View.INVISIBLE
-                        tvChatLeftProfileNickname.visibility = View.GONE
-                        tvLeftChatProfileLastMessageAt.visibility = View.GONE
-                    }
-                }
+                setSameTimeUI(
+                    currentTPMessage = currentTPMessage,
+                    currentMessageCreatedTime = currentMessageCreatedTime,
+                    previousMessageCreatedTime = previousMessageCreatedTime
+                )
             }
         }
 
-        // 리액션 테스트
         itemView.setOnClickListener {
-            TalkPlus.addMessageReaction(currentTPMessage,
-                "❤️",
-                object : TalkPlus.CallbackListener<TPMessage> {
-                    override fun onSuccess(tpMessage: TPMessage) {
-                        Log.d("!! : 성공 : ", tpMessage.toString())
-                    }
-                    override fun onFailure(errorCode: Int, exception: Exception) {
-                        Log.d("!! : 실패 : ", exception.toString())
-                    }
-                })
+
+        }
+    }
+
+    private fun setFirstMessageUI(
+        currentTPMessage: TPMessage,
+        currentMessageCreatedTime: String
+    ) = with(binding) {
+        setTopMargin(root, 14)
+        setProfileVisibility(true)
+        setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
+        setMessageTimestamp(currentMessageCreatedTime)
+    }
+
+    private fun setTimeChangeUI(
+        currentMessageCreatedTime: String,
+        previousMessageCreatedTime: String,
+        currentTPMessage: TPMessage
+    ) = with(binding) {
+        if (currentMessageCreatedTime == previousMessageCreatedTime) {
+            setProfileVisibility(false)
+        } else {
+            setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
+            setTopMargin(root, 14)
+            setProfileVisibility(true)
+        }
+        setMessageTimestamp(currentMessageCreatedTime)
+    }
+
+    private fun setSameTimeUI(
+        currentMessageCreatedTime: String,
+        previousMessageCreatedTime: String,
+        currentTPMessage: TPMessage
+    ) = with(binding) {
+        if (previousMessageCreatedTime != currentMessageCreatedTime) {
+            setTopMargin(root, 14)
+            setProfileVisibility(true)
+            setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
+            setMessageTimestamp(null)
+        } else {
+            setProfileVisibility(false)
+            setMessageTimestamp(null)
         }
     }
 
@@ -106,12 +111,39 @@ class LeftMessageViewHolder(
         return createdAt?.let { SimpleDateFormat("HH:mm", Locale.getDefault()).format(it) } ?: INVALID_TIME
     }
 
-    private fun topMargin(
+    private fun setTopMargin(
         rootView: ConstraintLayout,
         margin: Int
     ) {
         val layoutParams = rootView.layoutParams as? ViewGroup.MarginLayoutParams
         layoutParams?.topMargin = margin.dpToPxInt(itemView.context)
+    }
+
+    private fun initView(tpMessage: TPMessage) = with(binding) {
+        tvLeftChatProfileLastMessageAt.visibility = View.VISIBLE
+        ivLeftChatProfileThumbnail.visibility = View.VISIBLE
+        tvChatLeftProfileNickname.visibility = View.VISIBLE
+        cvLeftChatProfile.visibility = View.VISIBLE
+        tvLeftChatProfileMessage.text = tpMessage.text
+        setTopMargin(root, 0)
+    }
+
+    private fun setProfileVisibility(isVisible: Boolean) = with(binding) {
+        cvLeftChatProfile.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
+        tvChatLeftProfileNickname.visibility = if (isVisible) View.VISIBLE else View.GONE
+    }
+
+    private fun setProfileData(
+        username: String,
+        imageUrl: String
+    ) = with(binding) {
+        tvChatLeftProfileNickname.text = username
+        ivLeftChatProfileThumbnail.loadThumbnail(imageUrl)
+    }
+
+    private fun setMessageTimestamp(timestamp: String?) = with(binding) {
+        tvLeftChatProfileLastMessageAt.text = timestamp
+        tvLeftChatProfileLastMessageAt.visibility = if (timestamp != null) View.VISIBLE else View.GONE
     }
 
     companion object {

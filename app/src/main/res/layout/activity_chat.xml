@@ -26,6 +26,7 @@
         app:layout_constraintTop_toBottomOf="@+id/layout_chat_header">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:scrollbars="vertical"
             app:stackFromEnd="true"
             android:id="@+id/rv_chat"
             android:layout_width="0dp"

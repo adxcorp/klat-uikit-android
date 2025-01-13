@@ -3,7 +3,6 @@ package com.neptune.klat_uikit_android.feature.chat
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.viewModels
@@ -38,18 +37,20 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
     }
 
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            loadNextMessages(recyclerView)
+        }
+    }
 
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                val isAtTop = !recyclerView.canScrollVertically(-1)
+    private fun loadNextMessages(recyclerView: RecyclerView) {
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+        val visibleItemCount = layoutManager.childCount
+        val totalItemCount = layoutManager.itemCount
+        val firstVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
-                Log.d("!! : isAtTop : ", isAtTop.toString())
-
-                if (isAtTop) {
-                    viewModel.getMessageList()
-                }
-            }
+        if (firstVisibleItemPosition + visibleItemCount >= totalItemCount - 10) {
+            viewModel.getMessageList()
         }
     }
 

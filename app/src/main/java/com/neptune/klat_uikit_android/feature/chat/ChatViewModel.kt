@@ -51,9 +51,6 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
                         val reversedMembers = callbackResult.successData.tpMessages.reversed()
                         tpMessages.addAll(0, reversedMembers)
                         _chatUiState.emit(ChatUiState.GetMessages(reversedMembers))
-
-                        Log.d("!! last : ", tpMessages.firstOrNull()?.text.toString())
-
                     }
 
                     is Result.Failure -> {

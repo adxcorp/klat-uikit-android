@@ -1,15 +1,10 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
-import com.neptune.klat_uikit_android.core.data.model.channel.EventType
-import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
-import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
-import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
@@ -20,9 +15,6 @@ import kotlinx.coroutines.launch
 
 class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository()) : ViewModel() {
     private var hasNext: Boolean = true
-
-    var currentPosition = 0
-        private set
 
     var isFirstLoad: Boolean = true
         private set
@@ -83,17 +75,48 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
             chatRepository.receiveMessage().collect { tpMessage ->
                 _chatUiState.emit(ChatUiState.ReceiveMessage(tpMessage))
             }
-//            ChannelObject.channelRepository.observeChannel().collect { callbackResult ->
-//                when(callbackResult.type) {
-//                    EventType.BAN_USER -> {}
-//                    EventType.CHANGED_CHANNEL -> {}
-//                    EventType.ADDED_CHANNEL -> {}
-//                    EventType.REMOVED_CHANNEL -> {}
-//                    EventType.RECEIVED_MESSAGE -> {
-//                        _chatUiState.emit(ChatUiState.ReceiveMessage(callbackResult.message ?: error("null")))
-//                    }
-//                }
-//            }
+        }
+    }
+
+    fun addReaction(
+        tpMessage: TPMessage,
+        selectedEmoji: String
+    ) {
+        viewModelScope.launch {
+            chatRepository.addMessageReaction(
+                targetMessage = tpMessage,
+                selectedEmoji = selectedEmoji
+            ).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> Unit // addReaction 성공시 updateReaction 콜백으로 수신됩니다.
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    fun removeReaction(
+        tpMessage: TPMessage,
+        selectedEmoji: String
+    ) {
+        viewModelScope.launch {
+            chatRepository.removeMessageReaction(
+                targetMessage = tpMessage,
+                selectedEmoji = selectedEmoji
+            ).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> Unit // removeReaction 성공시 updateReaction 콜백으로 수신됩니다.
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    fun updateReaction() {
+        viewModelScope.launch {
+            chatRepository.updatedReaction().collect { tpMessage ->
+                _chatUiState.emit(ChatUiState.UpdatedReactionMessage(tpMessage))
+            }
         }
     }
 
@@ -103,9 +126,5 @@ class ChatViewModel(private val chatRepository: ChatRepository = ChatRepository(
 
     fun setFirstLoad(isLoaded: Boolean) {
         isFirstLoad = isLoaded
-    }
-
-    fun setPosition(position: Int) {
-        currentPosition = position
     }
 }

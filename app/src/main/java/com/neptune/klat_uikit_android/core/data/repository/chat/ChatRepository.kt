@@ -118,7 +118,7 @@ class ChatRepository {
         awaitClose { cancel() }
     }
 
-    fun updateReaction(): Flow<TPMessage> = callbackFlow {
+    fun updatedReaction(): Flow<TPMessage> = callbackFlow {
         TalkPlus.addChannelListener(ChannelObject.tpChannel.channelId, object : TalkPlus.ChannelListener {
             override fun onUpdatedReaction(channel: TPChannel, tpMessage: TPMessage) {
                 trySend(tpMessage)

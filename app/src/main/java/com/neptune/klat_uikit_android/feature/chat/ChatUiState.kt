@@ -7,4 +7,5 @@ sealed class ChatUiState {
     data class GetMessages(val tpMessages: List<TPMessage>) : ChatUiState()
     data class SendMessage(val tpMessage: TPMessage) : ChatUiState()
     data class ReceiveMessage(val tpMessage: TPMessage) : ChatUiState()
+    data class UpdatedReactionMessage(val tpMessage: TPMessage) : ChatUiState()
 }

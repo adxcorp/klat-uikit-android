@@ -58,10 +58,69 @@ class ChatRepository {
         }
     }
 
+    fun addMessageReaction(
+        targetMessage: TPMessage,
+        selectedEmoji: String
+    ): Flow<Result<TPMessage, WrappedFailResult>> {
+        return callbackFlow {
+            TalkPlus.addMessageReaction(
+                targetMessage,
+                selectedEmoji,
+                object : TalkPlus.CallbackListener<TPMessage> {
+                    override fun onSuccess(tpMessage: TPMessage) {
+                        trySend(Result.Success(tpMessage))
+                    }
+
+                    override fun onFailure(errorCode: Int, exception: Exception) {
+                        trySend(Result.Failure(WrappedFailResult(
+                            errorCode = errorCode,
+                            exception = exception
+                        )))
+                    }
+                }
+            )
+            awaitClose { cancel() }
+        }
+    }
+
+    fun removeMessageReaction(
+        targetMessage: TPMessage,
+        selectedEmoji: String
+    ): Flow<Result<TPMessage, WrappedFailResult>> {
+        return callbackFlow {
+            TalkPlus.removeMessageReaction(
+                targetMessage,
+                selectedEmoji,
+                object : TalkPlus.CallbackListener<TPMessage> {
+                    override fun onSuccess(tpMessage: TPMessage) {
+                        trySend(Result.Success(tpMessage))
+                    }
+
+                    override fun onFailure(errorCode: Int, exception: Exception) {
+                        trySend(Result.Failure(WrappedFailResult(
+                            errorCode = errorCode,
+                            exception = exception
+                        )))
+                    }
+                }
+            )
+            awaitClose { cancel() }
+        }
+    }
+
 
     fun receiveMessage(): Flow<TPMessage> = callbackFlow {
         TalkPlus.addChannelListener(ChannelObject.tpChannel.channelId, object : TalkPlus.ChannelListener {
             override fun onMessageReceived(tpChannel: TPChannel, tpMessage: TPMessage) {
+                trySend(tpMessage)
+            }
+        })
+        awaitClose { cancel() }
+    }
+
+    fun updateReaction(): Flow<TPMessage> = callbackFlow {
+        TalkPlus.addChannelListener(ChannelObject.tpChannel.channelId, object : TalkPlus.ChannelListener {
+            override fun onUpdatedReaction(channel: TPChannel, tpMessage: TPMessage) {
                 trySend(tpMessage)
             }
         })

@@ -54,7 +54,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private fun init() = with(viewModel) {
         binding.rvChannels.itemAnimator = null
         observeChannelList()
-        getChannelList()
+        getChannels()
     }
 
     private fun observeChannelListUiState() {

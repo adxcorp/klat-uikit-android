@@ -187,11 +187,11 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     }
 
     private fun loadMessages(newTPMessages: List<TPMessage>) {
+        adapter.addMessages(newTPMessages)
         if (viewModel.isFirstLoad) {
             viewModel.setFirstLoad(false)
             binding.rvChat.scrollToPosition(adapter.itemCount-1)
         }
-        adapter.addMessages(newTPMessages)
     }
 
     private fun sendMessage(tpMessage: TPMessage) {

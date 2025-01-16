@@ -27,7 +27,6 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:scrollbars="vertical"
-            app:stackFromEnd="true"
             android:id="@+id/rv_chat"
             android:layout_width="0dp"
             android:layout_height="0dp"

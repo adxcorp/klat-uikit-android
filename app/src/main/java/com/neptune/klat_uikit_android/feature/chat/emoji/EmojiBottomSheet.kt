@@ -37,20 +37,15 @@ class EmojiBottomSheet(
         if (isMe) layoutMessageCopyDelete.root.visibility = View.VISIBLE else layoutMessageCopy.root.visibility = View.VISIBLE
 
         rvEmojis.apply {
-            layoutManager = GridLayoutManager(requireActivity(), 2, LinearLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(requireActivity(), 1, LinearLayoutManager.HORIZONTAL, false)
             adapter = this@EmojiBottomSheet.adapter
-            addItemDecoration(object : RecyclerView.ItemDecoration() {
-                private val space = 16 // dp 단위 간격
-                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                    outRect.set(space, space, space, space)
-                }
-            })
         }
     }
 
     private fun setAdapter(): EmojiAdapter {
         return EmojiAdapter { emoji ->
             emojiSelectedListener.selectedEmoji(emoji)
+            dismiss()
         }
     }
 }

@@ -71,13 +71,23 @@
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/cv_left_chat_profile"
             app:layout_constraintTop_toBottomOf="@+id/tv_chat_left_profile_nickname"
+            app:layout_constraintVertical_bias="0.0"
             tools:text="동일한 시간에 다른 메세지를" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_reactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/tv_left_chat_profile_message"
+            app:layout_constraintTop_toBottomOf="@+id/tv_left_chat_profile_message">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout4"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_left_chat_profile_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/tv_left_chat_profile_message">

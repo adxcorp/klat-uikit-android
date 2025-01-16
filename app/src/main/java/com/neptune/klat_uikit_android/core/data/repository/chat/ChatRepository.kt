@@ -1,14 +1,12 @@
 package com.neptune.klat_uikit_android.core.data.repository.chat
 
+import android.util.Log
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.chat.MessagesResponse
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
-import com.neptune.klat_uikit_android.core.data.model.channel.EventType
-import com.neptune.klat_uikit_android.core.data.model.channel.ObserveChannelResponse
 import io.talkplus.TalkPlus
 import io.talkplus.TalkPlus.TPCallbackListener
-import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
@@ -106,24 +104,5 @@ class ChatRepository {
             )
             awaitClose { cancel() }
         }
-    }
-
-
-    fun receiveMessage(): Flow<TPMessage> = callbackFlow {
-        TalkPlus.addChannelListener(ChannelObject.tpChannel.channelId, object : TalkPlus.ChannelListener {
-            override fun onMessageReceived(tpChannel: TPChannel, tpMessage: TPMessage) {
-                trySend(tpMessage)
-            }
-        })
-        awaitClose { cancel() }
-    }
-
-    fun updatedReaction(): Flow<TPMessage> = callbackFlow {
-        TalkPlus.addChannelListener(ChannelObject.tpChannel.channelId, object : TalkPlus.ChannelListener {
-            override fun onUpdatedReaction(channel: TPChannel, tpMessage: TPMessage) {
-                trySend(tpMessage)
-            }
-        })
-        awaitClose { cancel() }
     }
 }

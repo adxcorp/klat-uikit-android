@@ -20,12 +20,19 @@ import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
+import com.neptune.klat_uikit_android.feature.chat.emoji.EmojiBottomSheet
+import com.neptune.klat_uikit_android.feature.chat.emoji.OnEmojiSelectedListener
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
-class ChatActivity : AppCompatActivity(), MemberInterface {
+class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListener {
+    companion object {
+        const val EXTRA_TP_CHANNEL = "extra_tp_channel"
+        private const val BOTTOM = 0
+    }
+
     private val binding: ActivityChatBinding by lazy { ActivityChatBinding.inflate(layoutInflater) }
     private val viewModel: ChatViewModel by viewModels()
     private val adapter: ChatAdapter by lazy { setAdapter() }
@@ -62,7 +69,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
 
     private fun init() {
         viewModel.getMessageList()
-        viewModel.receiveMessage()
+        viewModel.observeEvent()
         setHeaderUI()
         setRecyclerViewListener()
         observeChatUiState()
@@ -81,6 +88,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
                         is ChatUiState.SendMessage -> sendMessage(chatUiState.tpMessage)
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
                         is ChatUiState.ReceiveMessage -> receiveMessage(chatUiState.tpMessage)
+                        is ChatUiState.UpdatedReactionMessage -> updateReaction(chatUiState.tpMessage)
                     }
                 }
             }
@@ -150,6 +158,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
     }
 
     private fun setRecyclerViewListener() = with(binding) {
+        rvChat.itemAnimator = null
         rvChat.adapter = this@ChatActivity.adapter
         rvChat.addOnScrollListener(onScrollListener)
         rvChat.addOnLayoutChangeListener(onLayoutChangeListener)
@@ -157,8 +166,15 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
 
     private fun setAdapter(): ChatAdapter {
         return ChatAdapter(
-            tpMessages = arrayListOf(),
-            onLongClickMessage = { },
+            onLongClickMessage = { tpMessage, position ->
+                viewModel.setLongClickPosition(position)
+                viewModel.setClickedTPMessage(tpMessage)
+                EmojiBottomSheet(
+                    isMe = ChannelObject.userId == tpMessage.userId,
+                    emojiSelectedListener = this
+                ).show(supportFragmentManager, null)
+            },
+
             onClickProfile = { tpMessage ->
                 ProfileDialog(
                     profileImage =  tpMessage.userProfileImage,
@@ -166,7 +182,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
                     userNickname = tpMessage.username,
                     memberInterface = this
                 ).show(supportFragmentManager, null)
-            }
+            },
         )
     }
 
@@ -191,9 +207,8 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
         }
     }
 
-    companion object {
-        const val EXTRA_TP_CHANNEL = "extra_tp_channel"
-        private const val BOTTOM = 0
+    private fun updateReaction(tpMessage: TPMessage) {
+        adapter.updateReaction(viewModel.longClickPosition, tpMessage)
     }
 
     override fun updateMembers(banId: String) {
@@ -207,5 +222,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface {
     override fun onDestroy() {
         super.onDestroy()
         TalkPlus.removeChannelListener(ChannelObject.tpChannel.channelId)
+    }
+
+    override fun selectedEmoji(emoji: String) {
+        viewModel.updateReaction(emoji)
     }
 }

@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -8,13 +7,17 @@ import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
+import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
 import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-class ChannelListViewModel(private val channelRepository: ChannelRepository = ChannelRepository()) : ViewModel() {
+class ChannelListViewModel(
+    private val channelRepository: ChannelRepository = ChannelRepository(),
+    private val eventRepository: EventRepository = EventRepository()
+) : ViewModel() {
     private var _channelUiState = MutableSharedFlow<ChannelUiState>()
     val channelUiState: SharedFlow<ChannelUiState>
         get() = _channelUiState.asSharedFlow()
@@ -57,12 +60,13 @@ class ChannelListViewModel(private val channelRepository: ChannelRepository = Ch
 
     fun observeChannelList() {
         viewModelScope.launch {
-            channelRepository.observeChannel().collect { callbackResult ->
+            eventRepository.observeChannel(ChannelObject.tag).collect { callbackResult ->
                 when(callbackResult.type) {
                     EventType.BAN_USER -> _channelUiState.emit(ChannelUiState.BanUser(callbackResult.channel))
                     EventType.CHANGED_CHANNEL -> _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
                     EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
                     EventType.REMOVED_CHANNEL -> _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))
+                    EventType.UPDATED_REACTION -> Unit
                     EventType.RECEIVED_MESSAGE -> {
                         _channelUiState.emit(ChannelUiState.ReceivedMessage(
                             tpMessage = callbackResult.message,

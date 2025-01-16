@@ -3,11 +3,13 @@ package com.neptune.klat_uikit_android.feature.chat.viewholder
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.dpToPxInt
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
+import com.neptune.klat_uikit_android.feature.chat.reaction.ReactionAdapter
 import io.talkplus.entity.channel.TPMessage
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -15,7 +17,7 @@ import java.util.Locale
 class LeftMessageViewHolder(
     private val binding: ItemChatLeftProfileBinding,
     private val onClickProfile: (TPMessage) -> Unit,
-    private val onLongClickMessage: () -> Unit,
+    private val onLongClickMessage: (TPMessage, Int) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         currentTPMessage: TPMessage,
@@ -61,8 +63,9 @@ class LeftMessageViewHolder(
             }
         }
 
-        itemView.setOnClickListener {
-
+        itemView.setOnLongClickListener {
+            onLongClickMessage.invoke(currentTPMessage, adapterPosition)
+            true
         }
     }
 
@@ -120,12 +123,26 @@ class LeftMessageViewHolder(
     }
 
     private fun initView(tpMessage: TPMessage) = with(binding) {
+        if (tpMessage.reactions.isEmpty()) {
+            rvReactions.visibility = View.GONE
+        } else {
+            rvReactions.visibility = View.VISIBLE
+            setReaction(tpMessage)
+        }
         tvLeftChatProfileLastMessageAt.visibility = View.VISIBLE
         ivLeftChatProfileThumbnail.visibility = View.VISIBLE
         tvChatLeftProfileNickname.visibility = View.VISIBLE
         cvLeftChatProfile.visibility = View.VISIBLE
         tvLeftChatProfileMessage.text = tpMessage.text
         setTopMargin(root, 0)
+    }
+
+    private fun setReaction(tpMessage: TPMessage) = with(binding) {
+        rvReactions.apply {
+            adapter = ReactionAdapter(tpMessage)
+            layoutManager = GridLayoutManager(root.context, 4)
+            itemAnimator = null
+        }
     }
 
     private fun setProfileVisibility(isVisible: Boolean) = with(binding) {

@@ -39,45 +39,4 @@ class ChannelRepository {
             awaitClose { cancel() }
         }
     }
-
-    fun observeChannel(): Flow<ObserveChannelResponse> = callbackFlow {
-        TalkPlus.addChannelListener(ChannelObject.tag, object : ChannelListener {
-            override fun onMessageReceived(tpChannel: TPChannel, tpMessage: TPMessage) {
-                trySend(ObserveChannelResponse(
-                    type = EventType.RECEIVED_MESSAGE,
-                    channel = tpChannel,
-                    message = tpMessage
-                ))
-            }
-
-            override fun onChannelChanged(tpChannel: TPChannel) {
-                trySend(ObserveChannelResponse(
-                    type = EventType.CHANGED_CHANNEL,
-                    channel = tpChannel,
-                ))
-            }
-
-            override fun onChannelAdded(tpChannel: TPChannel) {
-                trySend(ObserveChannelResponse(
-                    type = EventType.ADDED_CHANNEL,
-                    channel = tpChannel,
-                ))
-            }
-
-            override fun onChannelRemoved(tpChannel: TPChannel) {
-                trySend(ObserveChannelResponse(
-                    type = EventType.REMOVED_CHANNEL,
-                    channel = tpChannel,
-                ))
-            }
-
-            override fun onMemberBanned(tpChannel: TPChannel, users: MutableList<TPMember>) {
-                trySend(ObserveChannelResponse(
-                    type = EventType.BAN_USER,
-                    channel = tpChannel,
-                ))
-            }
-        })
-        awaitClose { cancel() }
-    }
 }

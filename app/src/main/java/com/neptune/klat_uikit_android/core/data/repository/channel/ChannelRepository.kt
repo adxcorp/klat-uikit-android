@@ -1,17 +1,11 @@
 package com.neptune.klat_uikit_android.core.data.repository.channel
 
-import android.util.Log
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
 import com.neptune.klat_uikit_android.core.data.model.channel.ChannelListResponse
-import com.neptune.klat_uikit_android.core.data.model.channel.EventType
-import com.neptune.klat_uikit_android.core.data.model.channel.ObserveChannelResponse
 import io.talkplus.TalkPlus
-import io.talkplus.TalkPlus.ChannelListener
 import io.talkplus.entity.channel.TPChannel
-import io.talkplus.entity.channel.TPMember
-import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -38,5 +32,85 @@ class ChannelRepository {
             })
             awaitClose { cancel() }
         }
+    }
+
+    fun freezeChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
+        TalkPlus.freezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void> {
+            override fun onSuccess(void: Void) {
+                trySend(Result.Success(void))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+
+            }
+        })
+        awaitClose { cancel() }
+    }
+
+    fun unFreezeChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
+        TalkPlus.unfreezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void> {
+            override fun onSuccess(void: Void) {
+                trySend(Result.Success(void))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+
+            }
+        })
+        awaitClose { cancel() }
+    }
+
+    fun removeChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
+        TalkPlus.deleteChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void> {
+            override fun onSuccess(void: Void) {
+                trySend(Result.Success(void))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+
+            }
+        })
+        awaitClose { cancel() }
+    }
+
+    fun leaveChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
+        TalkPlus.leaveChannel(ChannelObject.tpChannel, true, object : TalkPlus.CallbackListener<Void> {
+            override fun onSuccess(void: Void) {
+                trySend(Result.Success(void))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+
+            }
+        })
+        awaitClose { cancel() }
+    }
+
+    fun enablePush(): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.enableChannelPushNotification(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
+            override fun onSuccess(tpChannel: TPChannel) {
+                ChannelObject.setTPChannel(tpChannel)
+                trySend(Result.Success(tpChannel))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+
+            }
+        })
+        awaitClose { cancel() }
+    }
+
+    fun disablePush(): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.disableChannelPushNotification(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
+            override fun onSuccess(tpChannel: TPChannel) {
+                ChannelObject.setTPChannel(tpChannel)
+                trySend(Result.Success(tpChannel))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+
+            }
+        })
+        awaitClose { cancel() }
     }
 }

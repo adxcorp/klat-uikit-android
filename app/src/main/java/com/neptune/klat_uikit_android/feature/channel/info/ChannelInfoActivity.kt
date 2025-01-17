@@ -4,11 +4,15 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ActivityChannelInfoBinding
 import com.neptune.klat_uikit_android.feature.member.list.MemberActivity
+import kotlinx.coroutines.launch
 
 class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
     private val viewModel: ChannelInfoViewModel by viewModels()
@@ -19,7 +23,32 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
 
     override fun init() {
         if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setOwnerUI() else setDefaultUI()
+        observeChannelInfo()
         setListener()
+    }
+
+    private fun observeChannelInfo() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.channelInfoUiState.collect { channelInfoUiState ->
+                    handleChannelInfoUiState(channelInfoUiState)
+                }
+            }
+        }
+    }
+
+    private fun handleChannelInfoUiState(channelInfoUiState: ChannelInfoUiState) {
+        when (channelInfoUiState) {
+            is ChannelInfoUiState.BaseState -> {
+
+            }
+            is ChannelInfoUiState.LeaveChannel -> finish()
+            is ChannelInfoUiState.Frozen -> { }
+            is ChannelInfoUiState.UnFrozen -> { }
+            is ChannelInfoUiState.RemoveChannel -> { }
+            is ChannelInfoUiState.EnablePush -> { }
+            is ChannelInfoUiState.DisablePush -> { }
+        }
     }
 
     override fun onResume() {

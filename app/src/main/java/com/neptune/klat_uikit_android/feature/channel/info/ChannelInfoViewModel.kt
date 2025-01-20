@@ -60,7 +60,7 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
 
     fun enablePush() {
         viewModelScope.launch {
-            channelRepository.leaveChannel().collect { callbackResult ->
+            channelRepository.enablePush().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelInfoUiState.emit(ChannelInfoUiState.EnablePush)
                     is Result.Failure -> {}
@@ -71,7 +71,7 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
 
     fun disablePush() {
         viewModelScope.launch {
-            channelRepository.leaveChannel().collect { callbackResult ->
+            channelRepository.disablePush().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelInfoUiState.emit(ChannelInfoUiState.DisablePush)
                     is Result.Failure -> {}

@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.core.data.repository.channel
 
+import android.util.Log
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
@@ -90,6 +91,7 @@ class ChannelRepository {
         TalkPlus.enableChannelPushNotification(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
             override fun onSuccess(tpChannel: TPChannel) {
                 ChannelObject.setTPChannel(tpChannel)
+                Log.d("!! enablePush : ", tpChannel.isPushNotificationDisabled.toString())
                 trySend(Result.Success(tpChannel))
             }
 
@@ -104,6 +106,7 @@ class ChannelRepository {
         TalkPlus.disableChannelPushNotification(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
             override fun onSuccess(tpChannel: TPChannel) {
                 ChannelObject.setTPChannel(tpChannel)
+                Log.d("!! disablePush : ", tpChannel.isPushNotificationDisabled.toString())
                 trySend(Result.Success(tpChannel))
             }
 

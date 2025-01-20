@@ -2,6 +2,7 @@ package com.neptune.klat_uikit_android.feature.channel.info
 
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,7 +23,7 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
     }
 
     override fun init() {
-        if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setOwnerUI() else setDefaultUI()
+        bindView()
         observeChannelInfo()
         setListener()
     }
@@ -43,11 +44,11 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
 
             }
             is ChannelInfoUiState.LeaveChannel -> finish()
-            is ChannelInfoUiState.Frozen -> { }
-            is ChannelInfoUiState.UnFrozen -> { }
-            is ChannelInfoUiState.RemoveChannel -> { }
-            is ChannelInfoUiState.EnablePush -> { }
-            is ChannelInfoUiState.DisablePush -> { }
+            is ChannelInfoUiState.Frozen -> binding.layoutChannelInfo4.switchInfo.isSelected = true
+            is ChannelInfoUiState.UnFrozen -> binding.layoutChannelInfo4.switchInfo.isSelected = false
+            is ChannelInfoUiState.RemoveChannel -> finish()
+            is ChannelInfoUiState.EnablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = true
+            is ChannelInfoUiState.DisablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = false
         }
     }
 
@@ -57,10 +58,6 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
     }
 
     private fun setDefaultUI() = with(binding) {
-        layoutChannelInfo2.root.visibility = View.GONE
-        layoutChannelInfo3.root.visibility = View.GONE
-        layoutChannelInfo4.root.visibility = View.GONE
-
         layoutChannelInfo1.tvInfoTitle.text = "참여자 목록"
         layoutChannelInfo1.root.setOnClickListener {
             val intent = Intent(this@ChannelInfoActivity, MemberActivity::class.java).apply {
@@ -69,15 +66,9 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
             startActivity(intent)
         }
 
-        layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
-        layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
-
-        layoutChannelInfo6.tvInfoTitle.text = "채널 삭제"
-        layoutChannelInfo6.ivChannelInfoArrow.visibility = View.GONE
-        layoutChannelInfo6.tvInfoTitle.setTextColor(Color.parseColor("#F53D3D"))
-        layoutChannelInfo6.root.setOnClickListener {
-
-        }
+        layoutChannelInfo2.root.visibility = View.GONE
+        layoutChannelInfo3.root.visibility = View.GONE
+        layoutChannelInfo4.root.visibility = View.GONE
     }
 
     private fun setOwnerUI() = with(binding) {
@@ -103,17 +94,8 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
         }
 
         layoutChannelInfo4.tvInfoSwitchTitle.text = "채널 얼리기"
+        layoutChannelInfo4.switchInfo.isChecked = ChannelObject.tpChannel.isFrozen
         layoutChannelInfo4.tvInfoSwitchSubTitle.visibility = View.GONE
-
-        layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
-        layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
-
-        layoutChannelInfo6.tvInfoTitle.text = "채널 삭제"
-        layoutChannelInfo6.ivChannelInfoArrow.visibility = View.GONE
-        layoutChannelInfo6.tvInfoTitle.setTextColor(Color.parseColor("#F53D3D"))
-        layoutChannelInfo6.root.setOnClickListener {
-
-        }
     }
 
     private fun setChannelInfo() = with(binding) {
@@ -126,9 +108,30 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
         ivChannelInfoBack.setOnClickListener {
             finish()
         }
+
+        // 채널 나가기, 삭제
+        layoutChannelInfo6.root.setOnClickListener {
+
+        }
+
+        // 푸시 설정
+        layoutChannelInfo5.switchInfo.setOnCheckedChangeListener { _, isChecked ->
+            when (isChecked) {
+                true -> viewModel.disablePush()
+                false -> viewModel.enablePush()
+            }
+        }
     }
 
-    companion object {
-        const val EXTRA_TP_CHANNEL = "extra_tp_channel"
+    private fun bindView() = with(binding) {
+        if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setOwnerUI() else setDefaultUI()
+
+        layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
+        layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
+        layoutChannelInfo5.switchInfo.isChecked = ChannelObject.tpChannel.isPushNotificationDisabled
+
+        layoutChannelInfo6.tvInfoTitle.text = "채널 삭제"
+        layoutChannelInfo6.ivChannelInfoArrow.visibility = View.GONE
+        layoutChannelInfo6.tvInfoTitle.setTextColor(Color.parseColor("#F53D3D"))
     }
 }

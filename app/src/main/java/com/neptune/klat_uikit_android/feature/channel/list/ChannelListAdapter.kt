@@ -1,6 +1,9 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
-import android.util.Log
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import java.util.Locale
 
 class ChannelListAdapter(
     private val channelList: ArrayList<TPChannel>,
+    private val searchKeyword: String = "",
     private val onClick: (TPChannel) -> Unit
 ) : RecyclerView.Adapter<ChannelListAdapter.ChannelViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
@@ -32,8 +36,16 @@ class ChannelListAdapter(
 
     inner class ChannelViewHolder(private val binding: ItemChannelBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(tpChannel: TPChannel) = with(binding) {
-            tvChannelName.text = tpChannel.channelName
             tvChannelMemberCount.text = tpChannel.memberCount.toString()
+
+            if (searchKeyword.isNotEmpty()) {
+                tvChannelName.text = highlightKeyword(
+                    channelName = tvChannelName.text.toString(),
+                    keyword = searchKeyword
+                )
+            } else {
+                tvChannelName.text = tpChannel.channelName
+            }
 
             if (tpChannel.lastMessage != null) {
                 tvLastMessage.text = tpChannel.lastMessage.text
@@ -71,6 +83,27 @@ class ChannelListAdapter(
                 currentTime.get(Calendar.DAY_OF_YEAR) == messageTime.get(Calendar.DAY_OF_YEAR)
 
             return if (isToday) timeFormat.format(messageTime.time) else dateFormat.format(messageTime.time)
+        }
+
+        private fun highlightKeyword(
+            channelName: String,
+            keyword: String,
+            color: Int = Color.parseColor("#00BFBF")
+        ): SpannableString {
+            val startIndex = channelName.indexOf(keyword, ignoreCase = true)
+            if (startIndex == -1) {
+                return SpannableString(channelName)
+            }
+
+            val spannableString = SpannableString(channelName)
+            val endIndex = startIndex + keyword.length
+            spannableString.setSpan(
+                ForegroundColorSpan(color), // 강조할 색상
+                startIndex,
+                endIndex,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            return spannableString
         }
     }
 

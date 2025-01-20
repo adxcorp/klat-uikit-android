@@ -97,7 +97,10 @@ class ChannelSearchActivity : AppCompatActivity() {
     }
 
     private fun setChannelListAdapter(channelList: List<TPChannel>): ChannelListAdapter {
-        return ChannelListAdapter(channelList as ArrayList<TPChannel>) { tpChannel ->
+        return ChannelListAdapter(
+            channelList = channelList as ArrayList<TPChannel>,
+            searchKeyword = binding.layoutChannelSearch.etSearch.text.toString()
+        ) { tpChannel ->
             val intent = Intent(this, ChatActivity::class.java).apply {
                 ChannelObject.setTPChannel(tpChannel)
             }

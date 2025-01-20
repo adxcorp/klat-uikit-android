@@ -11,11 +11,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
+import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
+import com.neptune.klat_uikit_android.core.ui.interfaces.ChannelActions
 import com.neptune.klat_uikit_android.databinding.ActivityChannelInfoBinding
 import com.neptune.klat_uikit_android.feature.member.list.MemberActivity
 import kotlinx.coroutines.launch
 
-class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
+class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelActions {
     private val viewModel: ChannelInfoViewModel by viewModels()
 
     override fun bindingFactory(): ActivityChannelInfoBinding {
@@ -43,10 +46,16 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
             is ChannelInfoUiState.BaseState -> {
 
             }
-            is ChannelInfoUiState.LeaveChannel -> finish()
+            is ChannelInfoUiState.LeaveChannel -> {
+                Log.d("!! : ", "leave")
+                finish()
+            }
             is ChannelInfoUiState.Frozen -> binding.layoutChannelInfo4.switchInfo.isSelected = true
             is ChannelInfoUiState.UnFrozen -> binding.layoutChannelInfo4.switchInfo.isSelected = false
-            is ChannelInfoUiState.RemoveChannel -> finish()
+            is ChannelInfoUiState.RemoveChannel -> {
+                Log.d("!! : ", "remove")
+                finish()
+            }
             is ChannelInfoUiState.EnablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = true
             is ChannelInfoUiState.DisablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = false
         }
@@ -111,7 +120,11 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
 
         // 채널 나가기, 삭제
         layoutChannelInfo6.root.setOnClickListener {
-
+            AlertDialog(
+                stateType = if (viewModel.isChannelOwner) StateType.REMOVE else StateType.LEAVE,
+                title = ChannelObject.tpChannel.channelName,
+                channelActions = this@ChannelInfoActivity
+            ).showNow(supportFragmentManager, null)
         }
 
         // 푸시 설정
@@ -124,14 +137,22 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>() {
     }
 
     private fun bindView() = with(binding) {
-        if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setOwnerUI() else setDefaultUI()
+        if (viewModel.isChannelOwner) setOwnerUI() else setDefaultUI()
 
         layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
         layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
         layoutChannelInfo5.switchInfo.isChecked = ChannelObject.tpChannel.isPushNotificationDisabled
 
-        layoutChannelInfo6.tvInfoTitle.text = "채널 삭제"
+        layoutChannelInfo6.tvInfoTitle.text = if (viewModel.isChannelOwner) "채널 삭제" else "채널 나가기"
         layoutChannelInfo6.ivChannelInfoArrow.visibility = View.GONE
         layoutChannelInfo6.tvInfoTitle.setTextColor(Color.parseColor("#F53D3D"))
+    }
+
+    override fun removeChannel() {
+        viewModel.removeChannel()
+    }
+
+    override fun leaveChannel() {
+        viewModel.leaveChannel()
     }
 }

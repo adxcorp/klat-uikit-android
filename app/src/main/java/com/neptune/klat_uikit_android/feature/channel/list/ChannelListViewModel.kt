@@ -59,11 +59,13 @@ class ChannelListViewModel(
         viewModelScope.launch {
             eventRepository.observeChannel(ChannelObject.tag).collect { callbackResult ->
                 when (callbackResult.type) {
+                    EventType.UPDATED_REACTION -> Unit
+                    EventType.LEAVE_OTHER_USER -> Unit
                     EventType.BAN_USER -> _channelUiState.emit(ChannelUiState.BanUser(callbackResult.channel))
                     EventType.CHANGED_CHANNEL -> _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
                     EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
                     EventType.REMOVED_CHANNEL -> _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))
-                    EventType.UPDATED_REACTION -> Unit
+                    EventType.LEAVE_CHANNEL -> _channelUiState.emit(ChannelUiState.LeaveChannel(callbackResult.channel))
                     EventType.RECEIVED_MESSAGE -> {
                         _channelUiState.emit(
                             ChannelUiState.ReceivedMessage(

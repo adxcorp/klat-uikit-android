@@ -5,6 +5,7 @@ import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
 import com.neptune.klat_uikit_android.core.data.model.channel.ChannelListResponse
+import com.neptune.klat_uikit_android.core.util.LogUtils
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.cancel
@@ -61,10 +62,10 @@ class ChannelRepository {
         awaitClose { cancel() }
     }
 
-    fun removeChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
-        TalkPlus.deleteChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void> {
-            override fun onSuccess(void: Void) {
-                trySend(Result.Success(void))
+    fun removeChannel(): Flow<Result<Unit, WrappedFailResult>> = callbackFlow {
+        TalkPlus.deleteChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void?> {
+            override fun onSuccess(void: Void?) {
+                trySend(Result.Success(Unit))
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
@@ -74,10 +75,10 @@ class ChannelRepository {
         awaitClose { cancel() }
     }
 
-    fun leaveChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
-        TalkPlus.leaveChannel(ChannelObject.tpChannel, true, object : TalkPlus.CallbackListener<Void> {
-            override fun onSuccess(void: Void) {
-                trySend(Result.Success(void))
+    fun leaveChannel(): Flow<Result<Unit, WrappedFailResult>> = callbackFlow {
+        TalkPlus.leaveChannel(ChannelObject.tpChannel, true, object : TalkPlus.CallbackListener<Void?> {
+            override fun onSuccess(void: Void?) {
+                trySend(Result.Success(Unit))
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
@@ -91,7 +92,6 @@ class ChannelRepository {
         TalkPlus.enableChannelPushNotification(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
             override fun onSuccess(tpChannel: TPChannel) {
                 ChannelObject.setTPChannel(tpChannel)
-                Log.d("!! enablePush : ", tpChannel.isPushNotificationDisabled.toString())
                 trySend(Result.Success(tpChannel))
             }
 
@@ -106,7 +106,6 @@ class ChannelRepository {
         TalkPlus.disableChannelPushNotification(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
             override fun onSuccess(tpChannel: TPChannel) {
                 ChannelObject.setTPChannel(tpChannel)
-                Log.d("!! disablePush : ", tpChannel.isPushNotificationDisabled.toString())
                 trySend(Result.Success(tpChannel))
             }
 

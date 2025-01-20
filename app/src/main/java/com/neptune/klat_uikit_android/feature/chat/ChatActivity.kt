@@ -74,6 +74,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
         setRecyclerViewListener()
         observeChatUiState()
         if (ChannelObject.tpChannel.isFrozen) setFrozenUI() else setMessageBarUI()
+        if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setMessageBarUI()
     }
 
     private fun observeChatUiState() {
@@ -89,6 +90,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
                         is ChatUiState.ReceiveMessage -> receiveMessage(chatUiState.tpMessage)
                         is ChatUiState.UpdatedReactionMessage -> updateReaction(chatUiState.tpMessage)
+                        is ChatUiState.Frozen -> if (chatUiState.isFrozen) setFrozenUI() else setMessageBarUI()
+                        is ChatUiState.LeaveChannel -> finish()
+                        is ChatUiState.RemoveChannel -> finish()
                     }
                 }
             }
@@ -209,14 +213,6 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
 
     private fun updateReaction(tpMessage: TPMessage) {
         adapter.updateReaction(viewModel.longClickPosition, tpMessage)
-    }
-
-    override fun updateMembers(banId: String) {
-
-    }
-
-    override fun updateOwner(ownerId: String) {
-
     }
 
     override fun onDestroy() {

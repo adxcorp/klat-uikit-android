@@ -1,7 +1,9 @@
 package com.neptune.klat_uikit_android.feature.channel.info
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,6 +15,8 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
     private var _channelInfoUiState = MutableSharedFlow<ChannelInfoUiState>()
     val channelInfoUiState: SharedFlow<ChannelInfoUiState>
         get() = _channelInfoUiState.asSharedFlow()
+
+    val isChannelOwner: Boolean = ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId
 
     fun freezeChannel() {
         viewModelScope.launch {
@@ -41,7 +45,7 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
             channelRepository.removeChannel().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelInfoUiState.emit(ChannelInfoUiState.RemoveChannel)
-                    is Result.Failure -> {}
+                    is Result.Failure -> { }
                 }
             }
         }
@@ -52,7 +56,7 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
             channelRepository.leaveChannel().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelInfoUiState.emit(ChannelInfoUiState.LeaveChannel)
-                    is Result.Failure -> {}
+                    is Result.Failure -> { }
                 }
             }
         }

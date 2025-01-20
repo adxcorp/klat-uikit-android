@@ -3,7 +3,6 @@ package com.neptune.klat_uikit_android.core.ui.components.alert
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,18 +12,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
-import com.neptune.klat_uikit_android.core.base.ChannelObject
-import com.neptune.klat_uikit_android.core.ui.components.enums.AlertType
-import com.neptune.klat_uikit_android.core.ui.interfaces.DialogInterface
+import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
+import com.neptune.klat_uikit_android.core.ui.interfaces.ChannelActions
+import com.neptune.klat_uikit_android.core.ui.interfaces.UserStatusActions
 import com.neptune.klat_uikit_android.databinding.LayoutAlertDialogBinding
-import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.launch
 
 class AlertDialog(
-    private val alertType: AlertType,
-    private val userId: String,
-    private val userNickname: String,
-    private val dialogInterface: DialogInterface
+    private val stateType: StateType,
+    private val userId: String = "",
+    private val title: String,
+    private val userStatusActions: UserStatusActions? = null,
+    private val channelActions: ChannelActions? = null
 ) : DialogFragment() {
     private var _binding: LayoutAlertDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutAlertDialogBinding 초기화 에러")
@@ -56,45 +55,70 @@ class AlertDialog(
 
     private fun handleAlertUiState(alertUiState: AlertUiState) {
         when (alertUiState) {
-            is AlertUiState.BaseState -> { }
-            is AlertUiState.BanUser -> dialogInterface.banUser(userId)
-            is AlertUiState.MuteUser -> dialogInterface.muteUser()
-            is AlertUiState.PeerMuteUser -> dialogInterface.peerMuteUser()
-            is AlertUiState.GrantOwner -> dialogInterface.grantOwner(userId)
+            is AlertUiState.BaseState -> {
+
+            }
+            is AlertUiState.BanUser -> userStatusActions?.banUser(userId)
+            is AlertUiState.MuteUser -> userStatusActions?.muteUser()
+            is AlertUiState.PeerMuteUser -> userStatusActions?.peerMuteUser()
+            is AlertUiState.GrantOwner -> userStatusActions?.grantOwner(userId)
+            is AlertUiState.LeaveChannel -> channelActions?.leaveChannel()
+            is AlertUiState.RemoveChannel -> channelActions?.removeChannel()
         }
         dialog?.dismiss()
     }
 
     private fun setAlertViewType() = with(binding) {
-        when (alertType) {
-            AlertType.BAN -> {
+        when (stateType) {
+            StateType.BAN -> {
                 tvAlertRight.setOnClickListener { viewModel.banUser(userId)  }
                 setContent(
-                    titleDescription = getString(R.string.alert_ban_title, userNickname),
+                    titleDescription = getString(R.string.alert_ban_title, title),
                     contentDescription = getString(R.string.alert_ban_description)
                 )
             }
 
-            AlertType.OWNER -> {
+            StateType.OWNER -> {
                 tvAlertRight.setOnClickListener { viewModel.grantOwner(userId) }
                 setContent(
-                    titleDescription = getString(R.string.alert_grant_owner_title, userNickname),
+                    titleDescription = getString(R.string.alert_grant_owner_title, title),
                     contentDescription = getString(R.string.alert_grant_owner_description)
                 )
             }
 
-            AlertType.MUTE -> {
-                setContent(
-                    titleDescription = getString(R.string.alert_mute_title, userNickname),
-                    contentDescription = getString(R.string.alert_mute_description)
-                )
-
+            StateType.MUTE -> {
                 tvAlertRight.setOnClickListener {
                     when {
                         viewModel.isChannelOwner -> viewModel.muteUser(userId)
                         else -> viewModel.peerMuteUser(userId)
                     }
                 }
+                setContent(
+                    titleDescription = getString(R.string.alert_mute_title, title),
+                    contentDescription = getString(R.string.alert_mute_description)
+                )
+            }
+
+            StateType.REMOVE -> {
+                tvAlertRight.setOnClickListener {
+                    channelActions?.removeChannel()
+                    dialog?.dismiss()
+                }
+                setContent(
+                    titleDescription = getString(R.string.alert_remove_title, title),
+                    contentDescription = getString(R.string.alert_remove_description)
+                )
+            }
+
+            StateType.LEAVE -> {
+                tvAlertRight.setOnClickListener {
+                    channelActions?.leaveChannel()
+                    dialog?.dismiss()
+                }
+                setContent(
+                    titleDescription = getString(R.string.alert_leave_title, title),
+                    contentDescription = getString(R.string.alert_leave_description)
+                )
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.neptune.klat_uikit_android.core.ui.components.enums
 
-enum class AlertType {
+enum class StateType {
     BAN,
     MUTE,
-    OWNER
+    OWNER,
+    REMOVE,
+    LEAVE
 }

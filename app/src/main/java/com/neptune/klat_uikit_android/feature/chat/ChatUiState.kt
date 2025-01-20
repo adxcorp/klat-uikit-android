@@ -8,4 +8,7 @@ sealed class ChatUiState {
     data class SendMessage(val tpMessage: TPMessage) : ChatUiState()
     data class ReceiveMessage(val tpMessage: TPMessage) : ChatUiState()
     data class UpdatedReactionMessage(val tpMessage: TPMessage) : ChatUiState()
+    data class Frozen(val isFrozen: Boolean) : ChatUiState()
+    object LeaveChannel : ChatUiState()
+    object RemoveChannel : ChatUiState()
 }

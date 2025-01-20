@@ -9,7 +9,9 @@ import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
 import com.neptune.klat_uikit_android.core.extension.getKeyByValue
+import com.neptune.klat_uikit_android.core.util.LogUtils
 import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
+import io.talkplus.entity.channel.TPMember
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
@@ -89,11 +91,13 @@ class ChatViewModel(
             eventRepository.observeChannel(ChannelObject.tpChannel.channelId).collect { callbackResult ->
                 when(callbackResult.type) {
                     EventType.BAN_USER -> Unit
-                    EventType.CHANGED_CHANNEL -> Unit
                     EventType.ADDED_CHANNEL -> Unit
-                    EventType.REMOVED_CHANNEL -> Unit
+                    EventType.LEAVE_OTHER_USER -> Unit
+                    EventType.CHANGED_CHANNEL -> _chatUiState.emit(ChatUiState.Frozen(callbackResult.channel.isFrozen))
+                    EventType.REMOVED_CHANNEL -> _chatUiState.emit(ChatUiState.RemoveChannel)
                     EventType.UPDATED_REACTION -> _chatUiState.emit(ChatUiState.UpdatedReactionMessage(callbackResult.message))
                     EventType.RECEIVED_MESSAGE -> _chatUiState.emit(ChatUiState.ReceiveMessage(callbackResult.message))
+                    EventType.LEAVE_CHANNEL -> _chatUiState.emit(ChatUiState.LeaveChannel)
                 }
             }
         }
@@ -165,6 +169,7 @@ class ChatViewModel(
         }
         return null
     }
+
 
     fun setClickedTPMessage(tpMessage: TPMessage) {
         clickedTPMessage = tpMessage

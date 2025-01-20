@@ -83,6 +83,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             is ChannelUiState.RemovedChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
             is ChannelUiState.ChangedChannel -> adapter.updateChannelItem(channelUiState.tpChannel)
             is ChannelUiState.BanUser -> adapter.updateChannelItem(channelUiState.tpChannel)
+            is ChannelUiState.LeaveChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
         }
     }
 

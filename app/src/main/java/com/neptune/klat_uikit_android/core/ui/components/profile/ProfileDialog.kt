@@ -13,8 +13,8 @@ import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
-import com.neptune.klat_uikit_android.core.ui.components.enums.AlertType
-import com.neptune.klat_uikit_android.core.ui.interfaces.DialogInterface
+import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
+import com.neptune.klat_uikit_android.core.ui.interfaces.UserStatusActions
 import com.neptune.klat_uikit_android.databinding.LayoutProfileDialogBinding
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import kotlinx.coroutines.launch
@@ -24,7 +24,7 @@ class ProfileDialog(
     private val userNickname: String,
     private val profileImage: String,
     private val memberInterface: MemberInterface
-) : DialogFragment(), DialogInterface {
+) : DialogFragment(), UserStatusActions {
     private var _binding: LayoutProfileDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutProfileDialogBinding 초기화 에러")
     private val viewModel: ProfileViewModel by viewModels()
@@ -70,13 +70,13 @@ class ProfileDialog(
 
     private fun setClickListener() = with(binding) {
         ivProfileClose.setOnClickListener { dialog?.dismiss() }
-        clProfileBlock.setOnClickListener { showAlertDialog(type = AlertType.BAN) }
-        clOwner.setOnClickListener { showAlertDialog(type = AlertType.OWNER) }
+        clProfileBlock.setOnClickListener { showAlertDialog(type = StateType.BAN) }
+        clOwner.setOnClickListener { showAlertDialog(type = StateType.OWNER) }
         clProfileMute.setOnClickListener {
             when {
                 viewModel.isMuted && viewModel.isChannelOwner -> viewModel.unMuteUser(userId)
                 viewModel.isMuted && !viewModel.isChannelOwner -> viewModel.peerUnMuteUser(userId)
-                else -> showAlertDialog(type = AlertType.MUTE)
+                else -> showAlertDialog(type = StateType.MUTE)
             }
         }
     }
@@ -107,12 +107,12 @@ class ProfileDialog(
         }
     }
 
-    private fun showAlertDialog(type: AlertType) {
+    private fun showAlertDialog(type: StateType) {
         AlertDialog(
-            alertType = type,
+            stateType = type,
             userId = userId,
-            userNickname = userNickname,
-            dialogInterface = this
+            title = userNickname,
+            userStatusActions = this
         ).showNow(parentFragmentManager, null)
     }
 

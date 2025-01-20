@@ -30,13 +30,18 @@ class ChatViewModel(
     var longClickPosition: Int = 0
         private set
 
+    val channelUiState: SharedFlow<ChatUiState>
+        get() = _chatUiState.asSharedFlow()
+
     private var clickedTPMessage: TPMessage? = null
 
     private val tpMessages: ArrayList<TPMessage> = arrayListOf()
 
     private var _chatUiState = MutableSharedFlow<ChatUiState>()
-    val channelUiState: SharedFlow<ChatUiState>
-        get() = _chatUiState.asSharedFlow()
+
+    var isMyLastMessage: Boolean = false
+        private set
+
 
     fun getMessageList() {
         if (!hasNext) return
@@ -185,5 +190,9 @@ class ChatViewModel(
 
     fun setLongClickPosition(position: Int) {
         longClickPosition = position
+    }
+
+    fun setMyLastMessage(myMessage: Boolean) {
+        isMyLastMessage = myMessage
     }
 }

@@ -1,10 +1,14 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.app.Activity
+import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -20,6 +24,7 @@ import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
+import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
 import com.neptune.klat_uikit_android.feature.chat.emoji.EmojiBottomSheet
 import com.neptune.klat_uikit_android.feature.chat.emoji.OnEmojiSelectedListener
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
@@ -39,6 +44,14 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     private val onLayoutChangeListener = View.OnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
         if (bottom < oldBottom) {
             binding.rvChat.scrollBy(0, oldBottom - bottom)
+        }
+    }
+
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            goBack()
+            this.isEnabled = false
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 
@@ -63,6 +76,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
         init()
     }
 
@@ -110,7 +124,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     private fun setHeaderUI() = with(binding) {
         layoutChatHeader.apply {
             ivLeftBtn.visibility = View.VISIBLE
-            ivLeftBtn.setOnClickListener { finish() }
+            ivLeftBtn.setOnClickListener { goBack() }
 
             ivSecondRightBtn.visibility = View.VISIBLE
             ivSecondRightBtn.setImageResource(R.drawable.ic_24_info)
@@ -142,6 +156,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
         }
 
         ivChatSend.setOnClickListener {
+            viewModel.setMyLastMessage(true)
             viewModel.sendMessage(etInputMessage.text.toString())
             etInputMessage.setText("")
             binding.rvChat.scrollToPosition(adapter.itemCount-1)
@@ -214,6 +229,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
 
     private fun receiveMessage(tpMessage: TPMessage) {
         adapter.addMessage(tpMessage)
+        viewModel.setMyLastMessage(false)
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         if (layoutManager.findFirstVisibleItemPosition() == BOTTOM) {
             binding.rvChat.scrollToPosition(adapter.itemCount-1)
@@ -227,6 +243,12 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     override fun onDestroy() {
         super.onDestroy()
         TalkPlus.removeChannelListener(ChannelObject.tpChannel.channelId)
+    }
+
+    private fun goBack() {
+        val intent = Intent(this, ChannelActivity::class.java)
+        setResult(if (viewModel.isMyLastMessage) Activity.RESULT_OK else Activity.RESULT_CANCELED, intent)
+        finish()
     }
 
     override fun selectedEmoji(emoji: String) {

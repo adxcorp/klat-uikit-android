@@ -1,11 +1,14 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
@@ -23,6 +26,7 @@ import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivi
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
 import io.talkplus.TalkPlus.CallbackListener
+import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
@@ -30,9 +34,21 @@ import kotlinx.coroutines.launch
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
+
     private val parentActivity: FragmentActivity by lazy { requireActivity() }
+
     private val viewModel: ChannelListViewModel by viewModels()
+
     private val adapter: ChannelListAdapter by lazy { setChannelListAdapter() }
+
+    private val channelUpdateLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                Activity.RESULT_OK -> {
+                    viewModel.getChannel()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +100,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             is ChannelUiState.ChangedChannel -> adapter.updateChannelItem(channelUiState.tpChannel)
             is ChannelUiState.BanUser -> adapter.updateChannelItem(channelUiState.tpChannel)
             is ChannelUiState.LeaveChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
+            is ChannelUiState.GetChannel -> adapter.moveChannelItemToTop(channelUiState.tpChannel)
         }
     }
 
@@ -129,7 +146,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         return ChannelListAdapter(viewModel.currentChannelList) { tpChannel ->
             ChannelObject.setTPChannel(tpChannel)
             val intent = Intent(parentActivity, ChatActivity::class.java)
-            startActivity(intent)
+            channelUpdateLauncher.launch(intent)
         }
     }
 

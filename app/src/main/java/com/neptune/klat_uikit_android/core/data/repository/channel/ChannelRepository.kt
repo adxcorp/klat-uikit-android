@@ -36,6 +36,23 @@ class ChannelRepository {
         }
     }
 
+    fun getChannel(): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.getChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<TPChannel> {
+            override fun onSuccess(tpChannel: TPChannel) {
+                ChannelObject.setTPChannel(tpChannel)
+                trySend(Result.Success(tpChannel))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
+            }
+        })
+        awaitClose { cancel() }
+    }
+
     fun freezeChannel(): Flow<Result<Unit, WrappedFailResult>> = callbackFlow {
         TalkPlus.freezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void?> {
             override fun onSuccess(void: Void?) {

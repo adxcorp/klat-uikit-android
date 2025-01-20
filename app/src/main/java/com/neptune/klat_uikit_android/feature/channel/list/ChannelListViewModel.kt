@@ -55,6 +55,17 @@ class ChannelListViewModel(
         }
     }
 
+    fun getChannel() {
+        viewModelScope.launch {
+            channelRepository.getChannel().collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _channelUiState.emit(ChannelUiState.GetChannel(callbackResult.successData))
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
     fun observeChannelList() {
         viewModelScope.launch {
             eventRepository.observeChannel(ChannelObject.tag).collect { callbackResult ->

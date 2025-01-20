@@ -8,6 +8,7 @@ import io.talkplus.entity.channel.TPMessage
 sealed class ChannelUiState {
     data class BaseState(val baseState: BaseUiState) : ChannelUiState()
     data class GetChannelList(val channelList: ChannelListResponse) : ChannelUiState()
+    data class GetChannel(val tpChannel: TPChannel) : ChannelUiState()
     data class ReceivedMessage(val tpChannel: TPChannel, val tpMessage: TPMessage) : ChannelUiState()
     data class AddedChannel(val tpChannel: TPChannel) : ChannelUiState()
     data class RemovedChannel(val tpChannel: TPChannel) : ChannelUiState()

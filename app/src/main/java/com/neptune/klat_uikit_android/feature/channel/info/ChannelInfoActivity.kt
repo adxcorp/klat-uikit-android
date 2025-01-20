@@ -2,6 +2,7 @@ package com.neptune.klat_uikit_android.feature.channel.info
 
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -25,9 +26,9 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
     }
 
     override fun init() {
+        setListener()
         bindView()
         observeChannelInfo()
-        setListener()
     }
 
     private fun observeChannelInfo() {
@@ -52,11 +53,6 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
             is ChannelInfoUiState.EnablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = true
             is ChannelInfoUiState.DisablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = false
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setChannelInfo()
     }
 
     private fun setDefaultUI() = with(binding) {
@@ -106,12 +102,6 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         }
     }
 
-    private fun setChannelInfo() = with(binding) {
-        ivChannelInfoThumbnail.loadThumbnail(ChannelObject.tpChannel.imageUrl)
-        tvChannelInfoTitle.text = ChannelObject.tpChannel.channelName
-        tvChannelInfoMemberCount.text = "${ChannelObject.tpChannel.memberCount}명 참여중"
-    }
-
     private fun setListener() = with(binding) {
         ivChannelInfoBack.setOnClickListener {
             finish()
@@ -129,14 +119,18 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         // 푸시 설정
         layoutChannelInfo5.switchInfo.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {
-                true -> viewModel.disablePush()
-                false -> viewModel.enablePush()
+                true -> viewModel.enablePush()
+                false -> viewModel.disablePush()
             }
         }
     }
 
     private fun bindView() = with(binding) {
         if (viewModel.isChannelOwner) setOwnerUI() else setDefaultUI()
+
+        ivChannelInfoThumbnail.loadThumbnail(ChannelObject.tpChannel.imageUrl)
+        tvChannelInfoTitle.text = ChannelObject.tpChannel.channelName
+        tvChannelInfoMemberCount.text = "${ChannelObject.tpChannel.memberCount}명 참여중"
 
         layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
         layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."

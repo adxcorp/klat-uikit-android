@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
 
 class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListener {
     companion object {
-        const val EXTRA_TP_CHANNEL = "extra_tp_channel"
         private const val BOTTOM = 0
     }
 

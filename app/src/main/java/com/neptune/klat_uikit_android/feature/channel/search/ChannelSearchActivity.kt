@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.getSerializableList
 import com.neptune.klat_uikit_android.core.extension.hideKeyboard
 import com.neptune.klat_uikit_android.core.extension.showKeyboard
@@ -98,7 +99,7 @@ class ChannelSearchActivity : AppCompatActivity() {
     private fun setChannelListAdapter(channelList: List<TPChannel>): ChannelListAdapter {
         return ChannelListAdapter(channelList as ArrayList<TPChannel>) { tpChannel ->
             val intent = Intent(this, ChatActivity::class.java).apply {
-                putExtra(ChatActivity.EXTRA_TP_CHANNEL, tpChannel)
+                ChannelObject.setTPChannel(tpChannel)
             }
             startActivity(intent)
         }

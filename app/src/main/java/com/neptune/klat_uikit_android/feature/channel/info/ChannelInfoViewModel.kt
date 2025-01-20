@@ -19,6 +19,7 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
     val isChannelOwner: Boolean = ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId
 
     fun freezeChannel() {
+        Log.d("!! : 프리즈", "call")
         viewModelScope.launch {
             channelRepository.freezeChannel().collect { callbackResult ->
                 when (callbackResult) {
@@ -30,11 +31,14 @@ class ChannelInfoViewModel(private val channelRepository: ChannelRepository = Ch
     }
 
     fun unFreezeChannel() {
+        Log.d("!! : 프리즈X", "call")
         viewModelScope.launch {
             channelRepository.unFreezeChannel().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelInfoUiState.emit(ChannelInfoUiState.UnFrozen)
-                    is Result.Failure -> {}
+                    is Result.Failure -> {
+
+                    }
                 }
             }
         }

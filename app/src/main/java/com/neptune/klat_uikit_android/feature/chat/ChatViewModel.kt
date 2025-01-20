@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.ChannelObject
@@ -8,14 +7,9 @@ import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
-import com.neptune.klat_uikit_android.core.extension.getKeyByValue
-import com.neptune.klat_uikit_android.core.util.LogUtils
-import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
-import io.talkplus.entity.channel.TPMember
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

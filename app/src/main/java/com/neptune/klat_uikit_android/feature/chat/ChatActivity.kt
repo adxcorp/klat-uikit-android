@@ -73,7 +73,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
         setHeaderUI()
         setRecyclerViewListener()
         observeChatUiState()
-        if (ChannelObject.tpChannel.isFrozen) setFrozenUI() else setMessageBarUI()
+        if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else setMessageBarUI()
         if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setMessageBarUI()
     }
 
@@ -90,7 +90,10 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
                         is ChatUiState.ReceiveMessage -> receiveMessage(chatUiState.tpMessage)
                         is ChatUiState.UpdatedReactionMessage -> updateReaction(chatUiState.tpMessage)
-                        is ChatUiState.Frozen -> if (chatUiState.isFrozen) setFrozenUI() else setMessageBarUI()
+                        is ChatUiState.Frozen -> if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else {
+                            setFrozenUI(false)
+                            setMessageBarUI()
+                        }
                         is ChatUiState.LeaveChannel -> finish()
                         is ChatUiState.RemoveChannel -> finish()
                     }
@@ -118,12 +121,12 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
         }
     }
 
-    private fun setFrozenUI() = with(binding.layoutChatMessageBar) {
-        binding.clChatFrozen.visibility = View.VISIBLE
-        etInputMessage.isEnabled = false
-        etInputMessage.hint = "메세지 입력 불가"
-        etInputMessage.setHintTextColor(Color.parseColor("#9A9A9A"))
-        ivChatAttach.setColorFilter(Color.parseColor("#C1C1C1"))
+    private fun setFrozenUI(isFrozen: Boolean) = with(binding.layoutChatMessageBar) {
+        binding.clChatFrozen.visibility = if (isFrozen) View.VISIBLE else View.GONE
+        etInputMessage.isEnabled = !isFrozen
+        etInputMessage.hint = if (isFrozen) "메시지 입력 불가" else "메시지 입력"
+        etInputMessage.setHintTextColor(Color.parseColor(if (isFrozen) "#C1C1C1" else "#4D4D4D"))
+        ivChatAttach.setColorFilter(Color.parseColor(if (isFrozen) "#C1C1C1" else "#000000"))
     }
 
     private fun setMessageBarUI() = with(binding.layoutChatMessageBar) {

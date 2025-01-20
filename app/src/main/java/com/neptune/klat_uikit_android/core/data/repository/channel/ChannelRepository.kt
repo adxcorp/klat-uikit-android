@@ -36,23 +36,23 @@ class ChannelRepository {
         }
     }
 
-    fun freezeChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
-        TalkPlus.freezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void> {
-            override fun onSuccess(void: Void) {
-                trySend(Result.Success(void))
+    fun freezeChannel(): Flow<Result<Unit, WrappedFailResult>> = callbackFlow {
+        TalkPlus.freezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void?> {
+            override fun onSuccess(void: Void?) {
+                trySend(Result.Success(Unit))
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                Log.d("!!: ", exception.toString())
             }
         })
         awaitClose { cancel() }
     }
 
-    fun unFreezeChannel(): Flow<Result<Void, WrappedFailResult>> = callbackFlow {
-        TalkPlus.unfreezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void> {
-            override fun onSuccess(void: Void) {
-                trySend(Result.Success(void))
+    fun unFreezeChannel(): Flow<Result<Unit, WrappedFailResult>> = callbackFlow {
+        TalkPlus.unfreezeChannel(ChannelObject.tpChannel.channelId, object : TalkPlus.CallbackListener<Void?> {
+            override fun onSuccess(void: Void?) {
+                trySend(Result.Success(Unit))
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {

@@ -2,7 +2,6 @@ package com.neptune.klat_uikit_android.feature.channel.info
 
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -46,16 +45,10 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
             is ChannelInfoUiState.BaseState -> {
 
             }
-            is ChannelInfoUiState.LeaveChannel -> {
-                Log.d("!! : ", "leave")
-                finish()
-            }
+            is ChannelInfoUiState.LeaveChannel -> finish()
+            is ChannelInfoUiState.RemoveChannel -> finish()
             is ChannelInfoUiState.Frozen -> binding.layoutChannelInfo4.switchInfo.isSelected = true
             is ChannelInfoUiState.UnFrozen -> binding.layoutChannelInfo4.switchInfo.isSelected = false
-            is ChannelInfoUiState.RemoveChannel -> {
-                Log.d("!! : ", "remove")
-                finish()
-            }
             is ChannelInfoUiState.EnablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = true
             is ChannelInfoUiState.DisablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = false
         }
@@ -97,7 +90,7 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         layoutChannelInfo3.tvInfoTitle.text = "음소거 목록"
         layoutChannelInfo3.root.setOnClickListener {
             val intent = Intent(this@ChannelInfoActivity, MemberActivity::class.java).apply {
-                putExtra(MemberActivity.EXTRA_IS_OWNER, ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId)
+                putExtra(MemberActivity.EXTRA_IS_OWNER, viewModel.isChannelOwner)
             }
             startActivity(intent)
         }
@@ -105,6 +98,12 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         layoutChannelInfo4.tvInfoSwitchTitle.text = "채널 얼리기"
         layoutChannelInfo4.switchInfo.isChecked = ChannelObject.tpChannel.isFrozen
         layoutChannelInfo4.tvInfoSwitchSubTitle.visibility = View.GONE
+        layoutChannelInfo4.switchInfo.setOnCheckedChangeListener { _, isChecked ->
+            when (isChecked) {
+                true -> viewModel.freezeChannel()
+                false -> viewModel.unFreezeChannel()
+            }
+        }
     }
 
     private fun setChannelInfo() = with(binding) {

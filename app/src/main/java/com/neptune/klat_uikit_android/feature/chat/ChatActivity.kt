@@ -70,11 +70,16 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     private fun init() {
         viewModel.getMessageList()
         viewModel.observeEvent()
+        bindView()
         setHeaderUI()
         setRecyclerViewListener()
         observeChatUiState()
         if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else setMessageBarUI()
         if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setMessageBarUI()
+    }
+
+    private fun bindView() = with(binding) {
+
     }
 
     private fun observeChatUiState() {
@@ -96,6 +101,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
                         }
                         is ChatUiState.LeaveChannel -> finish()
                         is ChatUiState.RemoveChannel -> finish()
+                        is ChatUiState.EmptyChat -> binding.layoutChatEmpty.root.visibility = View.VISIBLE
                     }
                 }
             }
@@ -202,6 +208,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     }
 
     private fun sendMessage(tpMessage: TPMessage) {
+        binding.layoutChatEmpty.root.visibility = View.GONE
         adapter.addMessage(tpMessage)
         binding.rvChat.scrollToPosition(adapter.itemCount-1)
     }

@@ -13,4 +13,10 @@
 
     <string name="alert_ban_title">%s\n사용자를 강퇴할까요?</string>
     <string name="alert_ban_description">선택한 사용자가 즉시 퇴장되며,\n차단이 해제돨 때까지 채널에 다시 입장할 수 없습니다.</string>
+
+    <string name="alert_remove_title">%s\n채널을 삭제할까요?</string>
+    <string name="alert_remove_description">채널이 즉시 삭제되며,\n대화 기록은 저장되지 않고 복구할 수 없습니다.</string>
+
+    <string name="alert_leave_title">%s\n채널을 나갈까요?</string>
+    <string name="alert_leave_description">채널에서 즉시 퇴장되며,\n대화 기록은 저장되지 않고 복구할 수 없습니다.</string>
 </resources>

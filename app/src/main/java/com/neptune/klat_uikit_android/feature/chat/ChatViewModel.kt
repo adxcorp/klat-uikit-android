@@ -50,6 +50,12 @@ class ChatViewModel(
                 when (callbackResult) {
                     is Result.Success -> {
                         hasNext = callbackResult.successData.hasNext
+
+                        if (callbackResult.successData.tpMessages.isEmpty()) {
+                            _chatUiState.emit(ChatUiState.EmptyChat)
+                            return@collect
+                        }
+
                         val reversedMembers = callbackResult.successData.tpMessages.reversed()
                         tpMessages.addAll(0, reversedMembers)
                         _chatUiState.emit(ChatUiState.GetMessages(reversedMembers))

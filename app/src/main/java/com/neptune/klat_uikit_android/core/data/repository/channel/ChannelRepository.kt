@@ -60,7 +60,7 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-                Log.d("!!: ", exception.toString())
+
             }
         })
         awaitClose { cancel() }

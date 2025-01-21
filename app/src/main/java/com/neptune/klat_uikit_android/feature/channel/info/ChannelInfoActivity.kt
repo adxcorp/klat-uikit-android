@@ -118,7 +118,7 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
 
         // 푸시 설정
         layoutChannelInfo5.switchInfo.setOnClickListener {
-            when (!layoutChannelInfo5.switchInfo.isSelected) {
+            when (ChannelObject.tpChannel.isPushNotificationDisabled) {
                 true -> viewModel.enablePush()
                 false -> viewModel.disablePush()
             }
@@ -134,6 +134,7 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
 
         layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
         layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
+        Log.d("!! : ", (ChannelObject.tpChannel.isPushNotificationDisabled).toString())
         layoutChannelInfo5.switchInfo.isChecked = !ChannelObject.tpChannel.isPushNotificationDisabled
 
         layoutChannelInfo6.tvInfoTitle.text = if (viewModel.isChannelOwner) "채널 삭제" else "채널 나가기"

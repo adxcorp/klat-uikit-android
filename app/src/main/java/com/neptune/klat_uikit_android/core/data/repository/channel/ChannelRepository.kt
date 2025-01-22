@@ -1,17 +1,18 @@
 package com.neptune.klat_uikit_android.core.data.repository.channel
 
-import android.util.Log
+import com.google.gson.JsonObject
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.base.WrappedFailResult
 import com.neptune.klat_uikit_android.core.data.model.channel.ChannelListResponse
-import com.neptune.klat_uikit_android.core.util.LogUtils
+import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateViewModel
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.io.File
 import java.lang.Exception
 
 class ChannelRepository {
@@ -60,7 +61,10 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
             }
         })
         awaitClose { cancel() }
@@ -73,7 +77,10 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
             }
         })
         awaitClose { cancel() }
@@ -86,7 +93,10 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
             }
         })
         awaitClose { cancel() }
@@ -99,7 +109,10 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
             }
         })
         awaitClose { cancel() }
@@ -113,7 +126,10 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
             }
         })
         awaitClose { cancel() }
@@ -127,9 +143,78 @@ class ChannelRepository {
             }
 
             override fun onFailure(errorCode: Int, exception: Exception) {
-
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
             }
         })
+        awaitClose { cancel() }
+    }
+
+    fun createChannel(
+        memberCount: Int,
+        channelName: String,
+        photoFile: File?
+    ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.createChannel(
+            ChannelObject.userId,
+            null,
+            false,
+            memberCount,
+            false,
+            if (memberCount == ChannelCreateViewModel.SUPER_TYPE) "super_private" else "private",
+            channelName,
+            "",
+            "",
+            "",
+            "",
+            JsonObject(),
+            photoFile,
+            object : TalkPlus.CallbackListener<TPChannel> {
+                override fun onSuccess(tpChannel: TPChannel) {
+                    ChannelObject.setTPChannel(tpChannel)
+                    trySend(Result.Success(tpChannel))
+                }
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            }
+        )
+        awaitClose { cancel() }
+    }
+
+    fun updateChannel(
+        channelName: String,
+        photoFile: File?
+    ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.updateChannel(
+            ChannelObject.tpChannel,
+            ChannelObject.tpChannel.memberCount,
+            false,
+            channelName,
+            "",
+            "",
+            "",
+            "",
+            JsonObject(),
+            photoFile,
+            object : TalkPlus.CallbackListener<TPChannel> {
+                override fun onSuccess(tpChannel: TPChannel) {
+                    ChannelObject.setTPChannel(tpChannel)
+                    trySend(Result.Success(tpChannel))
+                }
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            }
+        )
         awaitClose { cancel() }
     }
 }

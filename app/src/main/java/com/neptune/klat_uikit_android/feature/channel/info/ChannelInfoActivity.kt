@@ -15,6 +15,7 @@ import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.interfaces.ChannelActions
 import com.neptune.klat_uikit_android.databinding.ActivityChannelInfoBinding
+import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberActivity
 import kotlinx.coroutines.launch
 
@@ -27,8 +28,12 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
 
     override fun init() {
         setListener()
-        bindView()
         observeChannelInfo()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        bindView()
     }
 
     private fun observeChannelInfo() {
@@ -72,7 +77,10 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
     private fun setOwnerUI() = with(binding) {
         layoutChannelInfo1.tvInfoTitle.text = "채널 정보 변경"
         layoutChannelInfo1.root.setOnClickListener {
-
+            val intent = Intent(this@ChannelInfoActivity, ChannelCreateActivity::class.java).apply {
+                putExtra(ChannelCreateActivity.EXTRA_TYPE, ChannelCreateActivity.UPDATE)
+            }
+            startActivity(intent)
         }
 
         layoutChannelInfo2.tvInfoTitle.text = "참여자 목록"
@@ -134,7 +142,6 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
 
         layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
         layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
-        Log.d("!! : ", (ChannelObject.tpChannel.isPushNotificationDisabled).toString())
         layoutChannelInfo5.switchInfo.isChecked = !ChannelObject.tpChannel.isPushNotificationDisabled
 
         layoutChannelInfo6.tvInfoTitle.text = if (viewModel.isChannelOwner) "채널 삭제" else "채널 나가기"

@@ -1,57 +1,80 @@
 package com.neptune.klat_uikit_android.feature.channel.create
 
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.google.gson.JsonObject
-import io.talkplus.TalkPlus
-import io.talkplus.entity.channel.TPChannel
+import androidx.lifecycle.viewModelScope
+import com.neptune.klat_uikit_android.core.data.model.base.Result
+import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import java.io.File
 
-class ChannelCreateViewModel : ViewModel() {
-    private var currentUri: Uri? = null
+class ChannelCreateViewModel(private val channelRepository: ChannelRepository = ChannelRepository()) : ViewModel() {
+    private var photoFile: File? = null
+    private var channelName: String = ""
+    private var memberCount: Int = 0
 
-    fun setCurrentUri(uri: Uri) {
-        currentUri = uri
+    var channelType: String = ""
+        private set
+
+    private var _createChannelUiState = MutableSharedFlow<CreateChannelUiState>()
+    val createChannelUiState: SharedFlow<CreateChannelUiState>
+        get() = _createChannelUiState.asSharedFlow()
+
+    fun upsert() {
+        when (channelType) {
+            ChannelCreateActivity.CREATE -> createChannel()
+            ChannelCreateActivity.UPDATE -> updateChannel()
+        }
     }
 
-    var test = ""
-
-    fun createChannel(
-        chanelName: String,
-        memberCount: Int,
-        channelType: String = if (memberCount == SUPER_TYPE) "super_private" else "private",
-        imageUrl: String
-    ) {
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("test1", "test2")
-
-        TalkPlus.createChannel(
-            listOf("test1", "test2"),
-            null,
-            false,
-            memberCount,
-            false,
-            channelType,
-            chanelName,
-            "",
-            "",
-            "",
-            imageUrl,
-            jsonObject,
-            File(test),
-            object : TalkPlus.CallbackListener<TPChannel> {
-                override fun onSuccess(tpChannel: TPChannel) {
-                    Log.d("!! : 성공", tpChannel.toString())
-                }
-                override fun onFailure(i: Int, e: Exception) {
-
+    private fun createChannel() {
+        viewModelScope.launch {
+            channelRepository.createChannel(
+                memberCount = memberCount,
+                channelName = channelName,
+                photoFile = photoFile
+            ).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _createChannelUiState.emit(CreateChannelUiState.CreateChannel)
+                    is Result.Failure -> { }
                 }
             }
-        )
+        }
+    }
+
+    private fun updateChannel() {
+        viewModelScope.launch {
+            channelRepository.updateChannel(
+                channelName = channelName,
+                photoFile = photoFile
+            ).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _createChannelUiState.emit(CreateChannelUiState.UpdateChannel)
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    fun setPhotoFile(file: File) {
+        photoFile = file
+    }
+
+    fun setChannelType(type: String) {
+        channelType = type
+    }
+
+    fun setMemberCount(count: Int) {
+        memberCount = count
+    }
+
+    fun setChannelName(name: String) {
+        channelName = name
     }
 
     companion object {
-        private const val SUPER_TYPE = 100
+        const val SUPER_TYPE = 100
     }
 }

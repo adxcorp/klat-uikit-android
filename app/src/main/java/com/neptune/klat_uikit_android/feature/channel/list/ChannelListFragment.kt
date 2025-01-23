@@ -3,7 +3,6 @@ package com.neptune.klat_uikit_android.feature.channel.list
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,9 +24,6 @@ import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivi
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
-import io.talkplus.TalkPlus.CallbackListener
-import io.talkplus.entity.channel.TPChannel
-import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
 
@@ -41,6 +37,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
 
     private val adapter: ChannelListAdapter by lazy { setChannelListAdapter() }
 
+    // 내가 보낸 메시지 갱신시키기 위함
     private val channelUpdateLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
@@ -131,7 +128,10 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             visibility = View.VISIBLE
             loadThumbnail(R.drawable.ic_24_add_channel)
             setOnClickListener {
-                startActivity(Intent(parentActivity, ChannelCreateActivity::class.java))
+                val intent = Intent(parentActivity, ChannelCreateActivity::class.java).apply {
+                    putExtra(ChannelCreateActivity.EXTRA_TYPE, ChannelCreateActivity.CREATE)
+                }
+                startActivity(intent)
             }
         }
     }

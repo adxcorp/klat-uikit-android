@@ -107,6 +107,6 @@ class ChannelCreateActivity : AppCompatActivity(), PhotoActionListener {
 
     override fun onPhotoSelected(fileUri: Uri) = with(FileUtils) {
         binding.ivCreateChannelLogo.loadThumbnail(fileUri)
-        viewModel.setPhotoFile(getFileFromUri(this@ChannelCreateActivity, fileUri))
+        viewModel.setPhotoFile(resizeImage(getFileFromUri(this@ChannelCreateActivity, fileUri)))
     }
 }

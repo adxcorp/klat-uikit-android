@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -9,6 +10,7 @@ import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileUiState
+import com.neptune.klat_uikit_android.core.util.LogUtils
 import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -74,21 +76,9 @@ class ChannelListViewModel(
                     EventType.LEAVE_OTHER_USER -> Unit
                     EventType.BAN_USER -> _channelUiState.emit(ChannelUiState.BanUser(callbackResult.channel))
                     EventType.CHANGED_CHANNEL -> _channelUiState.emit(ChannelUiState.ChangedChannel(callbackResult.channel))
-                    EventType.ADDED_CHANNEL -> {
-                        _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
-                        currentChannelList.add(callbackResult.channel)
-                    }
-
-                    EventType.REMOVED_CHANNEL ->  {
-                        _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))
-                        currentChannelList.remove(callbackResult.channel)
-                    }
-
-                    EventType.LEAVE_CHANNEL -> {
-                        _channelUiState.emit(ChannelUiState.LeaveChannel(callbackResult.channel))
-                        currentChannelList.remove(callbackResult.channel)
-                    }
-
+                    EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
+                    EventType.REMOVED_CHANNEL -> _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))
+                    EventType.LEAVE_CHANNEL -> _channelUiState.emit(ChannelUiState.LeaveChannel(callbackResult.channel))
                     EventType.RECEIVED_MESSAGE -> {
                         _channelUiState.emit(
                             ChannelUiState.ReceivedMessage(

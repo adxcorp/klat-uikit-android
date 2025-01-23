@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/tv_channel_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="채널 생성"
@@ -70,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView2" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_channel_join_member"
         android:layout_width="0dp"
         android:layout_height="74dp"
         android:layout_marginTop="24dp"
@@ -103,14 +104,14 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <EditText
-            android:maxLength="3"
-            android:inputType="numberDecimal"
             android:id="@+id/et_create_member_count"
             android:layout_width="55dp"
             android:layout_height="40dp"
             android:background="@drawable/bg_radius_8dp"
             android:backgroundTint="#F3F3F3"
             android:gravity="center"
+            android:inputType="numberDecimal"
+            android:maxLength="3"
             android:text="100"
             android:textFontWeight="400"
             android:textSize="16dp"

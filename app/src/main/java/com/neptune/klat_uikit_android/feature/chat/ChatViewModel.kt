@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.ChannelObject
@@ -10,15 +11,18 @@ import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
+import io.talkplus.params.TPMessageSendParams.ContentType
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import java.io.File
 
 class ChatViewModel(
     private val chatRepository: ChatRepository = ChatRepository(),
     private val eventRepository: EventRepository = EventRepository()
 ) : ViewModel() {
+    private var photoFile: File? = null
     private var hasNext: Boolean = true
 
     var isFirstLoad: Boolean = true
@@ -74,11 +78,16 @@ class ChatViewModel(
         }
     }
 
-    fun sendMessage(message: String) {
+    fun sendMessage(
+        message: String,
+        contentType: ContentType = ContentType.TEXT
+    ) {
         val params: TPMessageSendParams = TPMessageSendParams.Builder(ChannelObject.tpChannel,
             TPMessageSendParams.MessageType.TEXT,
-            TPMessageSendParams.ContentType.TEXT)
+            contentType
+        )
             .setText(message)
+            .setFile(photoFile)
             .build()
 
         viewModelScope.launch {
@@ -175,6 +184,14 @@ class ChatViewModel(
         return null
     }
 
+    fun sendFileMessage(photoFile: File) {
+        this.photoFile = photoFile
+        isMyLastMessage = true
+        sendMessage(
+            message = "사진을 보냈습니다.",
+            contentType = ContentType.FILE
+        )
+    }
 
     fun setClickedTPMessage(tpMessage: TPMessage) {
         clickedTPMessage = tpMessage

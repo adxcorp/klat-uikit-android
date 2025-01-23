@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat.viewholder
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.dpToPxInt
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.extension.loadThumbnailContainRadius
 import com.neptune.klat_uikit_android.databinding.ItemChatLeftProfileBinding
 import com.neptune.klat_uikit_android.feature.chat.reaction.ReactionAdapter
 import io.talkplus.entity.channel.TPMessage
@@ -22,7 +24,8 @@ class LeftMessageViewHolder(
     fun bind(
         currentTPMessage: TPMessage,
         nextTPMessage: TPMessage?,
-        previousMessage: TPMessage?
+        previousMessage: TPMessage?,
+        tpMessages: List<TPMessage>
     ) = with(binding) {
         initView(currentTPMessage)
 
@@ -38,29 +41,26 @@ class LeftMessageViewHolder(
             onClickProfile.invoke(currentTPMessage)
         }
 
-        when {
-            nextMessageCreatedTime == INVALID_TIME -> {
-                setFirstMessageUI(
-                    currentTPMessage = currentTPMessage,
-                    currentMessageCreatedTime = currentMessageCreatedTime
-                )
-            }
+        try {
+            when {
+                nextMessageCreatedTime != currentMessageCreatedTime -> {
+                    setTimeChangeUI(
+                        currentTPMessage = currentTPMessage,
+                        currentMessageCreatedTime = currentMessageCreatedTime,
+                        previousMessageCreatedTime = previousMessageCreatedTime
+                    )
+                }
 
-            nextMessageCreatedTime != currentMessageCreatedTime -> {
-                setTimeChangeUI(
-                    currentTPMessage = currentTPMessage,
-                    currentMessageCreatedTime = currentMessageCreatedTime,
-                    previousMessageCreatedTime = previousMessageCreatedTime
-                )
+                nextMessageCreatedTime == currentMessageCreatedTime ->  {
+                    setSameTimeUI(
+                        currentTPMessage = currentTPMessage,
+                        currentMessageCreatedTime = currentMessageCreatedTime,
+                        previousMessageCreatedTime = previousMessageCreatedTime
+                    )
+                }
             }
-
-            nextMessageCreatedTime == currentMessageCreatedTime ->  {
-                setSameTimeUI(
-                    currentTPMessage = currentTPMessage,
-                    currentMessageCreatedTime = currentMessageCreatedTime,
-                    previousMessageCreatedTime = previousMessageCreatedTime
-                )
-            }
+        } catch (e: Exception) {
+            Log.d("!!: exception : ", e.message.toString())
         }
 
         itemView.setOnLongClickListener {
@@ -133,7 +133,17 @@ class LeftMessageViewHolder(
         ivLeftChatProfileThumbnail.visibility = View.VISIBLE
         tvChatLeftProfileNickname.visibility = View.VISIBLE
         cvLeftChatProfile.visibility = View.VISIBLE
-        tvLeftChatProfileMessage.text = tpMessage.text
+        if (tpMessage.fileUrl.isEmpty()) {
+            tvLeftChatTextMessage.visibility = View.VISIBLE
+            tvLeftChatTextMessage.text = tpMessage.text
+        } else {
+            tvLeftChatTextMessage.visibility = View.GONE
+            ivLeftChatImageMessage.visibility = View.VISIBLE
+            ivLeftChatImageMessage.loadThumbnailContainRadius(
+                url = tpMessage.fileUrl,
+                radius = 8.dpToPxInt(ivLeftChatImageMessage.context)
+            )
+        }
         setTopMargin(root, 0)
     }
 

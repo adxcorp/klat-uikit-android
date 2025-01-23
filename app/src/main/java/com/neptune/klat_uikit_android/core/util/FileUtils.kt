@@ -24,7 +24,7 @@ object FileUtils {
         return file
     }
 
-    fun resizeImage(file: File, targetWidth: Int = 1050, targetHeight: Int = 1400): File {
+    fun resizeImage(file: File, targetWidth: Int = 1400, targetHeight: Int = 1050): File {
         val originalBitmap = BitmapFactory.decodeFile(file.absolutePath)
 
         val exif = ExifInterface(file.absolutePath)

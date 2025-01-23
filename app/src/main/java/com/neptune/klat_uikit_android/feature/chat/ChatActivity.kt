@@ -1,14 +1,14 @@
 package com.neptune.klat_uikit_android.feature.chat
 
 import android.app.Activity
-import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -22,6 +22,9 @@ import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
+import com.neptune.klat_uikit_android.core.util.CameraUtils
+import com.neptune.klat_uikit_android.core.util.FileUtils
+import com.neptune.klat_uikit_android.core.util.PermissionUtils
 import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
 import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
@@ -35,6 +38,25 @@ import kotlinx.coroutines.launch
 class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListener {
     companion object {
         private const val BOTTOM = 0
+    }
+
+    private lateinit var requestPermissionCameraLauncher: ActivityResultLauncher<String>
+    private lateinit var requestPermissionGalleryLauncher: ActivityResultLauncher<Array<String>>
+
+    private val openCameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+        if (isSuccess) {
+            ChannelObject.photoUri?.let { uri ->
+                with(FileUtils) {
+                    viewModel.sendFileMessage(resizeImage(getFileFromUri(this@ChatActivity, uri)))
+                }
+            }
+        }
+    }
+
+    private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { photoUri ->
+        photoUri?.let { uri ->
+            viewModel.sendFileMessage(FileUtils.resizeImage(FileUtils.getFileFromUri(this@ChatActivity, uri)))
+        }
     }
 
     private val binding: ActivityChatBinding by lazy { ActivityChatBinding.inflate(layoutInflater) }
@@ -83,6 +105,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
     private fun init() {
         viewModel.getMessageList()
         viewModel.observeEvent()
+        setRequestLauncher()
         bindView()
         setHeaderUI()
         setRecyclerViewListener()
@@ -176,11 +199,14 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
 
     private fun setAttackBlockUI() = with(binding.layoutChatAttach) {
         clChatAlbum.setOnClickListener {
-
+            PermissionUtils.checkGalleryPermission(requestPermissionGalleryLauncher)
         }
 
         clChatCamera.setOnClickListener {
-
+            PermissionUtils.checkCameraPermission(
+                context = this@ChatActivity,
+                requestPermissionCameraLauncher = requestPermissionCameraLauncher
+            )
         }
     }
 
@@ -249,6 +275,30 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
         val intent = Intent(this, ChannelActivity::class.java)
         setResult(if (viewModel.isMyLastMessage) Activity.RESULT_OK else Activity.RESULT_CANCELED, intent)
         finish()
+    }
+
+    private fun setRequestLauncher() {
+        requestPermissionGalleryLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            when (PermissionUtils.checkMediaPermissions(permissions)) {
+                true -> openGalleryLauncher.launch("image/*")
+                false -> PermissionUtils.showPermissionRationale(
+                    context = this,
+                    title = "갤러리 권한 요청",
+                    message = "권한을 허용해야 갤러리에 접근이 가능합니다."
+                )
+            }
+        }
+
+        requestPermissionCameraLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            when (isGranted) {
+                true -> CameraUtils.openCamera(this, openCameraLauncher)
+                false -> PermissionUtils.showPermissionRationale(
+                    context = this,
+                    title = "카메라 권한 요청",
+                    message = "카메라 권한을 허용해야 사진 촬영이 가능합니다."
+                )
+            }
+        }
     }
 
     override fun selectedEmoji(emoji: String) {

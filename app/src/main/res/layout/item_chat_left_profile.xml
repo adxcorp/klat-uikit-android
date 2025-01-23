@@ -45,41 +45,59 @@
             android:textColor="#999999"
             android:textFontWeight="500"
             android:textSize="12dp"
-            app:layout_constraintStart_toStartOf="@+id/tv_left_chat_profile_message"
+            app:layout_constraintStart_toStartOf="@+id/cl_message_container"
             app:layout_constraintTop_toTopOf="@+id/cv_left_chat_profile"
             tools:text="루이 암스트롱" />
 
-        <TextView
-            android:id="@+id/tv_left_chat_profile_message"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_message_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:layout_marginEnd="5dp"
-            android:background="@drawable/bg_radius_8dp"
-            android:backgroundTint="#EEEEEE"
-            android:gravity="center_vertical"
-            android:maxWidth="266dp"
+            android:maxWidth="246dp"
             android:minHeight="38dp"
-            android:paddingStart="12dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/constraintLayout4"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toEndOf="@+id/cv_left_chat_profile"
-            app:layout_constraintTop_toBottomOf="@+id/tv_chat_left_profile_nickname"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="동일한 시간에 다른 메세지를" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_chat_left_profile_nickname">
+
+            <TextView
+                android:id="@+id/tv_left_chat_text_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_radius_8dp"
+                android:backgroundTint="#EEEEEE"
+                android:gravity="center_vertical"
+                android:maxWidth="246dp"
+                android:paddingStart="12dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="wdwdwdwdwdwdwdwdjdjdjdjwjdwjdwjdjwdjwjdwdwdwdwdjwdjwjdjwjdjwdjwdjwjdjwjd" />
+
+            <ImageView
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:id="@+id/iv_left_chat_image_message"
+                android:visibility="gone"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_reactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/tv_left_chat_profile_message"
-            app:layout_constraintTop_toBottomOf="@+id/tv_left_chat_profile_message">
+            app:layout_constraintStart_toStartOf="@+id/cl_message_container"
+            app:layout_constraintTop_toBottomOf="@+id/cl_message_container">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -87,10 +105,9 @@
             android:id="@+id/constraintLayout4"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_left_chat_profile_message"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tv_left_chat_profile_message">
+            android:layout_marginStart="5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cl_message_container"
+            app:layout_constraintStart_toEndOf="@+id/cl_message_container">
 
             <TextView
                 android:id="@+id/tv_left_chat_profile_un_read_count"

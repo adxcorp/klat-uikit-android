@@ -30,6 +30,7 @@ import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
 import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
 import com.neptune.klat_uikit_android.feature.chat.emoji.EmojiBottomSheet
 import com.neptune.klat_uikit_android.feature.chat.emoji.OnEmojiSelectedListener
+import com.neptune.klat_uikit_android.feature.chat.photo.PhotoDetailActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
@@ -236,6 +237,10 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
                     memberInterface = this
                 ).show(supportFragmentManager, null)
             },
+
+            onImageClick = {
+                startActivity((Intent(this, PhotoDetailActivity::class.java)))
+            }
         )
     }
 
@@ -243,7 +248,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
         adapter.addMessages(newTPMessages)
         if (viewModel.isFirstLoad) {
             viewModel.setFirstLoad(false)
-            binding.rvChat.scrollToPosition(adapter.itemCount-1)
+            binding.rvChat.post {
+                binding.rvChat.scrollToPosition(adapter.itemCount-1)
+            }
         }
     }
 

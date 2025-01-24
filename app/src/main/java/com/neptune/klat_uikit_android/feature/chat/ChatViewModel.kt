@@ -34,14 +34,13 @@ class ChatViewModel(
     var longClickPosition: Int = 0
         private set
 
+    private var _chatUiState = MutableSharedFlow<ChatUiState>()
     val channelUiState: SharedFlow<ChatUiState>
         get() = _chatUiState.asSharedFlow()
 
     private var clickedTPMessage: TPMessage? = null
 
     private val tpMessages: ArrayList<TPMessage> = arrayListOf()
-
-    private var _chatUiState = MutableSharedFlow<ChatUiState>()
 
     var isMyLastMessage: Boolean = false
         private set

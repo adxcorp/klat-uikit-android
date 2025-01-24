@@ -9,8 +9,8 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+
 
     <queries>
         <intent>
@@ -20,10 +20,15 @@
 
     <application>
         <activity
-            android:theme="@style/KlatAppTheme"
+            android:name=".feature.chat.photo.PhotoDetailActivity"
+            android:exported="false"
             android:screenOrientation="portrait"
+            android:theme="@style/KlatAppTheme" />
+        <activity
             android:name=".feature.member.list.MemberActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/KlatAppTheme" />
         <activity
             android:name=".feature.channel.info.ChannelInfoActivity"
             android:exported="false"
@@ -42,16 +47,6 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".feature.channel.main.ChannelActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/KlatAppTheme" />
-        <activity
-            android:name=".feature.photo.select.PhotoCropActivity"
-            android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/KlatAppTheme" />
-        <activity
-            android:name=".feature.photo.detail.PhotoDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/KlatAppTheme" />

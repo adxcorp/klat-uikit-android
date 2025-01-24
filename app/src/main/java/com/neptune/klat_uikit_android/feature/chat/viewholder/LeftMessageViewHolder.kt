@@ -20,6 +20,7 @@ class LeftMessageViewHolder(
     private val binding: ItemChatLeftProfileBinding,
     private val onClickProfile: (TPMessage) -> Unit,
     private val onLongClickMessage: (TPMessage, Int) -> Unit,
+    private val onImageClick: () -> Unit
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         currentTPMessage: TPMessage,
@@ -39,6 +40,13 @@ class LeftMessageViewHolder(
 
         ivLeftChatProfileThumbnail.setOnClickListener {
             onClickProfile.invoke(currentTPMessage)
+        }
+
+        itemView.setOnClickListener {
+            if (currentTPMessage.fileUrl.isNotEmpty()) {
+                ChannelObject.setTPMessage(currentTPMessage)
+                onImageClick.invoke()
+            }
         }
 
         try {

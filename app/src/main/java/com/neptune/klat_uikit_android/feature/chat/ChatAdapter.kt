@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +14,7 @@ class ChatAdapter(
     private val tpMessages: ArrayList<TPMessage> = arrayListOf(),
     private val onClickProfile: (TPMessage) -> Unit,
     private val onLongClickMessage: (TPMessage, Int) -> Unit,
+    private val onImageClick: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -37,7 +37,8 @@ class ChatAdapter(
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
                 nextTPMessage = tpMessages.getOrNull(position+1),
-                previousMessage = tpMessages.getOrNull(position-1)
+                previousMessage = tpMessages.getOrNull(position-1),
+                tpMessages = tpMessages
             )
 
             is RightMessageViewHolder -> holder.bind(
@@ -61,6 +62,7 @@ class ChatAdapter(
             binding = binding,
             onClickProfile = onClickProfile,
             onLongClickMessage = onLongClickMessage,
+            onImageClick = onImageClick
         )
     }
 

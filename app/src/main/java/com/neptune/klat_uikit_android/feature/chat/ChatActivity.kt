@@ -29,14 +29,14 @@ import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
 import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
 import com.neptune.klat_uikit_android.feature.chat.emoji.EmojiBottomSheet
-import com.neptune.klat_uikit_android.feature.chat.emoji.OnEmojiSelectedListener
+import com.neptune.klat_uikit_android.feature.chat.emoji.OnEmojiBottomSheetListener
 import com.neptune.klat_uikit_android.feature.chat.photo.PhotoDetailActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
-class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListener {
+class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetListener {
     companion object {
         private const val BOTTOM = 0
     }
@@ -310,5 +310,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiSelectedListen
 
     override fun selectedEmoji(emoji: String) {
         viewModel.updateReaction(emoji)
+    }
+
+    override fun copyMessage() {
+
     }
 }

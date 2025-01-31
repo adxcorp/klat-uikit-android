@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat.emoji
 
-interface OnEmojiSelectedListener {
+interface OnEmojiBottomSheetListener {
     fun selectedEmoji(emoji: String)
+    fun copyMessage()
 }

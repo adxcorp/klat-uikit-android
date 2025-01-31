@@ -1,19 +1,17 @@
 package com.neptune.klat_uikit_android.feature.chat.emoji
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.neptune.klat_uikit_android.databinding.LayoutEmojiBottomSheetBinding
 
 class EmojiBottomSheet(
     private val isMe: Boolean,
-    private val emojiSelectedListener: OnEmojiSelectedListener
+    private val emojiSelectedListener: OnEmojiBottomSheetListener
 ) : BottomSheetDialogFragment() {
     private var _binding: LayoutEmojiBottomSheetBinding? = null
     private val binding get() = _binding ?: error("LayoutEmojiBottomSheetBinding 초기화 에러")
@@ -31,6 +29,7 @@ class EmojiBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        setListener()
     }
 
     private fun initView() = with(binding) {
@@ -45,6 +44,13 @@ class EmojiBottomSheet(
     private fun setAdapter(): EmojiAdapter {
         return EmojiAdapter { emoji ->
             emojiSelectedListener.selectedEmoji(emoji)
+            dismiss()
+        }
+    }
+
+    private fun setListener() = with(binding) {
+        layoutMessageCopy.root.setOnClickListener {
+            emojiSelectedListener.copyMessage()
             dismiss()
         }
     }

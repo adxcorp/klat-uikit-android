@@ -1,11 +1,15 @@
 package com.neptune.klat_uikit_android.feature.chat
 
 import android.app.Activity
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -313,6 +317,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetLis
     }
 
     override fun copyMessage() {
-
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        viewModel.copyMessage(clipboard)
     }
 }

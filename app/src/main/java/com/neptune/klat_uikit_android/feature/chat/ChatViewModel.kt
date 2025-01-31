@@ -1,5 +1,7 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,7 +46,6 @@ class ChatViewModel(
 
     var isMyLastMessage: Boolean = false
         private set
-
 
     fun getMessageList() {
         if (!hasNext) return
@@ -190,6 +191,11 @@ class ChatViewModel(
             message = "사진을 보냈습니다.",
             contentType = ContentType.FILE
         )
+    }
+
+    fun copyMessage(clipboard: ClipboardManager) {
+        val clip = ClipData.newPlainText("Copied Text", clickedTPMessage?.text)
+        clipboard.setPrimaryClip(clip)
     }
 
     fun setClickedTPMessage(tpMessage: TPMessage) {

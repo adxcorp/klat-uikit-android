@@ -30,10 +30,6 @@ class LeftMessageViewHolder(
     ) = with(binding) {
         initView(currentTPMessage)
 
-        Log.d("!! : current : ", currentTPMessage.text.toString())
-        Log.d("!! : next : ", nextTPMessage?.text.toString())
-        Log.d("!! : previous : ", previousMessage?.text.toString())
-
         val currentMessageCreatedTime: String = longToTime(currentTPMessage.createdAt)
         val nextMessageCreatedTime: String = longToTime(nextTPMessage?.createdAt)
         val previousMessageCreatedTime: String = longToTime(previousMessage?.createdAt)
@@ -80,23 +76,13 @@ class LeftMessageViewHolder(
                 }
             }
         } catch (e: Exception) {
-            Log.d("!!: exception : ", e.message.toString())
+
         }
 
         itemView.setOnLongClickListener {
             onLongClickMessage.invoke(currentTPMessage, adapterPosition)
             true
         }
-    }
-
-    private fun setFirstMessageUI(
-        currentTPMessage: TPMessage,
-        currentMessageCreatedTime: String
-    ) = with(binding) {
-        setTopMargin(root, 14)
-        setProfileVisibility(true)
-        setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
-        setMessageTimestamp(currentMessageCreatedTime)
     }
 
     private fun setTimeChangeUI(
@@ -108,7 +94,7 @@ class LeftMessageViewHolder(
             setProfileVisibility(false)
         } else {
             setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
-            setTopMargin(root, 14)
+//            setTopMargin(root, 14)
             setProfileVisibility(true)
         }
         setMessageTimestamp(currentMessageCreatedTime)
@@ -119,14 +105,12 @@ class LeftMessageViewHolder(
         previousMessageCreatedTime: String,
         currentTPMessage: TPMessage
     ) = with(binding) {
+        setMessageTimestamp(null)
         if (previousMessageCreatedTime != currentMessageCreatedTime) {
-            setTopMargin(root, 14)
             setProfileVisibility(true)
             setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
-            setMessageTimestamp(null)
         } else {
             setProfileVisibility(false)
-            setMessageTimestamp(null)
         }
     }
 
@@ -143,16 +127,19 @@ class LeftMessageViewHolder(
     }
 
     private fun initView(tpMessage: TPMessage) = with(binding) {
-        if (tpMessage.reactions.isEmpty()) {
-            rvReactions.visibility = View.GONE
-        } else {
-            rvReactions.visibility = View.VISIBLE
-            setReaction(tpMessage)
-        }
         tvLeftChatProfileLastMessageAt.visibility = View.VISIBLE
         ivLeftChatProfileThumbnail.visibility = View.VISIBLE
         tvChatLeftProfileNickname.visibility = View.VISIBLE
         cvLeftChatProfile.visibility = View.VISIBLE
+        ivLeftChatImageMessage.visibility = View.GONE
+
+        if (tpMessage.reactions.isEmpty()) {
+            rvLeftReactions.visibility = View.GONE
+        } else {
+            rvLeftReactions.visibility = View.VISIBLE
+            setReaction(tpMessage)
+        }
+
         if (tpMessage.fileUrl.isEmpty()) {
             tvLeftChatTextMessage.visibility = View.VISIBLE
             tvLeftChatTextMessage.text = tpMessage.text
@@ -168,7 +155,7 @@ class LeftMessageViewHolder(
     }
 
     private fun setReaction(tpMessage: TPMessage) = with(binding) {
-        rvReactions.apply {
+        rvLeftReactions.apply {
             adapter = ReactionAdapter(tpMessage)
             layoutManager = GridLayoutManager(root.context, 4)
             itemAnimator = null

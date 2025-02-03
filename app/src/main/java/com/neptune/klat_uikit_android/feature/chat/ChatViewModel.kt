@@ -191,6 +191,7 @@ class ChatViewModel(
             message = "사진을 보냈습니다.",
             contentType = ContentType.FILE
         )
+        this.photoFile = null
     }
 
     fun copyMessage(clipboard: ClipboardManager) {

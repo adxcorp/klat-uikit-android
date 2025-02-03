@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +19,7 @@ class ChatAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             LEFT_MESSAGE -> showLeftMessage(parent)
-            RIGHT_MESSAGE -> {
-                val binding: ItemChatRightBinding = ItemChatRightBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                RightMessageViewHolder(binding = binding)
-            }
-
+            RIGHT_MESSAGE -> showRightMessage(parent)
             else -> error("")
         }
     }
@@ -34,7 +29,6 @@ class ChatAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("@@ : ", "Binding position: $position")
         when(holder) {
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
@@ -44,7 +38,10 @@ class ChatAdapter(
             )
 
             is RightMessageViewHolder -> holder.bind(
-                currentTPMessage = tpMessages[position]
+                currentTPMessage = tpMessages[position],
+                nextTPMessage = tpMessages.getOrNull(position+1),
+                previousMessage = tpMessages.getOrNull(position-1),
+                tpMessages = tpMessages
             )
         }
     }
@@ -68,6 +65,16 @@ class ChatAdapter(
         )
     }
 
+    private fun showRightMessage(parent: ViewGroup): RightMessageViewHolder {
+        val binding = ItemChatRightBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RightMessageViewHolder(
+            binding = binding,
+//            onClickProfile = onClickProfile,
+//            onLongClickMessage = onLongClickMessage,
+//            onImageClick = onImageClick
+        )
+    }
+
     fun addMessages(nextTpMessages: List<TPMessage>) {
         tpMessages.addAll(FIRST_POSITION, nextTpMessages)
         notifyItemRangeInserted(FIRST_POSITION, nextTpMessages.size)
@@ -81,8 +88,9 @@ class ChatAdapter(
     }
 
     private fun updatePreviousMessage() {
-        if (tpMessages.size != 1) {
-            notifyItemChanged(tpMessages.size - 2)
+        if (tpMessages.size != ONLY_ONE) {
+            val previousPosition = tpMessages.size - 2
+            notifyItemChanged(previousPosition)
         }
     }
 
@@ -97,11 +105,11 @@ class ChatAdapter(
 
     companion object {
         private const val LEFT_MESSAGE = 0
-        private const val LEFT_PROFILE_MESSAGE = 1
         private const val RIGHT_MESSAGE = 2
-        private const val RIGHT_IMAGE_MESSAGE = 3
 
         private const val LAST_POSITION = 19
         private const val FIRST_POSITION = 0
+
+        private const val ONLY_ONE = 1
     }
 }

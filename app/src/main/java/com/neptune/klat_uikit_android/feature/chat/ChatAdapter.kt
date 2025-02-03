@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,7 @@ class ChatAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d("@@ : ", "Binding position: $position")
         when(holder) {
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
@@ -75,6 +77,13 @@ class ChatAdapter(
     fun addMessage(newTPMessage: TPMessage) {
         tpMessages.add(newTPMessage)
         notifyItemInserted(tpMessages.size)
+        updatePreviousMessage()
+    }
+
+    private fun updatePreviousMessage() {
+        if (tpMessages.size != 1) {
+            notifyItemChanged(tpMessages.size - 2)
+        }
     }
 
     fun updateReaction(position: Int, tpMessage: TPMessage) {

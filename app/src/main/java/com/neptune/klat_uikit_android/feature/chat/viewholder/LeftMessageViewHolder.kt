@@ -30,6 +30,10 @@ class LeftMessageViewHolder(
     ) = with(binding) {
         initView(currentTPMessage)
 
+        Log.d("!! : current : ", currentTPMessage.text.toString())
+        Log.d("!! : next : ", nextTPMessage?.text.toString())
+        Log.d("!! : previous : ", previousMessage?.text.toString())
+
         val currentMessageCreatedTime: String = longToTime(currentTPMessage.createdAt)
         val nextMessageCreatedTime: String = longToTime(nextTPMessage?.createdAt)
         val previousMessageCreatedTime: String = longToTime(previousMessage?.createdAt)
@@ -60,6 +64,14 @@ class LeftMessageViewHolder(
                 }
 
                 nextMessageCreatedTime == currentMessageCreatedTime ->  {
+                    setSameTimeUI(
+                        currentTPMessage = currentTPMessage,
+                        currentMessageCreatedTime = currentMessageCreatedTime,
+                        previousMessageCreatedTime = previousMessageCreatedTime
+                    )
+                }
+
+                previousMessageCreatedTime == currentMessageCreatedTime ->  {
                     setSameTimeUI(
                         currentTPMessage = currentTPMessage,
                         currentMessageCreatedTime = currentMessageCreatedTime,

@@ -100,8 +100,8 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         }
 
         layoutChannelInfo4.tvInfoSwitchTitle.text = "채널 얼리기"
+        layoutChannelInfo4.tvInfoSwitchSubTitle.text = "채널 소유자만 메시지 전송이 가능합니다."
         layoutChannelInfo4.switchInfo.isChecked = ChannelObject.tpChannel.isFrozen
-        layoutChannelInfo4.tvInfoSwitchSubTitle.visibility = View.GONE
         layoutChannelInfo4.switchInfo.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {
                 true -> viewModel.freezeChannel()
@@ -141,7 +141,7 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         tvChannelInfoMemberCount.text = "${ChannelObject.tpChannel.memberCount}명 참여중"
 
         layoutChannelInfo5.tvInfoSwitchTitle.text = "푸시 알림 설정"
-        layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에만 해당하는 설정입니다."
+        layoutChannelInfo5.tvInfoSwitchSubTitle.text = "이 채널에 대한 푸시 알림을 수신하지 않습니다."
         layoutChannelInfo5.switchInfo.isChecked = !ChannelObject.tpChannel.isPushNotificationDisabled
 
         layoutChannelInfo6.tvInfoTitle.text = if (viewModel.isChannelOwner) "채널 삭제" else "채널 나가기"

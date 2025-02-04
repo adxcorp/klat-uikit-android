@@ -10,7 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.neptune.klat_uikit_android.databinding.LayoutEmojiBottomSheetBinding
 
 class EmojiBottomSheet(
-    private val isMe: Boolean,
+    private val messageType: MessageType,
     private val emojiSelectedListener: OnEmojiBottomSheetListener
 ) : BottomSheetDialogFragment() {
     private var _binding: LayoutEmojiBottomSheetBinding? = null
@@ -33,7 +33,12 @@ class EmojiBottomSheet(
     }
 
     private fun initView() = with(binding) {
-        if (isMe) layoutMessageCopyDelete.root.visibility = View.VISIBLE else layoutMessageCopy.root.visibility = View.VISIBLE
+        when (messageType) {
+            MessageType.COPY -> layoutMessageCopy.root.visibility = View.VISIBLE
+            MessageType.COPY_AND_DELETE -> layoutMessageCopyDelete.root.visibility = View.VISIBLE
+            MessageType.DELETE -> layoutMessageDelete.root.visibility = View.VISIBLE
+            MessageType.NONE -> Unit
+        }
 
         rvEmojis.apply {
             layoutManager = GridLayoutManager(requireActivity(), 1, LinearLayoutManager.HORIZONTAL, false)
@@ -50,8 +55,30 @@ class EmojiBottomSheet(
 
     private fun setListener() = with(binding) {
         layoutMessageCopy.root.setOnClickListener {
-            emojiSelectedListener.copyMessage()
+            emojiSelectedListener.selectedCopyText()
             dismiss()
         }
+
+        layoutMessageCopyDelete.clMessageCopy.setOnClickListener {
+            emojiSelectedListener.selectedCopyText()
+            dismiss()
+        }
+
+        layoutMessageCopyDelete.clMessageDelete.setOnClickListener {
+            emojiSelectedListener.selectedDeleteText()
+            dismiss()
+        }
+
+        layoutMessageDelete.root.setOnClickListener {
+            emojiSelectedListener.selectedDeleteText()
+            dismiss()
+        }
+    }
+
+    enum class MessageType {
+        COPY,
+        COPY_AND_DELETE,
+        DELETE,
+        NONE
     }
 }

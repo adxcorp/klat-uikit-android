@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.JsonObject
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
@@ -40,7 +41,7 @@ class ChatViewModel(
     val channelUiState: SharedFlow<ChatUiState>
         get() = _chatUiState.asSharedFlow()
 
-    private var clickedTPMessage: TPMessage? = null
+    private var clickedTPMessage: TPMessage = TPMessage(JsonObject())
 
     private val tpMessages: ArrayList<TPMessage> = arrayListOf()
 
@@ -94,6 +95,17 @@ class ChatViewModel(
             chatRepository.sendMessage(params).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _chatUiState.emit(ChatUiState.SendMessage(callbackResult.successData))
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    fun deleteMessage() {
+        viewModelScope.launch {
+            chatRepository.deleteMessage(clickedTPMessage).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _chatUiState.emit(ChatUiState.DeleteMessage(clickedTPMessage))
                     is Result.Failure -> { }
                 }
             }

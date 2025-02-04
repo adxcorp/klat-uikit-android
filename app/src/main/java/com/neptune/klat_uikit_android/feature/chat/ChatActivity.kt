@@ -23,6 +23,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.MessageActions
+import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.core.util.CameraUtils
 import com.neptune.klat_uikit_android.core.util.FileUtils
@@ -31,6 +34,7 @@ import com.neptune.klat_uikit_android.databinding.ActivityChatBinding
 import com.neptune.klat_uikit_android.feature.channel.info.ChannelInfoActivity
 import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
 import com.neptune.klat_uikit_android.feature.chat.emoji.EmojiBottomSheet
+import com.neptune.klat_uikit_android.feature.chat.emoji.EmojiBottomSheet.MessageType
 import com.neptune.klat_uikit_android.feature.chat.emoji.OnEmojiBottomSheetListener
 import com.neptune.klat_uikit_android.feature.chat.photo.PhotoDetailActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
@@ -38,7 +42,7 @@ import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import kotlinx.coroutines.launch
 
-class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetListener {
+class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmojiBottomSheetListener {
     companion object {
         private const val BOTTOM = 0
     }
@@ -106,6 +110,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetLis
     }
 
     private fun init() {
+        binding.layoutChatEmpty.tvEmptyMessage.text = "아직 채널에 메시지가 없어요.\n제일 먼저 메시지를 남겨보세요."
         viewModel.getMessageList()
         viewModel.observeEvent()
         setRequestLauncher()
@@ -131,6 +136,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetLis
                         }
 
                         is ChatUiState.SendMessage -> sendMessage(chatUiState.tpMessage)
+                        is ChatUiState.DeleteMessage -> deletedMessage(chatUiState.tpMessage)
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
                         is ChatUiState.ReceiveMessage -> receiveMessage(chatUiState.tpMessage)
                         is ChatUiState.UpdatedReactionMessage -> updateReaction(chatUiState.tpMessage)
@@ -223,10 +229,19 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetLis
     private fun setAdapter(): ChatAdapter {
         return ChatAdapter(
             onLongClickMessage = { tpMessage, position ->
+                val isMe = ChannelObject.userId == tpMessage.userId
+
+                val messageType: MessageType = when {
+                    tpMessage.fileUrl.isEmpty() -> if (isMe) MessageType.COPY_AND_DELETE else MessageType.COPY
+                    isMe -> MessageType.DELETE
+                    else -> MessageType.NONE
+                }
+
                 viewModel.setLongClickPosition(position)
                 viewModel.setClickedTPMessage(tpMessage)
+
                 EmojiBottomSheet(
-                    isMe = ChannelObject.userId == tpMessage.userId,
+                    messageType = messageType,
                     emojiSelectedListener = this
                 ).show(supportFragmentManager, null)
             },
@@ -263,6 +278,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetLis
     }
 
     private fun receiveMessage(tpMessage: TPMessage) {
+        binding.layoutChatEmpty.root.visibility = View.GONE
         adapter.addMessage(tpMessage)
         viewModel.setMyLastMessage(false)
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
@@ -310,12 +326,30 @@ class ChatActivity : AppCompatActivity(), MemberInterface, OnEmojiBottomSheetLis
         }
     }
 
+    private fun deletedMessage(deleteTPMessage: TPMessage) {
+        adapter.deleteMessage(
+            tpMessage = deleteTPMessage,
+            deletePosition = viewModel.longClickPosition
+        )
+    }
+
     override fun selectedEmoji(emoji: String) {
         viewModel.updateReaction(emoji)
     }
 
-    override fun copyMessage() {
+    override fun selectedCopyText() {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         viewModel.copyMessage(clipboard)
+    }
+
+    override fun selectedDeleteText() {
+        AlertDialog(
+            stateType = StateType.DELETE_MESSAGE,
+            messageActions = this
+        ).show(supportFragmentManager, null)
+    }
+
+    override fun deleteMessage() {
+        viewModel.deleteMessage()
     }
 }

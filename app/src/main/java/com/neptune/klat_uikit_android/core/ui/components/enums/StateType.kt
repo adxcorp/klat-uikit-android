@@ -5,5 +5,6 @@ enum class StateType {
     MUTE,
     OWNER,
     REMOVE,
-    LEAVE
+    LEAVE,
+    DELETE_MESSAGE
 }

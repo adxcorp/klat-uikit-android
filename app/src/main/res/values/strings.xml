@@ -19,4 +19,7 @@
 
     <string name="alert_leave_title">%s\n채널을 나갈까요?</string>
     <string name="alert_leave_description">채널에서 즉시 퇴장되며,\n대화 기록은 저장되지 않고 복구할 수 없습니다.</string>
+
+    <string name="alert_delete_message">메시지를 삭제할까요?</string>
+    <string name="alert_delete_message_description">메시지는 즉시 나와 상대방에게 삭제되며 복구되지 않습니다.</string>
 </resources>

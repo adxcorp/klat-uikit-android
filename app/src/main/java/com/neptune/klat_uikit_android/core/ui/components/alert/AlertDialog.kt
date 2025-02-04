@@ -13,17 +13,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
-import com.neptune.klat_uikit_android.core.ui.interfaces.ChannelActions
-import com.neptune.klat_uikit_android.core.ui.interfaces.UserStatusActions
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.MessageActions
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.UserStatusActions
 import com.neptune.klat_uikit_android.databinding.LayoutAlertDialogBinding
 import kotlinx.coroutines.launch
 
 class AlertDialog(
     private val stateType: StateType,
     private val userId: String = "",
-    private val title: String,
+    private val title: String = "",
     private val userStatusActions: UserStatusActions? = null,
-    private val channelActions: ChannelActions? = null
+    private val channelActions: ChannelActions? = null,
+    private val messageActions: MessageActions? = null
 ) : DialogFragment() {
     private var _binding: LayoutAlertDialogBinding? = null
     private val binding get() = _binding ?: error("LayoutAlertDialogBinding 초기화 에러")
@@ -118,6 +120,17 @@ class AlertDialog(
                 setContent(
                     titleDescription = getString(R.string.alert_leave_title, title),
                     contentDescription = getString(R.string.alert_leave_description)
+                )
+            }
+
+            StateType.DELETE_MESSAGE -> {
+                tvAlertRight.setOnClickListener {
+                    messageActions?.deleteMessage()
+                    dialog?.dismiss()
+                }
+                setContent(
+                    titleDescription = getString(R.string.alert_delete_message),
+                    contentDescription = getString(R.string.alert_delete_message_description)
                 )
             }
         }

@@ -14,7 +14,7 @@ import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
-import com.neptune.klat_uikit_android.core.ui.interfaces.UserStatusActions
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.UserStatusActions
 import com.neptune.klat_uikit_android.databinding.LayoutProfileDialogBinding
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import kotlinx.coroutines.launch

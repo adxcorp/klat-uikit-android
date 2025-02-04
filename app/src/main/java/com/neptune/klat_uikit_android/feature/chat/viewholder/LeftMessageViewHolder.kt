@@ -38,16 +38,21 @@ class LeftMessageViewHolder(
             tvLeftChatProfileUnReadCount.text = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString()
         }
 
-        ivLeftChatProfileThumbnail.setOnClickListener {
-            onClickProfile.invoke(currentTPMessage)
-        }
-
-        itemView.setOnClickListener {
-            if (currentTPMessage.fileUrl.isNotEmpty()) {
-                ChannelObject.setTPMessage(currentTPMessage)
-                onImageClick.invoke()
-            }
-        }
+//        if (previousMessage?.userId == currentTPMessage.userId) {
+//            if (currentMessageCreatedTime == previousMessageCreatedTime) {
+//                setSameTimeUI(
+//                    currentTPMessage = currentTPMessage,
+//                    currentMessageCreatedTime = currentMessageCreatedTime,
+//                    previousMessageCreatedTime = previousMessageCreatedTime
+//                )
+//            } else {
+//                setTimeChangeUI(
+//                    currentTPMessage = currentTPMessage,
+//                    currentMessageCreatedTime = currentMessageCreatedTime,
+//                    previousMessageCreatedTime = previousMessageCreatedTime
+//                )
+//            }
+//        }
 
         try {
             when {
@@ -68,11 +73,19 @@ class LeftMessageViewHolder(
                 }
 
                 previousMessageCreatedTime == currentMessageCreatedTime ->  {
-                    setSameTimeUI(
-                        currentTPMessage = currentTPMessage,
-                        currentMessageCreatedTime = currentMessageCreatedTime,
-                        previousMessageCreatedTime = previousMessageCreatedTime
-                    )
+                    if (currentTPMessage.userId != previousMessage?.userId) {
+                        setTimeChangeUI(
+                            currentTPMessage = currentTPMessage,
+                            currentMessageCreatedTime = currentMessageCreatedTime,
+                            previousMessageCreatedTime = previousMessageCreatedTime
+                        )
+                    } else {
+                        setSameTimeUI(
+                            currentTPMessage = currentTPMessage,
+                            currentMessageCreatedTime = currentMessageCreatedTime,
+                            previousMessageCreatedTime = previousMessageCreatedTime
+                        )
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -83,6 +96,17 @@ class LeftMessageViewHolder(
             onLongClickMessage.invoke(currentTPMessage, adapterPosition)
             true
         }
+
+        ivLeftChatProfileThumbnail.setOnClickListener {
+            onClickProfile.invoke(currentTPMessage)
+        }
+
+        itemView.setOnClickListener {
+            if (currentTPMessage.fileUrl.isNotEmpty()) {
+                ChannelObject.setTPMessage(currentTPMessage)
+                onImageClick.invoke()
+            }
+        }
     }
 
     private fun setTimeChangeUI(
@@ -90,6 +114,7 @@ class LeftMessageViewHolder(
         previousMessageCreatedTime: String,
         currentTPMessage: TPMessage
     ) = with(binding) {
+        setMessageTimestamp(currentMessageCreatedTime)
         if (currentMessageCreatedTime == previousMessageCreatedTime) {
             setProfileVisibility(false)
         } else {
@@ -97,7 +122,6 @@ class LeftMessageViewHolder(
             setTopMargin(root, 14)
             setProfileVisibility(true)
         }
-        setMessageTimestamp(currentMessageCreatedTime)
     }
 
     private fun setSameTimeUI(
@@ -107,6 +131,7 @@ class LeftMessageViewHolder(
     ) = with(binding) {
         setMessageTimestamp(null)
         if (previousMessageCreatedTime != currentMessageCreatedTime) {
+            setTopMargin(root, 14)
             setProfileVisibility(true)
             setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
         } else {
@@ -127,6 +152,8 @@ class LeftMessageViewHolder(
     }
 
     private fun initView(tpMessage: TPMessage) = with(binding) {
+        setTopMargin(root, 0)
+
         tvLeftChatProfileLastMessageAt.visibility = View.VISIBLE
         ivLeftChatProfileThumbnail.visibility = View.VISIBLE
         tvChatLeftProfileNickname.visibility = View.VISIBLE
@@ -151,7 +178,6 @@ class LeftMessageViewHolder(
                 radius = 8.dpToPxInt(ivLeftChatImageMessage.context)
             )
         }
-        setTopMargin(root, 0)
     }
 
     private fun setReaction(tpMessage: TPMessage) = with(binding) {

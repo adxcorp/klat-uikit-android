@@ -105,4 +105,24 @@ class ChatRepository {
             awaitClose { cancel() }
         }
     }
+
+    fun deleteMessage(deleteMessage: TPMessage): Flow<Result<Unit, WrappedFailResult>> = callbackFlow {
+        TalkPlus.deleteMessage(
+            ChannelObject.tpChannel,
+            deleteMessage,
+            object : TalkPlus.CallbackListener<Void> {
+                override fun onSuccess(t: Void?) {
+                    trySend(Result.Success(Unit))
+                }
+
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            }
+        )
+        awaitClose { cancel() }
+    }
 }

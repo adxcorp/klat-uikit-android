@@ -69,9 +69,8 @@ class ChatAdapter(
         val binding = ItemChatRightBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return RightMessageViewHolder(
             binding = binding,
-//            onClickProfile = onClickProfile,
-//            onLongClickMessage = onLongClickMessage,
-//            onImageClick = onImageClick
+            onLongClickMessage = onLongClickMessage,
+            onImageClick = onImageClick
         )
     }
 
@@ -79,6 +78,14 @@ class ChatAdapter(
         tpMessages.addAll(FIRST_POSITION, nextTpMessages)
         notifyItemRangeInserted(FIRST_POSITION, nextTpMessages.size)
         updateLastMessage()
+    }
+
+    fun deleteMessage(
+        tpMessage: TPMessage,
+        deletePosition: Int
+    ) {
+        tpMessages.remove(tpMessage)
+        notifyItemRemoved(deletePosition)
     }
 
     fun addMessage(newTPMessage: TPMessage) {

@@ -15,7 +15,11 @@ import io.talkplus.entity.channel.TPMessage
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class RightMessageViewHolder(private val binding: ItemChatRightBinding) : RecyclerView.ViewHolder(binding.root) {
+class RightMessageViewHolder(
+    private val binding: ItemChatRightBinding,
+    private val onLongClickMessage: (TPMessage, Int) -> Unit,
+    private val onImageClick: () -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
     fun bind(
         currentTPMessage: TPMessage,
         nextTPMessage: TPMessage?,
@@ -45,6 +49,18 @@ class RightMessageViewHolder(private val binding: ItemChatRightBinding) : Recycl
             }
         } catch (e: Exception) {
 
+        }
+
+        itemView.setOnLongClickListener {
+            onLongClickMessage.invoke(currentTPMessage, adapterPosition)
+            true
+        }
+
+        itemView.setOnClickListener {
+            if (currentTPMessage.fileUrl.isNotEmpty()) {
+                ChannelObject.setTPMessage(currentTPMessage)
+                onImageClick.invoke()
+            }
         }
     }
 

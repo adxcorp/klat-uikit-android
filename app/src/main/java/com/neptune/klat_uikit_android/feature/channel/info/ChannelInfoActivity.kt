@@ -13,7 +13,7 @@ import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
-import com.neptune.klat_uikit_android.core.ui.interfaces.ChannelActions
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
 import com.neptune.klat_uikit_android.databinding.ActivityChannelInfoBinding
 import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberActivity

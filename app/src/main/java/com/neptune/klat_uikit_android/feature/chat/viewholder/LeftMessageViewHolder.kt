@@ -94,7 +94,7 @@ class LeftMessageViewHolder(
             setProfileVisibility(false)
         } else {
             setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
-//            setTopMargin(root, 14)
+            setTopMargin(root, 14)
             setProfileVisibility(true)
         }
         setMessageTimestamp(currentMessageCreatedTime)

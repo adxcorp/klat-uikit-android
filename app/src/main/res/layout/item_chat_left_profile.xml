@@ -61,6 +61,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_chat_left_profile_nickname">
 
             <TextView
+                android:textColor="@color/black"
                 android:id="@+id/tv_left_chat_text_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,7 +85,7 @@
                 android:id="@+id/iv_left_chat_image_message"
                 android:visibility="gone"
                 android:layout_width="246dp"
-                android:layout_height="wrap_content"
+                android:layout_height="300dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +94,7 @@
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_reactions"
+            android:id="@+id/rv_left_reactions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@+id/cl_message_container"

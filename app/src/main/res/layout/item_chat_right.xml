@@ -1,46 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_marginTop="14dp"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="12dp"
-        android:foregroundGravity="left"
+        android:maxWidth="400dp"
         android:minHeight="38dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent="0.8">
 
-        <TextView
-            android:id="@+id/tv_chat_right_message"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_radius_8dp"
-            android:backgroundTint="#00BFBF"
             android:maxWidth="266dp"
-            android:paddingStart="12dp"
-            android:paddingTop="10dp"
-            android:paddingEnd="12dp"
-            android:paddingBottom="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:minHeight="38dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="wdwdwwwdwdwwdwdwdwdwdwdwdwddwd" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_chat_right_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_radius_8dp"
+                android:backgroundTint="#00BFBF"
+                android:maxWidth="266dp"
+                android:paddingStart="12dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="10dp"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="wdwdwwwdwdwwdwdwdwdwdwdwdwddwd" />
+
+            <ImageView
+                android:id="@+id/iv_right_chat_image_message"
+                android:layout_width="246dp"
+                android:layout_height="300dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layoutDirection="rtl"
+            android:id="@+id/rv_right_reactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:layout_constraintEnd_toEndOf="@+id/constraintLayout11"
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout11"
+            app:reverseLayout="true" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout6"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginEnd="5dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_chat_right_message"
+            app:layout_constraintBottom_toBottomOf="@+id/constraintLayout11"
+            app:layout_constraintEnd_toStartOf="@+id/constraintLayout11"
             app:layout_constraintHorizontal_chainStyle="packed">
 
             <TextView

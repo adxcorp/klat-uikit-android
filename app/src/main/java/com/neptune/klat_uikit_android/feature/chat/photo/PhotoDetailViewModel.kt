@@ -62,10 +62,11 @@ class PhotoDetailViewModel : ViewModel() {
                                 _photoUiState.emit(PhotoDetailUiState.DownloadFailed)
                                 return@launch
                             }
+
                             DownloadManager.STATUS_RUNNING -> _photoUiState.emit(PhotoDetailUiState.Downloading)
                         }
                     }
-                    delay(100)
+                    delay(500)
                     cursor = downloadManager.query(query)
                 } catch (exception: Exception) {
                     _photoUiState.emit(PhotoDetailUiState.Exception)

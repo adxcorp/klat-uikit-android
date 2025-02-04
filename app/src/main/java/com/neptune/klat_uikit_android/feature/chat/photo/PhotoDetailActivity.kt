@@ -3,6 +3,9 @@ package com.neptune.klat_uikit_android.feature.chat.photo
 import android.app.DownloadManager
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Matrix
+import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -25,6 +28,9 @@ class PhotoDetailActivity : BaseActivity<ActivityPhotoDetailBinding>() {
     }
 
     private val viewModel: PhotoDetailViewModel by viewModels()
+    private lateinit var scaleGestureDetector: ScaleGestureDetector
+    private var scaleFactor = 1.0f
+    private val matrix = Matrix()
 
     override fun bindingFactory(): ActivityPhotoDetailBinding {
         return ActivityPhotoDetailBinding.inflate(layoutInflater)
@@ -34,6 +40,19 @@ class PhotoDetailActivity : BaseActivity<ActivityPhotoDetailBinding>() {
         setHeaderUI()
         bindView()
         observePhotoDetailUiState()
+        zoomInAndOut()
+    }
+
+    private fun zoomInAndOut() = with(binding) {
+        scaleGestureDetector = ScaleGestureDetector(this@PhotoDetailActivity, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
+                scaleFactor *= detector.scaleFactor
+                scaleFactor = scaleFactor.coerceIn(1.0f, 5.0f) // 최소 1배, 최대 5배 확대
+                matrix.setScale(scaleFactor, scaleFactor, binding.root.width / 2f, binding.root.height / 2f)
+                binding.ivPhotoDetail.imageMatrix = matrix
+                return true
+            }
+        })
     }
 
     private fun observePhotoDetailUiState() {
@@ -96,5 +115,9 @@ class PhotoDetailActivity : BaseActivity<ActivityPhotoDetailBinding>() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return scaleGestureDetector.onTouchEvent(event) || super.onTouchEvent(event)
     }
 }

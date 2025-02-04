@@ -19,9 +19,10 @@
 
     <ImageView
         android:id="@+id/iv_photo_detail"
-        app:layout_constraintHeight_percent="0.5"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.8"
+        android:scaleType="matrix"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -24,4 +24,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "klat-uikit-android"
 include(":app")
+
+include(":talkplus")
+project(":talkplus").projectDir = file("/Users/neptune/AndroidStudioProjects/talkplus-android/app")
  

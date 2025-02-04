@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.core.extension
 
-import android.content.Context
 import android.net.Uri
 import android.widget.ImageView
 import com.bumptech.glide.Glide
@@ -47,5 +46,12 @@ fun ImageView.loadThumbnail(uri: Uri) {
 fun ImageView.loadThumbnail(drawable: Int) {
     Glide.with(this)
         .load(drawable)
+        .into(this)
+}
+
+fun ImageView.loadThumbnailFitCenter(url: String) {
+    Glide.with(this)
+        .load(url)
+        .fitCenter()
         .into(this)
 }

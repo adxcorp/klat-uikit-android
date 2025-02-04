@@ -90,4 +90,6 @@ dependencies {
     api("androidx.fragment:fragment-ktx:1.2.0")
 
     implementation(project(":talkplus"))
+
+    implementation ("com.github.chrisbanes:PhotoView:2.0.0")
 }

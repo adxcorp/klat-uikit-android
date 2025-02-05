@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -44,7 +45,7 @@ import kotlinx.coroutines.launch
 
 class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmojiBottomSheetListener {
     companion object {
-        private const val BOTTOM = 0
+        private val BOTTOM_RANGE = 1..3
     }
 
     private lateinit var requestPermissionCameraLauncher: ActivityResultLauncher<String>
@@ -282,7 +283,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         adapter.addMessage(tpMessage)
         viewModel.setMyLastMessage(false)
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
-        if (layoutManager.findFirstVisibleItemPosition() == BOTTOM) {
+        if (binding.rvChat.adapter?.itemCount?.minus(layoutManager.findLastVisibleItemPosition()) in BOTTOM_RANGE) {
             binding.rvChat.scrollToPosition(adapter.itemCount-1)
         }
     }

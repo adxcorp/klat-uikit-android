@@ -334,6 +334,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
 
     private fun channelChanged() {
         adapter.updateUnreadCount()
+        binding.layoutChatHeader.tvMidText.text = ChannelObject.tpChannel.channelName
         if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else {
             setFrozenUI(false)
             setMessageBarUI()

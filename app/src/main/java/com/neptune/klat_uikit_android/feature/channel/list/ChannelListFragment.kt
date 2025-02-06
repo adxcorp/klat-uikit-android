@@ -63,6 +63,13 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         observeChannelListUiState()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (!ChannelObject.tpChannel.channelId.isNullOrEmpty()) {
+            adapter.updateChannelItem(ChannelObject.tpChannel)
+        }
+    }
+
     private fun init() = with(viewModel) {
         binding.rvChannels.itemAnimator = null
         observeChannelList()

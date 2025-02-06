@@ -47,6 +47,7 @@ object PermissionUtils {
 
     fun checkGalleryPermission(requestPermissionGalleryLauncher: ActivityResultLauncher<Array<String>>) {
         when {
+            // 34 이상
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
                 requestPermissionGalleryLauncher.launch(arrayOf(
                     Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
@@ -54,10 +55,12 @@ object PermissionUtils {
                 ))
             }
 
+            // 33 이상
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                 requestPermissionGalleryLauncher.launch(arrayOf(Manifest.permission.READ_MEDIA_IMAGES))
             }
 
+            // 33 미만
             Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> {
                 requestPermissionGalleryLauncher.launch(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE))
             }
@@ -73,13 +76,23 @@ object PermissionUtils {
 
     fun checkMediaPermissions(permissions: Map<String, Boolean>): Boolean {
         return when {
+            // Android 14(API 34) 이상
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
                 permissions["android.permission.READ_MEDIA_VISUAL_USER_SELECTED"] == true ||
                         permissions["android.permission.READ_MEDIA_IMAGES"] == true
             }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> permissions["android.permission.READ_MEDIA_IMAGES"] == true
-            else -> permissions["android.permission.READ_EXTERNAL_STORAGE"] == true
+            // Android 13(API 33)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                permissions["android.permission.READ_MEDIA_IMAGES"] == true
+            }
+            // Android 10 ~ 12 (API 29 ~ 32)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
+                permissions["android.permission.READ_EXTERNAL_STORAGE"] == true
+            }
+            // Android 9 이하 (API 28 이하)
+            else -> {
+                permissions["android.permission.WRITE_EXTERNAL_STORAGE"] == true
+            }
         }
     }
 }

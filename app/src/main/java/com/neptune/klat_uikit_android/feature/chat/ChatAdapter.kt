@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -114,10 +115,11 @@ class ChatAdapter(
     }
 
     fun updateReaction(tpMessage: TPMessage) {
-        val updatedMessage = tpMessages.find { it.messageId == tpMessage.messageId }
-        val updatedPosition = tpMessages.indexOf(updatedMessage)
-        tpMessages[updatedPosition] = tpMessage
-        notifyItemChanged(updatedPosition)
+        tpMessages.find { it.messageId == tpMessage.messageId }?.let { updatedMessage ->
+            val updatedPosition = tpMessages.indexOf(updatedMessage)
+            tpMessages[updatedPosition] = tpMessage
+            notifyItemChanged(updatedPosition)
+        }
     }
 
     fun updateUnreadCount() {

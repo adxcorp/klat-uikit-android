@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.core.data.repository.channel
 
+import android.util.Log
 import com.google.gson.JsonObject
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
@@ -172,10 +173,13 @@ class ChannelRepository {
     fun createChannel(
         memberCount: Int,
         channelName: String,
-        photoFile: File?
+        photoFile: File? = null,
+        category: String = "",
+        subcategory: String = "",
+        targetIds: List<String> = listOf()
     ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
         TalkPlus.createChannel(
-            ChannelObject.userId,
+            targetIds,
             null,
             false,
             memberCount,
@@ -183,8 +187,8 @@ class ChannelRepository {
             if (memberCount == ChannelCreateViewModel.SUPER_TYPE) "super_private" else "private",
             channelName,
             "",
-            "",
-            "",
+            category,
+            subcategory,
             "",
             JsonObject(),
             photoFile,
@@ -194,6 +198,7 @@ class ChannelRepository {
                     trySend(Result.Success(tpChannel))
                 }
                 override fun onFailure(errorCode: Int, exception: Exception) {
+                    Log.d("!! : ex : ", exception.toString())
                     trySend(Result.Failure(WrappedFailResult(
                         errorCode = errorCode,
                         exception = exception

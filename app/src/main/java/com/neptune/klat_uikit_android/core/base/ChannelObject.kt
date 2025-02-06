@@ -9,6 +9,9 @@ object ChannelObject {
     var tpChannel: TPChannel = TPChannel(JsonObject())
         private set
 
+    var tpChannels: ArrayList<TPChannel> = arrayListOf()
+        private set
+
     var tpMessage: TPMessage = TPMessage(JsonObject())
         private set
 
@@ -29,5 +32,9 @@ object ChannelObject {
 
     fun setTPMessage(message: TPMessage) {
         tpMessage = message
+    }
+
+    fun setTPChannels(tpChannels: List<TPChannel>) {
+        this.tpChannels.addAll(tpChannels)
     }
 }

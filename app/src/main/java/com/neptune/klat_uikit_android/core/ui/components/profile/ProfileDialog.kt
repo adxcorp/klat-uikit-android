@@ -1,6 +1,8 @@
 package com.neptune.klat_uikit_android.core.ui.components.profile
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +18,7 @@ import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.UserStatusActions
 import com.neptune.klat_uikit_android.databinding.LayoutProfileDialogBinding
+import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberInterface
 import kotlinx.coroutines.launch
 
@@ -65,10 +68,12 @@ class ProfileDialog(
             is ProfileUiState.GetPeerMutedUsers -> setView()
             is ProfileUiState.UnMuteUser -> unMutedUI()
             is ProfileUiState.PeerUnMuteUser -> unMutedUI()
+            is ProfileUiState.MoveChatRoom -> moveChatRoom()
         }
     }
 
     private fun setClickListener() = with(binding) {
+        clProfileChat.setOnClickListener { viewModel.checkSameChatRoom(userId) }
         ivProfileClose.setOnClickListener { dialog?.dismiss() }
         clProfileBlock.setOnClickListener { showAlertDialog(type = StateType.BAN) }
         clOwner.setOnClickListener { showAlertDialog(type = StateType.OWNER) }
@@ -184,6 +189,14 @@ class ProfileDialog(
         viewModel.setMute(true)
         binding.ivProfileMute.setImageResource(R.drawable.ic_64dp_bell_on)
         binding.tvProfileMute.text = "음소거 됨"
+    }
+
+    private fun moveChatRoom() {
+        dismiss()
+        val intent = Intent(requireActivity(), ChatActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        startActivity(intent)
     }
 
     override fun peerMuteUser() {

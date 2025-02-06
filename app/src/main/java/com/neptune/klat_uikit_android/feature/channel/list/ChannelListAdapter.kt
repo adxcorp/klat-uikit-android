@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChannelBinding
 import io.talkplus.entity.channel.TPChannel
@@ -118,11 +119,13 @@ class ChannelListAdapter(
         channelList.add(FIRST, tpChannel)
         notifyItemMoved(oldChannelIndex, FIRST)
         notifyItemChanged(FIRST)
+        ChannelObject.setTPChannels(channelList)
     }
 
     fun addChannelItemToTop(tpChannel: TPChannel) {
         channelList.add(FIRST, tpChannel)
         notifyItemInserted(FIRST)
+        ChannelObject.setTPChannels(channelList)
     }
 
     fun updateChannelItem(tpChannel: TPChannel) {
@@ -130,6 +133,7 @@ class ChannelListAdapter(
         if (updateTPChannelIndex == NO_INDEX) return
         channelList[updateTPChannelIndex] = tpChannel
         notifyItemChanged(updateTPChannelIndex)
+        ChannelObject.setTPChannels(channelList)
     }
 
     fun removeChannelItem(tpChannel: TPChannel) {
@@ -137,6 +141,7 @@ class ChannelListAdapter(
         if (removeChannelIndex == NO_INDEX) return
         channelList.removeAt(removeChannelIndex)
         notifyItemRemoved(removeChannelIndex)
+        ChannelObject.setTPChannels(channelList)
     }
 
     companion object {

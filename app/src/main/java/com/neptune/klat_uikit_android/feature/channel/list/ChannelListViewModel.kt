@@ -35,6 +35,7 @@ class ChannelListViewModel(
                     is Result.Success -> {
                         lastChannel = callbackResult.successData.tpChannels.lastOrNull()
                         currentChannelList.addAll(callbackResult.successData.tpChannels)
+                        ChannelObject.setTPChannels(currentChannelList)
 
                         when (callbackResult.successData.hasNext) {
                             true -> getChannels()

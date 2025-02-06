@@ -24,10 +24,6 @@ class ChatAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return tpMessages.size
-    }
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
             is LeftMessageViewHolder -> holder.bind(
@@ -37,13 +33,29 @@ class ChatAdapter(
                 tpMessages = tpMessages
             )
 
-            is RightMessageViewHolder -> holder.bind(
-                currentTPMessage = tpMessages[position],
-                nextTPMessage = tpMessages.getOrNull(position+1),
-                previousMessage = tpMessages.getOrNull(position-1),
-                tpMessages = tpMessages
-            )
+            is RightMessageViewHolder ->  {
+                holder.bind(
+                    currentTPMessage = tpMessages[position],
+                    nextTPMessage = tpMessages.getOrNull(position+1),
+                    previousMessage = tpMessages.getOrNull(position-1),
+                    tpMessages = tpMessages
+                )
+            }
         }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty()) {
+            if (holder is RightMessageViewHolder) {
+                holder.updateUnreadCount(tpMessages[position])
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return tpMessages.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -101,9 +113,15 @@ class ChatAdapter(
         }
     }
 
-    fun updateReaction(position: Int, tpMessage: TPMessage) {
-        tpMessages[position] = tpMessage
-        notifyItemChanged(position)
+    fun updateReaction(tpMessage: TPMessage) {
+        val updatedMessage = tpMessages.find { it.messageId == tpMessage.messageId }
+        val updatedPosition = tpMessages.indexOf(updatedMessage)
+        tpMessages[updatedPosition] = tpMessage
+        notifyItemChanged(updatedPosition)
+    }
+
+    fun updateUnreadCount() {
+        notifyItemRangeChanged(0, tpMessages.size, "updateUnreadCount")
     }
 
     private fun updateLastMessage() {

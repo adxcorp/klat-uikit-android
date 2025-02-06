@@ -1,12 +1,17 @@
 package com.neptune.klat_uikit_android.feature.chat.viewholder
 
+import android.content.Context
+import android.graphics.Rect
+import android.util.LayoutDirection
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
+import com.neptune.klat_uikit_android.core.extension.dpToPx
 import com.neptune.klat_uikit_android.core.extension.dpToPxInt
 import com.neptune.klat_uikit_android.core.extension.loadThumbnailContainRadius
 import com.neptune.klat_uikit_android.databinding.ItemChatRightBinding
@@ -64,6 +69,18 @@ class RightMessageViewHolder(
         }
     }
 
+    fun updateUnreadCount(currentTPMessage: TPMessage) = with(binding) {
+        Log.d("!! : message : ", currentTPMessage.text.toString())
+        Log.d("!! : count : ", ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString())
+//        if (ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).minus(1) <= 0) {
+//            tvChatRightUnReadCount.text = ""
+//            return@with
+//        }
+        val unreadCount = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage)
+        tvChatRightUnReadCount.text = if (unreadCount == 0) "" else unreadCount.toString()
+
+    }
+
     private fun initView(tpMessage: TPMessage) = with(binding) {
         tvChatRightLastMessageAt.visibility = View.VISIBLE
         ivRightChatImageMessage.visibility = View.GONE
@@ -91,7 +108,9 @@ class RightMessageViewHolder(
 
     private fun setReaction(tpMessage: TPMessage) = with(binding) {
         rvRightReactions.apply {
-            adapter = ReactionAdapter(tpMessage)
+            layoutDirection = View.LAYOUT_DIRECTION_RTL
+            setHasFixedSize(true)
+            adapter = ReactionAdapter(tpMessage = tpMessage)
             layoutManager = GridLayoutManager(root.context, 4)
             itemAnimator = null
         }

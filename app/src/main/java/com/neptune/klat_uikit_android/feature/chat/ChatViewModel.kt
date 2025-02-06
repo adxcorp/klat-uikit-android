@@ -9,8 +9,10 @@ import com.google.gson.JsonObject
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
+import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
+import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
@@ -23,10 +25,13 @@ import java.io.File
 
 class ChatViewModel(
     private val chatRepository: ChatRepository = ChatRepository(),
-    private val eventRepository: EventRepository = EventRepository()
+    private val eventRepository: EventRepository = EventRepository(),
+    private val channelRepository: ChannelRepository = ChannelRepository()
 ) : ViewModel() {
     private var photoFile: File? = null
     private var hasNext: Boolean = true
+
+    var isOnStop = false
 
     var isFirstLoad: Boolean = true
         private set
@@ -119,7 +124,7 @@ class ChatViewModel(
                     EventType.BAN_USER -> Unit
                     EventType.ADDED_CHANNEL -> Unit
                     EventType.LEAVE_OTHER_USER -> Unit
-                    EventType.CHANGED_CHANNEL -> _chatUiState.emit(ChatUiState.Frozen(callbackResult.channel.isFrozen))
+                    EventType.CHANGED_CHANNEL -> _chatUiState.emit(ChatUiState.ChannelChanged(callbackResult.channel.isFrozen))
                     EventType.REMOVED_CHANNEL -> _chatUiState.emit(ChatUiState.RemoveChannel)
                     EventType.UPDATED_REACTION -> _chatUiState.emit(ChatUiState.UpdatedReactionMessage(callbackResult.message))
                     EventType.RECEIVED_MESSAGE -> _chatUiState.emit(ChatUiState.ReceiveMessage(callbackResult.message))
@@ -132,7 +137,7 @@ class ChatViewModel(
     private suspend fun addReaction(selectedEmoji: String) {
         viewModelScope.launch {
             chatRepository.addMessageReaction(
-                targetMessage = clickedTPMessage ?: return@launch,
+                targetMessage = clickedTPMessage,
                 selectedEmoji = selectedEmoji
             ).collect { callbackResult ->
                 when (callbackResult) {
@@ -174,15 +179,24 @@ class ChatViewModel(
     }
 
     fun updateReaction(selectedEmoji: String) {
-        val reactedEmoji: String? = clickedTPMessage?.let { tpMessage ->
-            getUserReactionEmoji(tpMessage)
-        }
+        val reactedEmoji: String? = getUserReactionEmoji(clickedTPMessage)
 
         viewModelScope.launch {
             when (reactedEmoji) {
                 null -> addReaction(selectedEmoji = selectedEmoji)
                 selectedEmoji -> removeReaction(selectedEmoji = selectedEmoji)
                 else -> removeAndAddReaction(removeEmoji = reactedEmoji, addEmoji = selectedEmoji)
+            }
+        }
+    }
+
+    fun markAsRead() {
+        viewModelScope.launch {
+            channelRepository.markAsRead().collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _chatUiState.emit(ChatUiState.MarkAsRead)
+                    is Result.Failure -> { }
+                }
             }
         }
     }

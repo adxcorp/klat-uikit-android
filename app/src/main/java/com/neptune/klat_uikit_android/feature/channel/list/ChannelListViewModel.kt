@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -9,8 +8,6 @@ import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
-import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileUiState
-import com.neptune.klat_uikit_android.core.util.LogUtils
 import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -62,6 +59,17 @@ class ChannelListViewModel(
             channelRepository.getChannel().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelUiState.emit(ChannelUiState.GetChannel(callbackResult.successData))
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    fun markAsRead() {
+        viewModelScope.launch {
+            channelRepository.markAsRead().collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _channelUiState.emit(ChannelUiState.MarkAsRead)
                     is Result.Failure -> { }
                 }
             }

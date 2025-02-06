@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,7 +60,10 @@ class ChannelListAdapter(
 
             when (tpChannel.unreadCount == 0) {
                 true -> tvChannelUnReadCount.visibility = View.GONE
-                false -> tvChannelUnReadCount.text = if (tpChannel.unreadCount >= 999) "999+" else tpChannel.unreadCount.toString()
+                false -> {
+                    tvChannelUnReadCount.visibility = View.VISIBLE
+                    tvChannelUnReadCount.text = if (tpChannel.unreadCount >= 999) "999+" else tpChannel.unreadCount.toString()
+                }
             }
 
             when (tpChannel.imageUrl.isNullOrEmpty()) {

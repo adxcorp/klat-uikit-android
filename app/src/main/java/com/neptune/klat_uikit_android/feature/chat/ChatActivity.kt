@@ -132,22 +132,17 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.channelUiState.collect { chatUiState ->
                     when (chatUiState) {
-                        is ChatUiState.BaseState -> {
-
-                        }
-
+                        is ChatUiState.BaseState -> { }
+                        is ChatUiState.MarkAsRead -> adapter.updateUnreadCount()
                         is ChatUiState.SendMessage -> sendMessage(chatUiState.tpMessage)
                         is ChatUiState.DeleteMessage -> deletedMessage(chatUiState.tpMessage)
                         is ChatUiState.GetMessages -> loadMessages(chatUiState.tpMessages)
                         is ChatUiState.ReceiveMessage -> receiveMessage(chatUiState.tpMessage)
                         is ChatUiState.UpdatedReactionMessage -> updateReaction(chatUiState.tpMessage)
-                        is ChatUiState.Frozen -> if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else {
-                            setFrozenUI(false)
-                            setMessageBarUI()
-                        }
                         is ChatUiState.LeaveChannel -> finish()
                         is ChatUiState.RemoveChannel -> finish()
                         is ChatUiState.EmptyChat -> binding.layoutChatEmpty.root.visibility = View.VISIBLE
+                        is ChatUiState.ChannelChanged -> channelChanged()
                     }
                 }
             }
@@ -282,6 +277,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         binding.layoutChatEmpty.root.visibility = View.GONE
         adapter.addMessage(tpMessage)
         viewModel.setMyLastMessage(false)
+        if (ChannelObject.tpChannel.unreadCount != 0 && !viewModel.isOnStop) {
+            viewModel.markAsRead()
+        }
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         if (binding.rvChat.adapter?.itemCount?.minus(layoutManager.findLastVisibleItemPosition()) in BOTTOM_RANGE) {
             binding.rvChat.scrollToPosition(adapter.itemCount-1)
@@ -289,7 +287,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     }
 
     private fun updateReaction(tpMessage: TPMessage) {
-        adapter.updateReaction(viewModel.longClickPosition, tpMessage)
+        adapter.updateReaction(tpMessage)
     }
 
     override fun onDestroy() {
@@ -334,6 +332,14 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         )
     }
 
+    private fun channelChanged() {
+        adapter.updateUnreadCount()
+        if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else {
+            setFrozenUI(false)
+            setMessageBarUI()
+        }
+    }
+
     override fun selectedEmoji(emoji: String) {
         viewModel.updateReaction(emoji)
     }
@@ -352,5 +358,18 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
 
     override fun deleteMessage() {
         viewModel.deleteMessage()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.isOnStop = false
+        if (ChannelObject.tpChannel.unreadCount != 0) {
+            viewModel.markAsRead()
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        viewModel.isOnStop = true
     }
 }

@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.core.data.repository.chat
 
-import android.util.Log
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.chat.MessagesResponse
 import com.neptune.klat_uikit_android.core.data.model.base.Result

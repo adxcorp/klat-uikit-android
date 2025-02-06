@@ -15,5 +15,6 @@ sealed class ChannelUiState {
     data class ChangedChannel(val tpChannel: TPChannel) : ChannelUiState()
     data class LeaveChannel(val tpChannel: TPChannel) : ChannelUiState()
     data class BanUser(val tpChannel: TPChannel) : ChannelUiState()
+    object MarkAsRead : ChannelUiState()
     object ChannelListEmpty : ChannelUiState()
 }

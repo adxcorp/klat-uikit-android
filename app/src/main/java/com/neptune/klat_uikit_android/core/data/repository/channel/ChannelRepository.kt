@@ -152,6 +152,23 @@ class ChannelRepository {
         awaitClose { cancel() }
     }
 
+    fun markAsRead(): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.markAsReadChannel(ChannelObject.tpChannel, object : TalkPlus.CallbackListener<TPChannel> {
+            override fun onSuccess(tpChannel: TPChannel) {
+                ChannelObject.setTPChannel(tpChannel)
+                trySend(Result.Success(tpChannel))
+            }
+
+            override fun onFailure(errorCode: Int, exception: Exception) {
+                trySend(Result.Failure(WrappedFailResult(
+                    errorCode = errorCode,
+                    exception = exception
+                )))
+            }
+        })
+        awaitClose { cancel() }
+    }
+
     fun createChannel(
         memberCount: Int,
         channelName: String,

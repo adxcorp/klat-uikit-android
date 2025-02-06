@@ -1,7 +1,9 @@
 package com.neptune.klat_uikit_android.feature.chat.reaction
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
@@ -10,7 +12,9 @@ import com.neptune.klat_uikit_android.databinding.ItemReactionBinding
 import io.talkplus.entity.channel.TPMessage
 import kotlin.collections.ArrayList
 
-class ReactionAdapter(private val tpMessage: TPMessage) : RecyclerView.Adapter<ReactionAdapter.ReactionViewHolder>() {
+class ReactionAdapter(
+    private val tpMessage: TPMessage
+) : RecyclerView.Adapter<ReactionAdapter.ReactionViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReactionViewHolder {
         return ReactionViewHolder(ItemReactionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
@@ -27,6 +31,7 @@ class ReactionAdapter(private val tpMessage: TPMessage) : RecyclerView.Adapter<R
     inner class ReactionViewHolder(private val binding: ItemReactionBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(emoji: String) = with(binding) {
             val reactionUsers: ArrayList<String> = tpMessage.reactions?.get(emoji) ?: arrayListOf()
+
             if (reactionUsers.contains(ChannelObject.userId)) {
                 root.setBackgroundResource(R.drawable.bg_reaction_selected)
                 tvReactionCount.setTextColor(Color.parseColor("#00BFBF"))

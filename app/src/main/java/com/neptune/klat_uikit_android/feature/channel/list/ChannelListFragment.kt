@@ -26,7 +26,6 @@ import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
 import kotlinx.coroutines.launch
 
-
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
@@ -98,6 +97,10 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             is ChannelUiState.BanUser -> adapter.updateChannelItem(channelUiState.tpChannel)
             is ChannelUiState.LeaveChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
             is ChannelUiState.GetChannel -> adapter.moveChannelItemToTop(channelUiState.tpChannel)
+            is ChannelUiState.MarkAsRead -> {
+                moveChatScreen()
+                adapter.updateChannelItem(ChannelObject.tpChannel)
+            }
         }
     }
 
@@ -145,9 +148,13 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private fun setChannelListAdapter(): ChannelListAdapter {
         return ChannelListAdapter(viewModel.currentChannelList) { tpChannel ->
             ChannelObject.setTPChannel(tpChannel)
-            val intent = Intent(parentActivity, ChatActivity::class.java)
-            channelUpdateLauncher.launch(intent)
+            if (tpChannel.unreadCount != 0) viewModel.markAsRead() else moveChatScreen()
         }
+    }
+
+    private fun moveChatScreen() {
+        val intent = Intent(parentActivity, ChatActivity::class.java)
+        channelUpdateLauncher.launch(intent)
     }
 
     private fun setSwipeListener() {

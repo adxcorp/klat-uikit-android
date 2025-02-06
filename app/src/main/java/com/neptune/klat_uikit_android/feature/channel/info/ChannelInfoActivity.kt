@@ -69,7 +69,14 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
             startActivity(intent)
         }
 
-        layoutChannelInfo2.root.visibility = View.GONE
+        layoutChannelInfo2.tvInfoTitle.text = "음소거 목록"
+        layoutChannelInfo2.root.setOnClickListener {
+            val intent = Intent(this@ChannelInfoActivity, MemberActivity::class.java).apply {
+                putExtra(MemberActivity.EXTRA_IS_OWNER, viewModel.isChannelOwner)
+            }
+            startActivity(intent)
+        }
+
         layoutChannelInfo3.root.visibility = View.GONE
         layoutChannelInfo4.root.visibility = View.GONE
     }

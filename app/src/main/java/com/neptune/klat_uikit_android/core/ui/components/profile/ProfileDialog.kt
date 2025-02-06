@@ -175,11 +175,13 @@ class ProfileDialog(
     }
 
     private fun unMutedUI() {
+        viewModel.setMute(false)
         binding.ivProfileMute.setImageResource(R.drawable.ic_64dp_bell_off)
         binding.tvProfileMute.text = "음소거"
     }
 
     private fun mutedUI() {
+        viewModel.setMute(true)
         binding.ivProfileMute.setImageResource(R.drawable.ic_64dp_bell_on)
         binding.tvProfileMute.text = "음소거 됨"
     }

@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState
@@ -49,7 +50,10 @@ class MemberViewModel(private val memberRepository: MemberRepository = MemberRep
                 tpChannel = ChannelObject.tpChannel
             ).collect { callbackResult ->
                 when(callbackResult) {
-                    is Result.Success -> emitMemberUiState(callbackResult.successData)
+                    is Result.Success -> {
+                        Log.d("!! : ", callbackResult.successData.tpMembers.toString())
+                        emitMemberUiState(callbackResult.successData)
+                    }
                     is Result.Failure -> _memberUiState.emit(MemberUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }

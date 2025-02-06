@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.MessageActions
@@ -91,7 +92,7 @@ class AlertDialog(
             StateType.MUTE -> {
                 tvAlertRight.setOnClickListener {
                     when {
-                        viewModel.isChannelOwner -> viewModel.muteUser(userId)
+                        ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId -> viewModel.muteUser(userId)
                         else -> viewModel.peerMuteUser(userId)
                     }
                 }

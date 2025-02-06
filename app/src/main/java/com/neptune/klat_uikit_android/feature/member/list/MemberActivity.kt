@@ -5,6 +5,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
+import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
@@ -47,7 +48,7 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
 
     private fun setMutedType() {
         binding.tvMemberTitle.text = "음소거 목록"
-        when (intent.getBooleanExtra(EXTRA_IS_OWNER, false)) {
+        when (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) {
             true -> viewModel.getMutedUsers()
             false -> viewModel.getPeerMutedUsers()
         }

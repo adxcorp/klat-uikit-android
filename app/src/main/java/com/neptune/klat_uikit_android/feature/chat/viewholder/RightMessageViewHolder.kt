@@ -41,7 +41,12 @@ class RightMessageViewHolder(
             tvChatRightUnReadCount.text = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString()
         }
 
-        try {
+        if (previousMessage?.userId != currentTPMessage.userId && nextTPMessage?.userId != currentTPMessage.userId) {
+            setTimeChangeUI(
+                currentMessageCreatedTime = currentMessageCreatedTime,
+                previousMessageCreatedTime = previousMessageCreatedTime
+            )
+        } else {
             when {
                 nextMessageCreatedTime != currentMessageCreatedTime -> {
                     setTimeChangeUI(
@@ -49,11 +54,15 @@ class RightMessageViewHolder(
                         previousMessageCreatedTime = previousMessageCreatedTime
                     )
                 }
-                previousMessageCreatedTime == currentMessageCreatedTime -> setSameTimeUI()
-                nextMessageCreatedTime == currentMessageCreatedTime -> setSameTimeUI()
+                previousMessageCreatedTime == currentMessageCreatedTime ->  {
+                    setSameTimeUI(
+                        currentTPMessage, nextTPMessage, currentMessageCreatedTime
+                    )
+                }
+                nextMessageCreatedTime == currentMessageCreatedTime ->  {
+                    setSameTimeUI(currentTPMessage, nextTPMessage, currentMessageCreatedTime)
+                }
             }
-        } catch (e: Exception) {
-
         }
 
         itemView.setOnLongClickListener {
@@ -70,15 +79,8 @@ class RightMessageViewHolder(
     }
 
     fun updateUnreadCount(currentTPMessage: TPMessage) = with(binding) {
-        Log.d("!! : message : ", currentTPMessage.text.toString())
-        Log.d("!! : count : ", ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString())
-//        if (ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).minus(1) <= 0) {
-//            tvChatRightUnReadCount.text = ""
-//            return@with
-//        }
         val unreadCount = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage)
         tvChatRightUnReadCount.text = if (unreadCount == 0) "" else unreadCount.toString()
-
     }
 
     private fun initView(tpMessage: TPMessage) = with(binding) {
@@ -108,10 +110,12 @@ class RightMessageViewHolder(
 
     private fun setReaction(tpMessage: TPMessage) = with(binding) {
         rvRightReactions.apply {
-            layoutDirection = View.LAYOUT_DIRECTION_RTL
-            setHasFixedSize(true)
             adapter = ReactionAdapter(tpMessage = tpMessage)
-            layoutManager = GridLayoutManager(root.context, 4)
+            layoutManager = RightToLeftGridLayoutManager(
+                root.context,
+                spanCount = 4,
+                orientation = GridLayoutManager.VERTICAL
+            )
             itemAnimator = null
         }
     }
@@ -126,8 +130,16 @@ class RightMessageViewHolder(
         }
     }
 
-    private fun setSameTimeUI() = with(binding) {
-        setMessageTimestamp(null)
+    private fun setSameTimeUI(
+        currentTPMessage: TPMessage,
+        nextTPMessage: TPMessage?,
+        currentMessageCreatedTime: String
+    ) = with(binding) {
+        if (currentTPMessage.userId != nextTPMessage?.userId) {
+            setMessageTimestamp(currentMessageCreatedTime)
+        } else {
+            setMessageTimestamp(null)
+        }
     }
 
     private fun longToTime(createdAt: Long?): String {
@@ -149,5 +161,27 @@ class RightMessageViewHolder(
 
     companion object {
         private const val INVALID_TIME = "-1"
+    }
+}
+
+class RightToLeftGridLayoutManager(
+    context: Context?,
+    spanCount: Int,
+    orientation: Int
+) : GridLayoutManager(
+    context,
+    spanCount,
+    orientation,
+    false
+) {
+    override fun layoutDecoratedWithMargins(child: View, left: Int, top: Int, right: Int, bottom: Int) {
+        val parentWidth = width
+        val newLeft = parentWidth - right
+        val newRight = parentWidth - left
+        super.layoutDecoratedWithMargins(child, newLeft, top, newRight, bottom)
+    }
+
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
+        super.onLayoutChildren(recycler, state)
     }
 }

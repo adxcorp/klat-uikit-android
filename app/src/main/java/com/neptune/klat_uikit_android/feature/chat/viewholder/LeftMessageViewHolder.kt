@@ -38,23 +38,9 @@ class LeftMessageViewHolder(
             tvLeftChatProfileUnReadCount.text = ChannelObject.tpChannel.getMessageUnreadCount(currentTPMessage).toString()
         }
 
-//        if (previousMessage?.userId == currentTPMessage.userId) {
-//            if (currentMessageCreatedTime == previousMessageCreatedTime) {
-//                setSameTimeUI(
-//                    currentTPMessage = currentTPMessage,
-//                    currentMessageCreatedTime = currentMessageCreatedTime,
-//                    previousMessageCreatedTime = previousMessageCreatedTime
-//                )
-//            } else {
-//                setTimeChangeUI(
-//                    currentTPMessage = currentTPMessage,
-//                    currentMessageCreatedTime = currentMessageCreatedTime,
-//                    previousMessageCreatedTime = previousMessageCreatedTime
-//                )
-//            }
-//        }
-
-        try {
+        if (previousMessage?.userId != currentTPMessage.userId && nextTPMessage?.userId != currentTPMessage.userId) {
+            newMessage(currentTPMessage, currentMessageCreatedTime)
+        } else {
             when {
                 nextMessageCreatedTime != currentMessageCreatedTime -> {
                     setTimeChangeUI(
@@ -68,7 +54,9 @@ class LeftMessageViewHolder(
                     setSameTimeUI(
                         currentTPMessage = currentTPMessage,
                         currentMessageCreatedTime = currentMessageCreatedTime,
-                        previousMessageCreatedTime = previousMessageCreatedTime
+                        previousMessageCreatedTime = previousMessageCreatedTime,
+                        previousMessage = previousMessage,
+                        nextTPMessage = nextTPMessage
                     )
                 }
 
@@ -83,14 +71,15 @@ class LeftMessageViewHolder(
                         setSameTimeUI(
                             currentTPMessage = currentTPMessage,
                             currentMessageCreatedTime = currentMessageCreatedTime,
-                            previousMessageCreatedTime = previousMessageCreatedTime
+                            previousMessageCreatedTime = previousMessageCreatedTime,
+                            previousMessage = previousMessage,
+                            nextTPMessage = nextTPMessage
                         )
                     }
                 }
             }
-        } catch (e: Exception) {
-
         }
+
 
         itemView.setOnLongClickListener {
             onLongClickMessage.invoke(currentTPMessage, adapterPosition)
@@ -124,18 +113,39 @@ class LeftMessageViewHolder(
         }
     }
 
+    private fun newMessage(
+        currentTPMessage: TPMessage,
+        currentMessageCreatedTime: String
+    ) = with(binding) {
+        setMessageTimestamp(currentMessageCreatedTime)
+        setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
+        setTopMargin(root, 14)
+        setProfileVisibility(true)
+    }
+
     private fun setSameTimeUI(
         currentMessageCreatedTime: String,
         previousMessageCreatedTime: String,
-        currentTPMessage: TPMessage
+        previousMessage: TPMessage?,
+        currentTPMessage: TPMessage,
+        nextTPMessage: TPMessage?
     ) = with(binding) {
-        setMessageTimestamp(null)
+        if ((currentTPMessage.userId != nextTPMessage?.userId)) {
+            setMessageTimestamp(currentMessageCreatedTime)
+        } else {
+            setMessageTimestamp(null)
+        }
         if (previousMessageCreatedTime != currentMessageCreatedTime) {
             setTopMargin(root, 14)
             setProfileVisibility(true)
             setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
         } else {
-            setProfileVisibility(false)
+            if (previousMessage?.userId != currentTPMessage.userId) {
+                setProfileVisibility(true)
+                setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
+            } else {
+                setProfileVisibility(false)
+            }
         }
     }
 

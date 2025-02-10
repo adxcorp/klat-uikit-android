@@ -99,7 +99,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         val firstVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
         if (firstVisibleItemPosition + visibleItemCount >= totalItemCount - 10) {
-            viewModel.getMessageList()
+            if (!viewModel.isFirstLoad) {
+                viewModel.getMessageList()
+            }
         }
     }
 
@@ -258,11 +260,12 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     }
 
     private fun loadMessages(newTPMessages: List<TPMessage>) {
+        Log.d("!! : call! : ", "call")
         adapter.addMessages(newTPMessages)
         if (viewModel.isFirstLoad) {
-            viewModel.setFirstLoad(false)
             binding.rvChat.post {
                 binding.rvChat.scrollToPosition(adapter.itemCount-1)
+                viewModel.setFirstLoad(false)
             }
         }
     }

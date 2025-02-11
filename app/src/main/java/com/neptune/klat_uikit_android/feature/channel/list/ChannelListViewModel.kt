@@ -35,7 +35,6 @@ class ChannelListViewModel(
                     is Result.Success -> {
                         lastChannel = callbackResult.successData.tpChannels.lastOrNull()
                         currentChannelList.addAll(callbackResult.successData.tpChannels)
-                        ChannelObject.setTPChannels(currentChannelList)
 
                         when (callbackResult.successData.hasNext) {
                             true -> getChannels()
@@ -88,6 +87,7 @@ class ChannelListViewModel(
                     EventType.ADDED_CHANNEL -> _channelUiState.emit(ChannelUiState.AddedChannel(callbackResult.channel))
                     EventType.REMOVED_CHANNEL -> _channelUiState.emit(ChannelUiState.RemovedChannel(callbackResult.channel))
                     EventType.LEAVE_CHANNEL -> _channelUiState.emit(ChannelUiState.LeaveChannel(callbackResult.channel))
+                    EventType.ADD_MEMBER -> _channelUiState.emit(ChannelUiState.AddMember(callbackResult.channel))
                     EventType.RECEIVED_MESSAGE -> {
                         _channelUiState.emit(
                             ChannelUiState.ReceivedMessage(

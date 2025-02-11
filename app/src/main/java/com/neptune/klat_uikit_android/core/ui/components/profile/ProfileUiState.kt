@@ -7,5 +7,6 @@ sealed class ProfileUiState {
     object GetPeerMutedUsers : ProfileUiState()
     object PeerUnMuteUser : ProfileUiState()
     object UnMuteUser : ProfileUiState()
-    object MoveChatRoom : ProfileUiState()
+    object CreateOneToOneChatRoom : ProfileUiState()
+    object AddMember : ProfileUiState()
 }

@@ -78,6 +78,15 @@ class EventRepository {
                     channel = tpChannel
                 ))
             }
+
+            override fun onMemberAdded(tpChannel: TPChannel, users: MutableList<TPMember>) {
+                ChannelObject.setTPChannel(tpChannel)
+                trySend(
+                    ObserveChannelResponse(
+                        type = EventType.ADD_MEMBER,
+                        channel = tpChannel,
+                    ))
+            }
         })
         awaitClose { cancel() }
     }

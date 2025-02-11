@@ -22,7 +22,7 @@ class ChannelRepository {
             TalkPlus.getChannels(lastChannel, object : TalkPlus.TPCallbackListener<List<TPChannel>, Boolean> {
                 override fun onSuccess(tpChannelList: List<TPChannel>, hasNext: Boolean) {
                     trySend(Result.Success(ChannelListResponse(
-                        tpChannels = tpChannelList.filter { it.type == "private" },
+                        tpChannels = tpChannelList.filter { it.type == "private" || it.type == "super_private" || it.type == "invitationOnly"},
                         hasNext = hasNext
                     )))
                 }
@@ -176,17 +176,21 @@ class ChannelRepository {
         photoFile: File? = null,
         category: String = "",
         subcategory: String = "",
-        targetIds: List<String> = listOf()
+        targetIds: List<String> = listOf(),
+        invitationCode: String = "",
+        channelId: String? = null
     ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        val channelType: String = if (invitationCode != "") "invitationOnly" else if (memberCount == ChannelCreateViewModel.SUPER_TYPE) "super_private" else "private"
+        Log.d("!! : type : ", channelType)
         TalkPlus.createChannel(
             targetIds,
-            null,
+            channelId,
             false,
             memberCount,
             false,
-            if (memberCount == ChannelCreateViewModel.SUPER_TYPE) "super_private" else "private",
+            channelType,
             channelName,
-            "",
+            invitationCode,
             category,
             subcategory,
             "",
@@ -198,7 +202,6 @@ class ChannelRepository {
                     trySend(Result.Success(tpChannel))
                 }
                 override fun onFailure(errorCode: Int, exception: Exception) {
-                    Log.d("!! : ex : ", exception.toString())
                     trySend(Result.Failure(WrappedFailResult(
                         errorCode = errorCode,
                         exception = exception
@@ -229,6 +232,50 @@ class ChannelRepository {
                     ChannelObject.setTPChannel(tpChannel)
                     trySend(Result.Success(tpChannel))
                 }
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            }
+        )
+        awaitClose { cancel() }
+    }
+
+    fun joinChannel(
+        channelId: String? = null,
+        invitationCode: String
+    ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.joinChannel(
+            channelId,
+            invitationCode,
+            object : TalkPlus.CallbackListener<TPChannel> {
+                override fun onSuccess(tpChannel: TPChannel) {
+                    ChannelObject.setTPChannel(tpChannel)
+                    trySend(Result.Success(tpChannel))
+                }
+
+                override fun onFailure(errorCode: Int, exception: Exception) {
+                    trySend(Result.Failure(WrappedFailResult(
+                        errorCode = errorCode,
+                        exception = exception
+                    )))
+                }
+            })
+        awaitClose { cancel() }
+    }
+
+    fun addMember(targetUserId: String): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
+        TalkPlus.addMemberToChannel(
+            ChannelObject.tpChannel,
+            targetUserId,
+            object : TalkPlus.CallbackListener<TPChannel> {
+                override fun onSuccess(tpChannel: TPChannel) {
+                    ChannelObject.setTPChannel(tpChannel)
+                    trySend(Result.Success(tpChannel))
+                }
+
                 override fun onFailure(errorCode: Int, exception: Exception) {
                     trySend(Result.Failure(WrappedFailResult(
                         errorCode = errorCode,

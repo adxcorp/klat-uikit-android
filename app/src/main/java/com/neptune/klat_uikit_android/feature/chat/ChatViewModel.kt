@@ -124,6 +124,7 @@ class ChatViewModel(
                     EventType.BAN_USER -> Unit
                     EventType.ADDED_CHANNEL -> Unit
                     EventType.LEAVE_OTHER_USER -> Unit
+                    EventType.ADD_MEMBER -> Unit
                     EventType.CHANGED_CHANNEL -> _chatUiState.emit(ChatUiState.ChannelChanged(callbackResult.channel.isFrozen))
                     EventType.REMOVED_CHANNEL -> _chatUiState.emit(ChatUiState.RemoveChannel)
                     EventType.UPDATED_REACTION -> _chatUiState.emit(ChatUiState.UpdatedReactionMessage(callbackResult.message))

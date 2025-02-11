@@ -3,6 +3,7 @@ package com.neptune.klat_uikit_android.feature.channel.list
 import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.data.model.channel.ChannelListResponse
 import io.talkplus.entity.channel.TPChannel
+import io.talkplus.entity.channel.TPMember
 import io.talkplus.entity.channel.TPMessage
 
 sealed class ChannelUiState {
@@ -15,6 +16,7 @@ sealed class ChannelUiState {
     data class ChangedChannel(val tpChannel: TPChannel) : ChannelUiState()
     data class LeaveChannel(val tpChannel: TPChannel) : ChannelUiState()
     data class BanUser(val tpChannel: TPChannel) : ChannelUiState()
+    data class AddMember(val tpChannel: TPChannel) : ChannelUiState()
     object MarkAsRead : ChannelUiState()
     object ChannelListEmpty : ChannelUiState()
 }

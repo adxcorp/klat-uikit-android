@@ -9,4 +9,5 @@ enum class EventType {
     LEAVE_OTHER_USER,
     UPDATED_REACTION,
     BAN_USER,
+    ADD_MEMBER
 }

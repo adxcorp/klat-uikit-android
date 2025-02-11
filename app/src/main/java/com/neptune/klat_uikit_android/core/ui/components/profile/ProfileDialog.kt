@@ -2,10 +2,10 @@ package com.neptune.klat_uikit_android.core.ui.components.profile
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -68,12 +68,16 @@ class ProfileDialog(
             is ProfileUiState.GetPeerMutedUsers -> setView()
             is ProfileUiState.UnMuteUser -> unMutedUI()
             is ProfileUiState.PeerUnMuteUser -> unMutedUI()
-            is ProfileUiState.MoveChatRoom -> moveChatRoom()
+            is ProfileUiState.CreateOneToOneChatRoom -> moveChatRoom()
+            is ProfileUiState.AddMember -> {
+                Toast.makeText(requireActivity(), "${viewModel.targetUserId}님을 초대했습니다.", Toast.LENGTH_SHORT).show()
+                dismiss()
+            }
         }
     }
 
     private fun setClickListener() = with(binding) {
-        clProfileChat.setOnClickListener { viewModel.checkSameChatRoom(userId) }
+        clProfileChat.setOnClickListener { viewModel.joinInvitationChannel(userId) }
         ivProfileClose.setOnClickListener { dialog?.dismiss() }
         clProfileBlock.setOnClickListener { showAlertDialog(type = StateType.BAN) }
         clOwner.setOnClickListener { showAlertDialog(type = StateType.OWNER) }

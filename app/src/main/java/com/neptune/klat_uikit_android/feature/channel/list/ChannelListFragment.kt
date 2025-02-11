@@ -24,6 +24,7 @@ import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivi
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
+import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.launch
 
 class ChannelListFragment : Fragment(), SwipeCallbackListener {
@@ -104,6 +105,7 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             is ChannelUiState.BanUser -> adapter.updateChannelItem(channelUiState.tpChannel)
             is ChannelUiState.LeaveChannel -> adapter.removeChannelItem(channelUiState.tpChannel)
             is ChannelUiState.GetChannel -> adapter.moveChannelItemToTop(channelUiState.tpChannel)
+            is ChannelUiState.AddMember -> addMember(channelUiState.tpChannel)
             is ChannelUiState.MarkAsRead -> {
                 moveChatScreen()
                 adapter.updateChannelItem(ChannelObject.tpChannel)
@@ -162,6 +164,14 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
     private fun moveChatScreen() {
         val intent = Intent(parentActivity, ChatActivity::class.java)
         channelUpdateLauncher.launch(intent)
+    }
+
+    private fun addMember(tpChannel: TPChannel) {
+        if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) {
+            adapter.updateChannelItem(tpChannel)
+        } else {
+            adapter.addChannelItemToTop(tpChannel)
+        }
     }
 
     private fun setSwipeListener() {

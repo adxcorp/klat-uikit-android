@@ -8,8 +8,6 @@ import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.member.MemberRepository
 import com.neptune.klat_uikit_android.core.data.repository.user.UserEventRepository
-import com.neptune.klat_uikit_android.feature.channel.create.CreateChannelUiState
-import io.talkplus.entity.channel.TPChannel
 import io.talkplus.entity.user.TPUser
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,34 +32,64 @@ class ProfileViewModel(
 
     val isChannelOwner: Boolean = ChannelObject.userId == ChannelObject.tpChannel.channelOwnerId
 
+    var targetUserId: String = ""
+        private set
+
     private var _profileUiState = MutableSharedFlow<ProfileUiState>()
     val profileUiState: SharedFlow<ProfileUiState>
         get() = _profileUiState.asSharedFlow()
 
-    fun checkSameChatRoom(targetUserId: String) {
+    fun joinInvitationChannel(targetUserId: String) {
         val sortedUserIds: List<String> = listOf(targetUserId, ChannelObject.userId).sorted().map { it.lowercase() }
-        val subcategory: String = "${sortedUserIds[0]}_${sortedUserIds[1]}"
-        val sameChannel: TPChannel? = ChannelObject.tpChannels.find { it.subCategory == subcategory }
+        val channelName: String = "${sortedUserIds[0]},${sortedUserIds[1]}"
+        val channelId: String = "klat_uikit_invitation_${sortedUserIds[0]}_${sortedUserIds[1]}"
+        val invitationCode: String = "${sortedUserIds[0]}_${sortedUserIds[1]}"
 
-        sameChannel?.let { tpChannel ->
-            viewModelScope.launch {
-                ChannelObject.setTPChannel(tpChannel)
-                _profileUiState.emit(ProfileUiState.MoveChatRoom)
+        viewModelScope.launch {
+            channelRepository.joinChannel(
+                channelId = channelId,
+                invitationCode = invitationCode
+            ).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> if (callbackResult.successData.memberCount < 2) addMember(targetUserId)
+                    is Result.Failure -> {
+                        when (callbackResult.failResult.errorCode) {
+                            2003 -> createChannel(
+                                channelName = channelName,
+                                targetUserId = targetUserId,
+                                channelId = channelId,
+                                invitationCode = invitationCode
+                            )
+                        }
+                    }
+                }
             }
-        } ?: createChannel(subcategory, targetUserId)
+        }
     }
 
-    private fun createChannel(subcategory: String, targetUserId: String) {
+    private fun addMember(targetUserId: String) {
+        this.targetUserId = targetUserId
+        viewModelScope.launch {
+            channelRepository.addMember(targetUserId).collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> _profileUiState.emit(ProfileUiState.AddMember)
+                    is Result.Failure -> { }
+                }
+            }
+        }
+    }
+
+    private fun createChannel(channelName: String, targetUserId: String, channelId: String, invitationCode: String) {
         viewModelScope.launch {
             channelRepository.createChannel(
                 memberCount = 2,
-                channelName = subcategory.replace("_", ", "),
-                subcategory = subcategory,
-                category = "klat_uikit_private_chat",
-                targetIds = listOf(ChannelObject.userId, targetUserId)
+                channelName = channelName,
+                invitationCode = invitationCode,
+                targetIds = listOf(ChannelObject.userId, targetUserId),
+                channelId = channelId
             ).collect { callbackResult ->
                 when (callbackResult) {
-                    is Result.Success -> _profileUiState.emit(ProfileUiState.MoveChatRoom)
+                    is Result.Success -> _profileUiState.emit(ProfileUiState.CreateOneToOneChatRoom)
                     is Result.Failure -> { }
                 }
             }

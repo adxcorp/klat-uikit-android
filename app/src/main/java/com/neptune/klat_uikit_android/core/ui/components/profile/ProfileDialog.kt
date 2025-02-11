@@ -80,7 +80,11 @@ class ProfileDialog(
         clProfileChat.setOnClickListener { viewModel.joinInvitationChannel(userId) }
         ivProfileClose.setOnClickListener { dialog?.dismiss() }
         clProfileBlock.setOnClickListener { showAlertDialog(type = StateType.BAN) }
-        clOwner.setOnClickListener { showAlertDialog(type = StateType.OWNER) }
+        clOwner.setOnClickListener {
+            if (ChannelObject.tpChannel.channelOwnerId != userId) {
+                showAlertDialog(type = StateType.OWNER)
+            }
+        }
         clProfileMute.setOnClickListener {
             when {
                 viewModel.isMuted && viewModel.isChannelOwner -> viewModel.unMuteUser(userId)

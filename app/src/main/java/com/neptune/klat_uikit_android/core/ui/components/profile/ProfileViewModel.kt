@@ -60,6 +60,7 @@ class ProfileViewModel(
                                 channelId = channelId,
                                 invitationCode = invitationCode
                             )
+                            else -> _profileUiState.emit(ProfileUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                         }
                     }
                 }
@@ -73,7 +74,7 @@ class ProfileViewModel(
             channelRepository.addMember(targetUserId).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _profileUiState.emit(ProfileUiState.AddMember)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _profileUiState.emit(ProfileUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -90,7 +91,7 @@ class ProfileViewModel(
             ).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _profileUiState.emit(ProfileUiState.CreateOneToOneChatRoom)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _profileUiState.emit(ProfileUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }

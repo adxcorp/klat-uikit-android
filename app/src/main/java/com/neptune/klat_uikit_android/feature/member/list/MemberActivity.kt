@@ -5,7 +5,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
+import com.neptune.klat_uikit_android.core.extension.showToast
 import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileDialog
 import com.neptune.klat_uikit_android.databinding.ActivityMemberBinding
 import kotlinx.coroutines.launch
@@ -41,7 +43,13 @@ class MemberActivity : BaseActivity<ActivityMemberBinding>(), MemberInterface {
 
     private fun handleUiState(memberUiState: MemberUiState) {
         when (memberUiState) {
-            is MemberUiState.BaseState -> { }
+            is MemberUiState.BaseState -> {
+                when (memberUiState.baseState) {
+                    is BaseUiState.Error -> showToast("${memberUiState.baseState.failedResult.errorCode}")
+                    is BaseUiState.Loading -> { }
+                    is BaseUiState.LoadingFinish -> { }
+                }
+            }
             is MemberUiState.GetMutesMembers -> adapter.addMembers(memberUiState.tpMembers)
         }
     }

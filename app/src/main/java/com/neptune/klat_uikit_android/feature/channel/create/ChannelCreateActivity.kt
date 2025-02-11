@@ -9,8 +9,11 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.extension.showToast
+import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileUiState
 import com.neptune.klat_uikit_android.core.util.FileUtils
 import com.neptune.klat_uikit_android.databinding.ActivityChannelCreateBinding
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
@@ -47,10 +50,19 @@ class ChannelCreateActivity : AppCompatActivity(), PhotoActionListener {
 
     private fun handleUiState(uiState: CreateChannelUiState) {
         when (uiState) {
+            is CreateChannelUiState.BaseState -> {
+                when (uiState.baseState) {
+                    is BaseUiState.Error -> showToast("${uiState.baseState.failedResult.errorCode}")
+                    is BaseUiState.Loading -> binding.pgCreateChannel.visibility = View.VISIBLE
+                    is BaseUiState.LoadingFinish -> binding.pgCreateChannel.visibility = View.GONE
+                }
+            }
+
             is CreateChannelUiState.CreateChannel -> {
                 startActivity(Intent(this, ChatActivity::class.java))
                 finish()
             }
+
             is CreateChannelUiState.UpdateChannel -> finish()
         }
     }

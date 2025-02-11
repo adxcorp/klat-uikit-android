@@ -12,7 +12,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
+import com.neptune.klat_uikit_android.core.extension.showToast
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.MessageActions
@@ -59,7 +61,11 @@ class AlertDialog(
     private fun handleAlertUiState(alertUiState: AlertUiState) {
         when (alertUiState) {
             is AlertUiState.BaseState -> {
-
+                when (alertUiState.baseState) {
+                    is BaseUiState.Error -> requireActivity().showToast("${alertUiState.baseState.failedResult.errorCode}")
+                    is BaseUiState.Loading -> { }
+                    is BaseUiState.LoadingFinish -> { }
+                }
             }
             is AlertUiState.BanUser -> userStatusActions?.banUser(userId)
             is AlertUiState.MuteUser -> userStatusActions?.muteUser()

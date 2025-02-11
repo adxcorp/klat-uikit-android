@@ -9,8 +9,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.core.base.BaseActivity
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.extension.showToast
 import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
@@ -51,7 +53,11 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
     private fun handleChannelInfoUiState(channelInfoUiState: ChannelInfoUiState) {
         when (channelInfoUiState) {
             is ChannelInfoUiState.BaseState -> {
-
+                when (channelInfoUiState.baseState) {
+                    is BaseUiState.Error -> showToast("${channelInfoUiState.baseState.failedResult.errorCode}")
+                    is BaseUiState.Loading -> binding.pgChannelInfo.visibility = View.VISIBLE
+                    is BaseUiState.LoadingFinish -> binding.pgChannelInfo.visibility = View.GONE
+                }
             }
             is ChannelInfoUiState.LeaveChannel -> moveChannelListScreen()
             is ChannelInfoUiState.RemoveChannel -> moveChannelListScreen()

@@ -2,6 +2,7 @@ package com.neptune.klat_uikit_android.feature.channel.create
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -31,6 +32,7 @@ class ChannelCreateViewModel(private val channelRepository: ChannelRepository = 
 
     private fun createChannel() {
         viewModelScope.launch {
+            _createChannelUiState.emit(CreateChannelUiState.BaseState(BaseUiState.Loading))
             channelRepository.createChannel(
                 memberCount = memberCount,
                 channelName = channelName,
@@ -38,22 +40,25 @@ class ChannelCreateViewModel(private val channelRepository: ChannelRepository = 
             ).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _createChannelUiState.emit(CreateChannelUiState.CreateChannel)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _createChannelUiState.emit(CreateChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
+                _createChannelUiState.emit(CreateChannelUiState.BaseState(BaseUiState.LoadingFinish))
             }
         }
     }
 
     private fun updateChannel() {
         viewModelScope.launch {
+            _createChannelUiState.emit(CreateChannelUiState.BaseState(BaseUiState.Loading))
             channelRepository.updateChannel(
                 channelName = channelName,
                 photoFile = photoFile
             ).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _createChannelUiState.emit(CreateChannelUiState.UpdateChannel)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _createChannelUiState.emit(CreateChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
+                _createChannelUiState.emit(CreateChannelUiState.BaseState(BaseUiState.LoadingFinish))
             }
         }
     }

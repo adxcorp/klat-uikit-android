@@ -12,8 +12,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.extension.showToast
 import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.UserStatusActions
@@ -64,7 +66,13 @@ class ProfileDialog(
 
     private fun handleProfileUiState(profileUiState: ProfileUiState) {
         when (profileUiState) {
-            is ProfileUiState.BaseState -> { }
+            is ProfileUiState.BaseState -> {
+                when (profileUiState.baseState) {
+                    is BaseUiState.Error -> requireActivity().showToast("${profileUiState.baseState.failedResult.errorCode}")
+                    is BaseUiState.Loading -> { }
+                    is BaseUiState.LoadingFinish -> { }
+                }
+            }
             is ProfileUiState.GetPeerMutedUsers -> setView()
             is ProfileUiState.UnMuteUser -> unMutedUI()
             is ProfileUiState.PeerUnMuteUser -> unMutedUI()

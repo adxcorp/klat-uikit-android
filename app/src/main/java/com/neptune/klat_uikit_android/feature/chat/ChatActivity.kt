@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -22,8 +21,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.extension.showToast
 import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.MessageActions
 import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
@@ -88,8 +89,9 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-//            if (dx != 0 || dy != 0) loadNextMessages(recyclerView)
-            loadNextMessages(recyclerView)
+            if (!viewModel.isFirstLoad) {
+                loadNextMessages(recyclerView)
+            }
         }
     }
 
@@ -97,11 +99,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         val visibleItemCount = layoutManager.childCount
         val totalItemCount = layoutManager.itemCount
-        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-//        Log.d("!!: visibleCnt : ", visibleItemCount.toString())
-//        Log.d("!!: totalCnt : ", totalItemCount.toString())
-//        Log.d("!!: visiblePos : ", firstVisibleItemPosition.toString())
+        val firstVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
         if (firstVisibleItemPosition + visibleItemCount >= totalItemCount - 10) {
             viewModel.getMessageList()
@@ -117,12 +115,12 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
 
     private fun init() {
         binding.layoutChatEmpty.tvEmptyMessage.text = "아직 채널에 메시지가 없어요.\n제일 먼저 메시지를 남겨보세요."
-        viewModel.getMessageList()
+        setRecyclerViewListener()
         viewModel.observeEvent()
+        viewModel.getMessageList()
         setRequestLauncher()
         bindView()
         setHeaderUI()
-        setRecyclerViewListener()
         observeChatUiState()
         if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else setMessageBarUI()
         if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setMessageBarUI()
@@ -137,7 +135,13 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 viewModel.channelUiState.collect { chatUiState ->
                     when (chatUiState) {
-                        is ChatUiState.BaseState -> { }
+                        is ChatUiState.BaseState -> {
+                            when (chatUiState.baseState) {
+                                is BaseUiState.Error -> showToast("${chatUiState.baseState.failedResult.errorCode}")
+                                is BaseUiState.Loading -> { }
+                                is BaseUiState.LoadingFinish -> { }
+                            }
+                        }
                         is ChatUiState.MarkAsRead -> adapter.updateUnreadCount()
                         is ChatUiState.SendMessage -> sendMessage(chatUiState.tpMessage)
                         is ChatUiState.DeleteMessage -> deletedMessage(chatUiState.tpMessage)
@@ -263,7 +267,6 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     }
 
     private fun loadMessages(newTPMessages: List<TPMessage>) {
-        Log.d("!! : call! : ", "call")
         adapter.addMessages(newTPMessages)
         if (viewModel.isFirstLoad) {
             binding.rvChat.post {
@@ -299,7 +302,6 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     override fun onDestroy() {
         super.onDestroy()
         TalkPlus.removeChannelListener(viewModel.tag)
-        Log.d("!! onDestroy", (viewModel.tag))
     }
 
     private fun goBack() {

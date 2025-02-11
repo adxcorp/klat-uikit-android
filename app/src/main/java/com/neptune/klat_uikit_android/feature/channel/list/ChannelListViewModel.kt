@@ -59,7 +59,7 @@ class ChannelListViewModel(
             channelRepository.getChannel().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelUiState.emit(ChannelUiState.GetChannel(callbackResult.successData))
-                    is Result.Failure -> { }
+                    is Result.Failure -> _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -70,7 +70,7 @@ class ChannelListViewModel(
             channelRepository.markAsRead().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _channelUiState.emit(ChannelUiState.MarkAsRead)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }

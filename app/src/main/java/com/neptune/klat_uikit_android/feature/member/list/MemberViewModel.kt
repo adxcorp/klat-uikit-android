@@ -50,10 +50,7 @@ class MemberViewModel(private val memberRepository: MemberRepository = MemberRep
                 tpChannel = ChannelObject.tpChannel
             ).collect { callbackResult ->
                 when(callbackResult) {
-                    is Result.Success -> {
-                        Log.d("!! : ", callbackResult.successData.tpMembers.toString())
-                        emitMemberUiState(callbackResult.successData)
-                    }
+                    is Result.Success -> emitMemberUiState(callbackResult.successData)
                     is Result.Failure -> _memberUiState.emit(MemberUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }

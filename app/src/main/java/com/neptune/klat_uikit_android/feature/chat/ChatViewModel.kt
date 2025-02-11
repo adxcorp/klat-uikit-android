@@ -2,19 +2,16 @@ package com.neptune.klat_uikit_android.feature.chat
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
+import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelRepository
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
-import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
-import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
@@ -80,9 +77,7 @@ class ChatViewModel(
                         _chatUiState.emit(ChatUiState.GetMessages(reversedMembers))
                     }
 
-                    is Result.Failure -> {
-
-                    }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -104,7 +99,7 @@ class ChatViewModel(
             chatRepository.sendMessage(params).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _chatUiState.emit(ChatUiState.SendMessage(callbackResult.successData))
-                    is Result.Failure -> { }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -115,7 +110,7 @@ class ChatViewModel(
             chatRepository.deleteMessage(clickedTPMessage).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _chatUiState.emit(ChatUiState.DeleteMessage(clickedTPMessage))
-                    is Result.Failure -> { }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -147,9 +142,7 @@ class ChatViewModel(
             ).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> Unit // addReaction 성공시 updateReaction 콜백으로 수신됩니다.
-                    is Result.Failure -> {
-
-                    }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -158,12 +151,12 @@ class ChatViewModel(
     private fun removeReaction(selectedEmoji: String) {
         viewModelScope.launch {
             chatRepository.removeMessageReaction(
-                targetMessage = clickedTPMessage ?: return@launch,
+                targetMessage = clickedTPMessage,
                 selectedEmoji = selectedEmoji
             ).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> Unit
-                    is Result.Failure -> { }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -172,12 +165,12 @@ class ChatViewModel(
     private fun removeAndAddReaction(removeEmoji: String, addEmoji: String) {
         viewModelScope.launch {
             chatRepository.removeMessageReaction(
-                targetMessage = clickedTPMessage ?: return@launch,
+                targetMessage = clickedTPMessage,
                 selectedEmoji = removeEmoji
             ).collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> addReaction(addEmoji)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -200,7 +193,7 @@ class ChatViewModel(
             channelRepository.markAsRead().collect { callbackResult ->
                 when (callbackResult) {
                     is Result.Success -> _chatUiState.emit(ChatUiState.MarkAsRead)
-                    is Result.Failure -> { }
+                    is Result.Failure -> _chatUiState.emit(ChatUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
                 }
             }
         }
@@ -226,7 +219,7 @@ class ChatViewModel(
     }
 
     fun copyMessage(clipboard: ClipboardManager) {
-        val clip = ClipData.newPlainText("Copied Text", clickedTPMessage?.text)
+        val clip = ClipData.newPlainText("Copied Text", clickedTPMessage.text)
         clipboard.setPrimaryClip(clip)
     }
 

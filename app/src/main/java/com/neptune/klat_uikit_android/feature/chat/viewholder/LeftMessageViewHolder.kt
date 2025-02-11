@@ -45,6 +45,7 @@ class LeftMessageViewHolder(
                 nextMessageCreatedTime != currentMessageCreatedTime -> {
                     setTimeChangeUI(
                         currentTPMessage = currentTPMessage,
+                        previousMessage = previousMessage,
                         currentMessageCreatedTime = currentMessageCreatedTime,
                         previousMessageCreatedTime = previousMessageCreatedTime
                     )
@@ -64,6 +65,7 @@ class LeftMessageViewHolder(
                     if (currentTPMessage.userId != previousMessage?.userId) {
                         setTimeChangeUI(
                             currentTPMessage = currentTPMessage,
+                            previousMessage = previousMessage,
                             currentMessageCreatedTime = currentMessageCreatedTime,
                             previousMessageCreatedTime = previousMessageCreatedTime
                         )
@@ -101,11 +103,18 @@ class LeftMessageViewHolder(
     private fun setTimeChangeUI(
         currentMessageCreatedTime: String,
         previousMessageCreatedTime: String,
+        previousMessage: TPMessage?,
         currentTPMessage: TPMessage
     ) = with(binding) {
         setMessageTimestamp(currentMessageCreatedTime)
         if (currentMessageCreatedTime == previousMessageCreatedTime) {
-            setProfileVisibility(false)
+            if (currentTPMessage.userId != previousMessage?.userId) {
+                setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
+                setTopMargin(root, 14)
+                setProfileVisibility(true)
+            } else {
+                setProfileVisibility(false)
+            }
         } else {
             setProfileData(currentTPMessage.username, currentTPMessage.userProfileImage)
             setTopMargin(root, 14)

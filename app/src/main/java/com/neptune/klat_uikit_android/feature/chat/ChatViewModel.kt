@@ -122,7 +122,6 @@ class ChatViewModel(
     }
 
     fun observeEvent() {
-        Log.d("!! create", ChannelObject.tpChannel.channelId)
         viewModelScope.launch {
             eventRepository.observeChannel(tag).collect { callbackResult ->
                 when(callbackResult.type) {

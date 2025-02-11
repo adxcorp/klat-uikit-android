@@ -16,6 +16,8 @@ import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
 import com.neptune.klat_uikit_android.databinding.ActivityChannelInfoBinding
 import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
+import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
+import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import com.neptune.klat_uikit_android.feature.member.list.MemberActivity
 import kotlinx.coroutines.launch
 
@@ -51,8 +53,8 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
             is ChannelInfoUiState.BaseState -> {
 
             }
-            is ChannelInfoUiState.LeaveChannel -> finish()
-            is ChannelInfoUiState.RemoveChannel -> finish()
+            is ChannelInfoUiState.LeaveChannel -> moveChannelListScreen()
+            is ChannelInfoUiState.RemoveChannel -> moveChannelListScreen()
             is ChannelInfoUiState.Frozen -> binding.layoutChannelInfo4.switchInfo.isSelected = true
             is ChannelInfoUiState.UnFrozen -> binding.layoutChannelInfo4.switchInfo.isSelected = false
             is ChannelInfoUiState.EnablePush -> binding.layoutChannelInfo5.switchInfo.isSelected = true
@@ -154,6 +156,13 @@ class ChannelInfoActivity : BaseActivity<ActivityChannelInfoBinding>(), ChannelA
         layoutChannelInfo6.tvInfoTitle.text = if (viewModel.isChannelOwner) "채널 삭제" else "채널 나가기"
         layoutChannelInfo6.ivChannelInfoArrow.visibility = View.GONE
         layoutChannelInfo6.tvInfoTitle.setTextColor(Color.parseColor("#F53D3D"))
+    }
+
+    private fun moveChannelListScreen() {
+        val intent = Intent(this, ChannelActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        startActivity(intent)
     }
 
     override fun removeChannel() {

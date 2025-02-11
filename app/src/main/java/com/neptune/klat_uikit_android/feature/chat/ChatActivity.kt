@@ -88,6 +88,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     private val onScrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
+//            if (dx != 0 || dy != 0) loadNextMessages(recyclerView)
             loadNextMessages(recyclerView)
         }
     }
@@ -96,12 +97,14 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
         val visibleItemCount = layoutManager.childCount
         val totalItemCount = layoutManager.itemCount
-        val firstVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+//        Log.d("!!: visibleCnt : ", visibleItemCount.toString())
+//        Log.d("!!: totalCnt : ", totalItemCount.toString())
+//        Log.d("!!: visiblePos : ", firstVisibleItemPosition.toString())
 
         if (firstVisibleItemPosition + visibleItemCount >= totalItemCount - 10) {
-            if (!viewModel.isFirstLoad) {
-                viewModel.getMessageList()
-            }
+            viewModel.getMessageList()
         }
     }
 
@@ -295,7 +298,8 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
 
     override fun onDestroy() {
         super.onDestroy()
-        TalkPlus.removeChannelListener(ChannelObject.tpChannel.channelId)
+        TalkPlus.removeChannelListener(viewModel.tag)
+        Log.d("!! onDestroy", (viewModel.tag))
     }
 
     private fun goBack() {

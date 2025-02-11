@@ -3,6 +3,7 @@ package com.neptune.klat_uikit_android.feature.chat
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -13,6 +14,7 @@ import com.neptune.klat_uikit_android.core.data.repository.channel.ChannelReposi
 import com.neptune.klat_uikit_android.core.data.repository.chat.ChatRepository
 import com.neptune.klat_uikit_android.core.data.repository.event.EventRepository
 import com.neptune.klat_uikit_android.feature.channel.list.ChannelUiState
+import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPMessage
 import io.talkplus.params.TPMessageRetrievalParams
 import io.talkplus.params.TPMessageSendParams
@@ -30,6 +32,8 @@ class ChatViewModel(
 ) : ViewModel() {
     private var photoFile: File? = null
     private var hasNext: Boolean = true
+
+    val tag = ChannelObject.tpChannel.channelId
 
     var isOnStop = false
 
@@ -118,8 +122,9 @@ class ChatViewModel(
     }
 
     fun observeEvent() {
+        Log.d("!! create", ChannelObject.tpChannel.channelId)
         viewModelScope.launch {
-            eventRepository.observeChannel(ChannelObject.tpChannel.channelId).collect { callbackResult ->
+            eventRepository.observeChannel(tag).collect { callbackResult ->
                 when(callbackResult.type) {
                     EventType.BAN_USER -> Unit
                     EventType.ADDED_CHANNEL -> Unit

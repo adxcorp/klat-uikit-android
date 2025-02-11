@@ -181,7 +181,6 @@ class ChannelRepository {
         channelId: String? = null
     ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
         val channelType: String = if (invitationCode != "") "invitationOnly" else if (memberCount == ChannelCreateViewModel.SUPER_TYPE) "super_private" else "private"
-        Log.d("!! : type : ", channelType)
         TalkPlus.createChannel(
             targetIds,
             channelId,

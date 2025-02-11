@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -97,11 +98,11 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
 
     private fun loadNextMessages(recyclerView: RecyclerView) {
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        val visibleItemCount = layoutManager.childCount
         val totalItemCount = layoutManager.itemCount
-        val firstVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-        if (firstVisibleItemPosition + visibleItemCount >= totalItemCount - 10) {
+        if (firstVisibleItemPosition == 3 && viewModel.currentItemCount != totalItemCount) {
+            viewModel.currentItemCount = totalItemCount
             viewModel.getMessageList()
         }
     }
@@ -119,15 +120,10 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         viewModel.observeEvent()
         viewModel.getMessageList()
         setRequestLauncher()
-        bindView()
         setHeaderUI()
         observeChatUiState()
         if (ChannelObject.tpChannel.isFrozen) setFrozenUI(true) else setMessageBarUI()
         if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) setMessageBarUI()
-    }
-
-    private fun bindView() = with(binding) {
-
     }
 
     private fun observeChatUiState() {
@@ -269,10 +265,8 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     private fun loadMessages(newTPMessages: List<TPMessage>) {
         adapter.addMessages(newTPMessages)
         if (viewModel.isFirstLoad) {
-            binding.rvChat.post {
-                binding.rvChat.scrollToPosition(adapter.itemCount-1)
-                viewModel.setFirstLoad(false)
-            }
+            binding.rvChat.post { viewModel.setFirstLoad(false) }
+            binding.rvChat.scrollToPosition(adapter.itemCount-1)
         }
     }
 
@@ -286,9 +280,7 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
         binding.layoutChatEmpty.root.visibility = View.GONE
         adapter.addMessage(tpMessage)
         viewModel.setMyLastMessage(false)
-        if (ChannelObject.tpChannel.unreadCount != 0 && !viewModel.isOnStop) {
-            viewModel.markAsRead()
-        }
+        if (ChannelObject.tpChannel.unreadCount != 0 && !viewModel.isOnStop) viewModel.markAsRead()
         val layoutManager = binding.rvChat.layoutManager as LinearLayoutManager
         if (binding.rvChat.adapter?.itemCount?.minus(layoutManager.findLastVisibleItemPosition()) in BOTTOM_RANGE) {
             binding.rvChat.scrollToPosition(adapter.itemCount-1)

@@ -1,5 +1,6 @@
 package com.neptune.klat_uikit_android.feature.chat
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -90,6 +91,11 @@ class ChatAdapter(
         tpMessages.addAll(FIRST_POSITION, nextTpMessages)
         notifyItemRangeInserted(FIRST_POSITION, nextTpMessages.size)
         updateLastMessage()
+        updateFirstMessage()
+    }
+
+    private fun updateFirstMessage() {
+        notifyItemChanged(LAST_POSITION + 1)
     }
 
     fun deleteMessage(

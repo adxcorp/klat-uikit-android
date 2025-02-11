@@ -2,6 +2,7 @@ package com.neptune.klat_uikit_android.feature.chat
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject
@@ -37,6 +38,8 @@ class ChatViewModel(
     var isFirstLoad: Boolean = true
         private set
 
+    var currentItemCount = 0
+
     var isAttachMode: Boolean = false
         private set
 
@@ -60,6 +63,8 @@ class ChatViewModel(
         val params: TPMessageRetrievalParams = TPMessageRetrievalParams.Builder(ChannelObject.tpChannel)
             .setLastMessage(tpMessages.firstOrNull())
             .build()
+
+        Log.d("!! last : ", tpMessages.firstOrNull()?.text.toString())
 
         viewModelScope.launch {
             chatRepository.getMessageList(params).collect { callbackResult ->

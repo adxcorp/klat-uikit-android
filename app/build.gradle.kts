@@ -42,18 +42,18 @@ android {
     }
 }
 
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            create<MavenPublication>("release") {
-//                from(components["release"])
-//                groupId = "com.github.adxcorp"
-//                artifactId = "pointpub-android-sdk"
-//                version = "0.0.1"
-//            }
-//        }
-//    }
-//}
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.adxcorp"
+                artifactId = "klat-uikit-android"
+                version = "0.0.1"
+            }
+        }
+    }
+}
 
 dependencies {
     implementation(libs.androidx.core.ktx)

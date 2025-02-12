@@ -221,7 +221,6 @@ class ChatActivity : AppCompatActivity(), MemberInterface, MessageActions, OnEmo
     }
 
     private fun setRecyclerViewListener() = with(binding) {
-        rvChat.itemAnimator = null
         rvChat.adapter = this@ChatActivity.adapter
         rvChat.addOnScrollListener(onScrollListener)
         rvChat.addOnLayoutChangeListener(onLayoutChangeListener)

@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.chat
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -95,7 +94,7 @@ class ChatAdapter(
     }
 
     private fun updateFirstMessage() {
-        notifyItemChanged(LAST_POSITION + 1)
+        notifyItemRangeChanged(0, 21)
     }
 
     fun deleteMessage(

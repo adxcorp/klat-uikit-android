@@ -41,7 +41,6 @@ class AlertDialog(
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         setDisplayMetrics()
         observeAlertUiState()
         setClickListener()
@@ -128,6 +127,22 @@ class AlertDialog(
                     titleDescription = getString(R.string.alert_leave_title, title),
                     contentDescription = getString(R.string.alert_leave_description)
                 )
+            }
+
+            StateType.CHANNEL_LEAVE -> {
+                tvAlertRight.setOnClickListener {
+                    channelActions?.leaveChannelToList()
+                    dialog?.dismiss()
+                }
+                setContent(
+                    titleDescription = title,
+                    contentDescription = getString(R.string.alert_leave_channel_description)
+                )
+                binding.tvAlertRight.apply {
+                    text = "나가기"
+                    setTextColor(Color.RED)
+                }
+                binding.tvAlertLeft.text = "취소"
             }
 
             StateType.DELETE_MESSAGE -> {

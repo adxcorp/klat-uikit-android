@@ -22,4 +22,6 @@
 
     <string name="alert_delete_message">메시지를 삭제할까요?</string>
     <string name="alert_delete_message_description">메시지는 즉시 나와 상대방에게 삭제되며 복구되지 않습니다.</string>
+
+    <string name="alert_leave_channel_description">채널을 나가시겠어요?\n나간 채널의 대화는 저장되지 않습니다."</string>
 </resources>

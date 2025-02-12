@@ -6,5 +6,6 @@ enum class StateType {
     OWNER,
     REMOVE,
     LEAVE,
-    DELETE_MESSAGE
+    CHANNEL_LEAVE,
+    DELETE_MESSAGE,
 }

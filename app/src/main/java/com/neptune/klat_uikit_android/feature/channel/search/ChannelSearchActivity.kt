@@ -60,7 +60,11 @@ class ChannelSearchActivity : AppCompatActivity() {
                 binding.layoutSearchEmpty.root.visibility = View.GONE
             }
             is SearchUiState.SearchResultEmpty -> {
-                binding.rvSearchChannelList.adapter = ChannelListAdapter(arrayListOf()) { }
+                binding.rvSearchChannelList.adapter = ChannelListAdapter(
+                    arrayListOf(),
+                    onClick = { },
+                    onLongClick = { }
+                )
                 binding.layoutSearchEmpty.root.visibility = View.VISIBLE
             }
         }
@@ -99,13 +103,15 @@ class ChannelSearchActivity : AppCompatActivity() {
     private fun setChannelListAdapter(channelList: List<TPChannel>): ChannelListAdapter {
         return ChannelListAdapter(
             channelList = channelList as ArrayList<TPChannel>,
-            searchKeyword = binding.layoutChannelSearch.etSearch.text.toString()
-        ) { tpChannel ->
-            val intent = Intent(this, ChatActivity::class.java).apply {
-                ChannelObject.setTPChannel(tpChannel)
-            }
-            startActivity(intent)
-        }
+            searchKeyword = binding.layoutChannelSearch.etSearch.text.toString(),
+            onClick = { tpChannel ->
+                val intent = Intent(this, ChatActivity::class.java).apply {
+                    ChannelObject.setTPChannel(tpChannel)
+                }
+                startActivity(intent)
+            },
+            onLongClick = { }
+        )
     }
 
     companion object {

@@ -21,7 +21,8 @@ import java.util.Locale
 class ChannelListAdapter(
     private val channelList: ArrayList<TPChannel>,
     private val searchKeyword: String = "",
-    private val onClick: (TPChannel) -> Unit
+    private val onClick: (TPChannel) -> Unit,
+    private val onLongClick: (TPChannel) -> Unit
 ) : RecyclerView.Adapter<ChannelListAdapter.ChannelViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelViewHolder {
         val binding: ItemChannelBinding = ItemChannelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -74,6 +75,11 @@ class ChannelListAdapter(
 
             itemView.setOnClickListener {
                 onClick.invoke(tpChannel)
+            }
+
+            itemView.setOnLongClickListener {
+                onLongClick.invoke(tpChannel)
+                true
             }
         }
 

@@ -14,20 +14,24 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.ItemTouchHelper
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
+import com.neptune.klat_uikit_android.core.ui.components.alert.AlertDialog
+import com.neptune.klat_uikit_android.core.ui.components.alert.interfaces.ChannelActions
+import com.neptune.klat_uikit_android.core.ui.components.enums.StateType
 import com.neptune.klat_uikit_android.databinding.FragmentChannelListBinding
 import com.neptune.klat_uikit_android.feature.channel.create.ChannelCreateActivity
+import com.neptune.klat_uikit_android.feature.channel.list.alert.ChannelLongClickAlert
+import com.neptune.klat_uikit_android.feature.channel.list.alert.ChannelLongClickListener
 import com.neptune.klat_uikit_android.feature.channel.search.ChannelSearchActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
 import io.talkplus.TalkPlus
 import io.talkplus.entity.channel.TPChannel
 import kotlinx.coroutines.launch
 
-class ChannelListFragment : Fragment(), SwipeCallbackListener {
+class ChannelListFragment : Fragment(), ChannelLongClickListener, ChannelActions {
     private var _binding: FragmentChannelListBinding? = null
     private val binding get() = _binding ?: error("FragmentChannelListBinding 초기화 에러")
 
@@ -47,10 +51,6 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
             }
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChannelListBinding.inflate(inflater)
         return binding.root
@@ -60,7 +60,6 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         super.onViewCreated(view, savedInstanceState)
         init()
         setHeaderUI()
-        setSwipeListener()
         observeChannelListUiState()
     }
 
@@ -155,10 +154,20 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
     }
 
     private fun setChannelListAdapter(): ChannelListAdapter {
-        return ChannelListAdapter(viewModel.currentChannelList) { tpChannel ->
-            ChannelObject.setTPChannel(tpChannel)
-            if (tpChannel.unreadCount != 0) viewModel.markAsRead() else moveChatScreen()
-        }
+        return ChannelListAdapter(
+            viewModel.currentChannelList,
+            onClick = { tpChannel ->
+                ChannelObject.setTPChannel(tpChannel)
+                if (tpChannel.unreadCount != 0) viewModel.markAsRead() else moveChatScreen()
+            },
+            onLongClick = { tpChannel ->
+                ChannelObject.setTPChannel(tpChannel)
+                ChannelLongClickAlert(
+                    channelName = tpChannel.channelName,
+                    channelLongClickListener = this
+                ).show(parentFragmentManager, null)
+            },
+        )
     }
 
     private fun moveChatScreen() {
@@ -174,19 +183,24 @@ class ChannelListFragment : Fragment(), SwipeCallbackListener {
         }
     }
 
-    private fun setSwipeListener() {
-        ItemTouchHelper(ItemSwipeCallback(
-            swipeCallbackListener = this,
-            context = parentActivity
-        )).attachToRecyclerView(binding.rvChannels)
-    }
-
-    override fun onSwipe(position: Int) {
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         TalkPlus.removeChannelListener(ChannelObject.tag)
+    }
+
+    override fun markAsRead() {
+        if (ChannelObject.tpChannel.unreadCount != 0) viewModel.markAsRead()
+    }
+
+    override fun leaveChannel() {
+        AlertDialog(
+            stateType = StateType.CHANNEL_LEAVE,
+            title = ChannelObject.tpChannel.channelName,
+            channelActions = this
+        ).show(parentFragmentManager, null)
+    }
+
+    override fun leaveChannelToList() {
+        viewModel.deleteChannel()
     }
 }

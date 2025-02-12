@@ -100,4 +100,34 @@ class ChannelListViewModel(
             }
         }
     }
+
+    private fun leaveChannel() {
+        viewModelScope.launch {
+            _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Loading))
+            channelRepository.leaveChannel().collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> Unit
+                    is Result.Failure -> _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
+                }
+                _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.LoadingFinish))
+            }
+        }
+    }
+
+    private fun removeChannel() {
+        viewModelScope.launch {
+            _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Loading))
+            channelRepository.removeChannel().collect { callbackResult ->
+                when (callbackResult) {
+                    is Result.Success -> Unit
+                    is Result.Failure -> _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.Error(callbackResult.failResult)))
+                }
+                _channelUiState.emit(ChannelUiState.BaseState(BaseUiState.LoadingFinish))
+            }
+        }
+    }
+
+    fun deleteChannel() {
+        if (ChannelObject.tpChannel.channelOwnerId == ChannelObject.userId) removeChannel() else leaveChannel()
+    }
 }

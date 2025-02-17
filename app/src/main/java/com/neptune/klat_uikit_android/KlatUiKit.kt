@@ -23,7 +23,7 @@ object KlatUiKit {
     fun connect(
         activity: Activity,
         loginRequest: LoginRequest,
-        oneToOneChannelId: String? = null
+        oneToOneChannelId: String? = null,
     ) {
         val loginType = loginRequest.userToken?.let { TPLoginParams.LoginType.TOKEN } ?: TPLoginParams.LoginType.ANONYMOUS
 

@@ -4,13 +4,11 @@ import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
-import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChannelBinding
 import io.talkplus.entity.channel.TPChannel
@@ -39,16 +37,18 @@ class ChannelListAdapter(
 
     inner class ChannelViewHolder(private val binding: ItemChannelBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(tpChannel: TPChannel) = with(binding) {
-            tvChannelMemberCount.text = tpChannel.memberCount.toString()
+            tvChannelMemberCount.text =
+                if (tpChannel.memberCount == 0) (tpChannel.memberCount + 1).toString() else tpChannel.memberCount.toString()
 
             if (searchKeyword.isNotEmpty()) {
                 tvChannelName.text = highlightKeyword(
-                    channelName = tvChannelName.text.toString(),
+                    channelName = tpChannel.channelName.toString(),
                     keyword = searchKeyword
                 )
             } else {
                 tvChannelName.text = tpChannel.channelName
             }
+
 
             if (tpChannel.lastMessage != null) {
                 tvLastMessage.text = tpChannel.lastMessage.text

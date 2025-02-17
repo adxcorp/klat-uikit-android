@@ -64,8 +64,6 @@ class ChatViewModel(
             .setLastMessage(tpMessages.firstOrNull())
             .build()
 
-        Log.d("!! last : ", tpMessages.firstOrNull()?.text.toString())
-
         viewModelScope.launch {
             chatRepository.getMessageList(params).collect { callbackResult ->
                 when (callbackResult) {

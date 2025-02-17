@@ -79,8 +79,6 @@ dependencies {
     api("androidx.activity:activity-ktx:1.5.0")
     api("androidx.fragment:fragment-ktx:1.2.0")
 
-    api("com.github.adxcorp:talkplus-android:0.6.5")
-
-    implementation("com.github.adxcorp:talkplus-android:1.0.0")
-    implementation("com.github.chrisbanes:PhotoView:2.0.0")
+    api("com.github.adxcorp:talkplus-android:1.0.0")
+    api("com.github.chrisbanes:PhotoView:2.0.0")
 }

@@ -18,6 +18,9 @@ class ChannelListViewModel(
     private val channelRepository: ChannelRepository = ChannelRepository(),
     private val eventRepository: EventRepository = EventRepository()
 ) : ViewModel() {
+
+    var isLongClickMarkAsRead = false
+
     private var _channelUiState = MutableSharedFlow<ChannelUiState>()
     val channelUiState: SharedFlow<ChannelUiState>
         get() = _channelUiState.asSharedFlow()

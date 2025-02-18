@@ -106,8 +106,11 @@ class ChannelListFragment : Fragment(), ChannelLongClickListener, ChannelActions
             is ChannelUiState.GetChannel -> adapter.moveChannelItemToTop(channelUiState.tpChannel)
             is ChannelUiState.AddMember -> addMember(channelUiState.tpChannel)
             is ChannelUiState.MarkAsRead -> {
-                moveChatScreen()
                 adapter.updateChannelItem(ChannelObject.tpChannel)
+                if (!viewModel.isLongClickMarkAsRead) {
+                    moveChatScreen()
+                }
+                viewModel.isLongClickMarkAsRead = false
             }
         }
     }
@@ -189,6 +192,7 @@ class ChannelListFragment : Fragment(), ChannelLongClickListener, ChannelActions
     }
 
     override fun markAsRead() {
+        viewModel.isLongClickMarkAsRead = true
         if (ChannelObject.tpChannel.unreadCount != 0) viewModel.markAsRead()
     }
 

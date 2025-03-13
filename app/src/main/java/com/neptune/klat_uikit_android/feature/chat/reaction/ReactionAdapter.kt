@@ -34,7 +34,7 @@ class ReactionAdapter(
 
             if (reactionUsers.contains(ChannelObject.userId)) {
                 root.setBackgroundResource(R.drawable.bg_reaction_selected)
-                tvReactionCount.setTextColor(Color.parseColor("#00BFBF"))
+                tvReactionCount.setTextColor(binding.root.context.resources.getColor(R.color.klat_brand_color, null))
             } else {
                 root.setBackgroundResource(R.drawable.bg_reaction_un_selected)
                 tvReactionCount.setTextColor(Color.BLACK)

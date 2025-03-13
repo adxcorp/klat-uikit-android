@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.chat.viewholder
 
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +25,6 @@ class LeftMessageViewHolder(
         currentTPMessage: TPMessage,
         nextTPMessage: TPMessage?,
         previousMessage: TPMessage?,
-        tpMessages: List<TPMessage>
     ) = with(binding) {
         initView(currentTPMessage)
 

@@ -51,7 +51,7 @@ class ProfileViewModel(
                 invitationCode = invitationCode
             ).collect { callbackResult ->
                 when (callbackResult) {
-                    is Result.Success -> if (callbackResult.successData.memberCount < 2) addMember(targetUserId)
+                    is Result.Success -> if (callbackResult.successData.memberCount <= 2) addMember(targetUserId)
                     is Result.Failure -> {
                         when (callbackResult.failResult.errorCode) {
                             2003 -> createChannel(

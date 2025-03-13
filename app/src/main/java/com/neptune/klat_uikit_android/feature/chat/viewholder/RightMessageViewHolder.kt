@@ -1,17 +1,12 @@
 package com.neptune.klat_uikit_android.feature.chat.viewholder
 
 import android.content.Context
-import android.graphics.Rect
-import android.util.LayoutDirection
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.core.base.ChannelObject
-import com.neptune.klat_uikit_android.core.extension.dpToPx
 import com.neptune.klat_uikit_android.core.extension.dpToPxInt
 import com.neptune.klat_uikit_android.core.extension.loadThumbnailContainRadius
 import com.neptune.klat_uikit_android.databinding.ItemChatRightBinding
@@ -29,7 +24,6 @@ class RightMessageViewHolder(
         currentTPMessage: TPMessage,
         nextTPMessage: TPMessage?,
         previousMessage: TPMessage?,
-        tpMessages: List<TPMessage>
     ) = with(binding) {
         initView(currentTPMessage)
 
@@ -126,7 +120,7 @@ class RightMessageViewHolder(
     ) = with(binding) {
         setMessageTimestamp(currentMessageCreatedTime)
         if (currentMessageCreatedTime != previousMessageCreatedTime) {
-            setTopMargin(root, 14)
+            setTopMargin(root, 0)
         }
     }
 

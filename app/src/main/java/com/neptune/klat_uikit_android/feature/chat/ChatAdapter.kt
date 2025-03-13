@@ -29,16 +29,14 @@ class ChatAdapter(
             is LeftMessageViewHolder -> holder.bind(
                 currentTPMessage = tpMessages[position],
                 nextTPMessage = tpMessages.getOrNull(position+1),
-                previousMessage = tpMessages.getOrNull(position-1),
-                tpMessages = tpMessages
+                previousMessage = tpMessages.getOrNull(position-1)
             )
 
             is RightMessageViewHolder ->  {
                 holder.bind(
                     currentTPMessage = tpMessages[position],
                     nextTPMessage = tpMessages.getOrNull(position+1),
-                    previousMessage = tpMessages.getOrNull(position-1),
-                    tpMessages = tpMessages
+                    previousMessage = tpMessages.getOrNull(position-1)
                 )
             }
         }

@@ -76,11 +76,11 @@ class ProfileDialog(
             is ProfileUiState.GetPeerMutedUsers -> setView()
             is ProfileUiState.UnMuteUser -> unMutedUI()
             is ProfileUiState.PeerUnMuteUser -> unMutedUI()
-            is ProfileUiState.CreateOneToOneChatRoom -> moveChatRoom()
-            is ProfileUiState.AddMember -> {
-                Toast.makeText(requireActivity(), "${viewModel.targetUserId}님을 초대했습니다.", Toast.LENGTH_SHORT).show()
-                dismiss()
-            }
+            is ProfileUiState.CreateOneToOneChatRoom, ProfileUiState.AddMember -> moveChatRoom()
+//            is ProfileUiState.AddMember -> {
+//                Toast.makeText(requireActivity(), "${viewModel.targetUserId}님을 초대했습니다.", Toast.LENGTH_SHORT).show()
+//                dismiss()
+//            }
         }
     }
 

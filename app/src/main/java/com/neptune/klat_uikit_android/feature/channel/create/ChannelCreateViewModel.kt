@@ -13,8 +13,9 @@ import java.io.File
 
 class ChannelCreateViewModel(private val channelRepository: ChannelRepository = ChannelRepository()) : ViewModel() {
     private var photoFile: File? = null
-    private var channelName: String = ""
     private var memberCount: Int = 0
+    var channelName: String = ""
+        private set
 
     var channelType: String = ""
         private set

@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.channel.list
 
-import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -8,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.neptune.klat_uikit_android.KlatUiKit
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.databinding.ItemChannelBinding
@@ -48,7 +48,6 @@ class ChannelListAdapter(
             } else {
                 tvChannelName.text = tpChannel.channelName
             }
-
 
             if (tpChannel.lastMessage != null) {
                 tvLastMessage.text = tpChannel.lastMessage.text
@@ -98,8 +97,7 @@ class ChannelListAdapter(
 
         private fun highlightKeyword(
             channelName: String,
-            keyword: String,
-            color: Int = Color.parseColor("#00BFBF")
+            keyword: String
         ): SpannableString {
             val startIndex = channelName.indexOf(keyword, ignoreCase = true)
             if (startIndex == -1) {
@@ -109,7 +107,7 @@ class ChannelListAdapter(
             val spannableString = SpannableString(channelName)
             val endIndex = startIndex + keyword.length
             spannableString.setSpan(
-                ForegroundColorSpan(color), // 강조할 색상
+                ForegroundColorSpan(KlatUiKit.brandColor),
                 startIndex,
                 endIndex,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

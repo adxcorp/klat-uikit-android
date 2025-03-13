@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.feature.channel.main.ChannelActivity
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
@@ -15,9 +16,13 @@ import io.talkplus.params.TPLoginParams
 import java.lang.Exception
 
 object KlatUiKit {
+    var brandColor: Int = 0
+        private set
+
     fun initialize(context: Context, appId: String) {
         TalkPlus.init(context, appId)
         ChannelObject.tag = appId
+        brandColor = ContextCompat.getColor(context, R.color.klat_brand_color)
     }
 
     fun connect(

@@ -5,7 +5,7 @@
     android:viewportHeight="36">
   <path
       android:pathData="M18,0L30,0A18,18 0,0 1,48 18L48,18A18,18 0,0 1,30 36L18,36A18,18 0,0 1,0 18L0,18A18,18 0,0 1,18 0z"
-      android:fillColor="#00BFBF"/>
+      android:fillColor="@color/klat_brand_color"/>
   <group>
     <clip-path
         android:pathData="M12,6h24v24h-24z"/>

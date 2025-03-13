@@ -11,5 +11,5 @@
         android:height="28dp" />
 
     <solid
-        android:color="#00BFBF" />
+        android:color="@color/klat_brand_color" />
 </shape>

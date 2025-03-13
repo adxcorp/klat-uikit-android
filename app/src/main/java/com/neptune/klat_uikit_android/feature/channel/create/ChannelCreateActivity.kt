@@ -13,7 +13,6 @@ import com.neptune.klat_uikit_android.core.base.BaseUiState
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.extension.loadThumbnail
 import com.neptune.klat_uikit_android.core.extension.showToast
-import com.neptune.klat_uikit_android.core.ui.components.profile.ProfileUiState
 import com.neptune.klat_uikit_android.core.util.FileUtils
 import com.neptune.klat_uikit_android.databinding.ActivityChannelCreateBinding
 import com.neptune.klat_uikit_android.feature.chat.ChatActivity
@@ -95,6 +94,11 @@ class ChannelCreateActivity : AppCompatActivity(), PhotoActionListener {
         }
 
         tvCreateChannel.setOnClickListener {
+            if (layoutChannelName.etCreateChannelName.text.toString().isBlank()) {
+                showToast("채널 이름을 입력해주세요.")
+                return@setOnClickListener
+            }
+
             viewModel.apply {
                 setChannelName(layoutChannelName.etCreateChannelName.text.toString())
                 setMemberCount(etCreateMemberCount.text.toString().toInt())

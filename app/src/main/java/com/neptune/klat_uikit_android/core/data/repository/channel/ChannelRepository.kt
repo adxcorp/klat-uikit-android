@@ -22,7 +22,7 @@ class ChannelRepository {
             TalkPlus.getChannels(lastChannel, object : TalkPlus.TPCallbackListener<List<TPChannel>, Boolean> {
                 override fun onSuccess(tpChannelList: List<TPChannel>, hasNext: Boolean) {
                     trySend(Result.Success(ChannelListResponse(
-                        tpChannels = tpChannelList.filter { it.type == "private" || it.type == "super_private" || it.type == "invitationOnly"},
+                        tpChannels = tpChannelList.filter { it.type == "private" || it.type == "invitationOnly"},
                         hasNext = hasNext
                     )))
                 }
@@ -180,7 +180,7 @@ class ChannelRepository {
         invitationCode: String = "",
         channelId: String? = null
     ): Flow<Result<TPChannel, WrappedFailResult>> = callbackFlow {
-        val channelType: String = if (invitationCode != "") "invitationOnly" else if (memberCount == ChannelCreateViewModel.SUPER_TYPE) "super_private" else "private"
+        val channelType: String = if (invitationCode != "") "invitationOnly" else "private"
         TalkPlus.createChannel(
             targetIds,
             channelId,

@@ -2,7 +2,6 @@ package com.neptune.klat_uikit_android.feature.chat
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonObject

@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.core.data.repository.channel
 
-import android.util.Log
 import com.google.gson.JsonObject
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.base.Result

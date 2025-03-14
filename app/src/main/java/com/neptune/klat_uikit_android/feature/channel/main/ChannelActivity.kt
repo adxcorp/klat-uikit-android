@@ -1,7 +1,6 @@
 package com.neptune.klat_uikit_android.feature.channel.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.neptune.klat_uikit_android.R
 import com.neptune.klat_uikit_android.feature.channel.list.ChannelListFragment

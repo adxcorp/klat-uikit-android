@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.core.data.repository.event
 
-import android.util.Log
 import com.neptune.klat_uikit_android.core.base.ChannelObject
 import com.neptune.klat_uikit_android.core.data.model.channel.EventType
 import com.neptune.klat_uikit_android.core.data.model.channel.ObserveChannelResponse

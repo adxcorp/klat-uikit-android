@@ -1,6 +1,5 @@
 package com.neptune.klat_uikit_android.feature.member.list
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.neptune.klat_uikit_android.core.base.BaseUiState

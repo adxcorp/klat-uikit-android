@@ -2,7 +2,6 @@ package com.neptune.klat_uikit_android.feature.channel.info
 
 import android.content.Intent
 import android.graphics.Color
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle

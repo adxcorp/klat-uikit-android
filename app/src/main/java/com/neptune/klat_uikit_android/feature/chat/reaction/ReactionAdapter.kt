@@ -1,9 +1,7 @@
 package com.neptune.klat_uikit_android.feature.chat.reaction
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.neptune.klat_uikit_android.R
